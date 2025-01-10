@@ -1,4 +1,6 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/todays_special.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,8 +16,9 @@ class HomePage extends StatelessWidget {
         ),
         title: Center(
           child: Image.asset(
-          'assets/images/logo.webp',  
-        ),) ,
+            'assets/images/logo.webp',
+          ),
+        ),
         actions: [
           IconButton(
             icon: Stack(
@@ -64,15 +67,18 @@ class HomePage extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => TodaySpecialPage()),
                   );
                 },
-                child: Text(
-                  "Today's Special",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: Text(
+                    "Today's Special",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
+           Carouselfirst(),
           ],
         ),
       ),
