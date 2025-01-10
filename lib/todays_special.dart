@@ -1,5 +1,4 @@
 
-
 import 'package:flutter/material.dart';
 
 class TodaySpecialPage extends StatelessWidget {
@@ -75,7 +74,7 @@ class ProductCard extends StatelessWidget {
   final String imagePath;
   final String name;
 
-  ProductCard({required this.imagePath, required this.name});
+  const ProductCard({required this.imagePath, required this.name});
 
   @override
   Widget build(BuildContext context) {

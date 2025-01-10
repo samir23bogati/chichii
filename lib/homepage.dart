@@ -1,6 +1,6 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:padshala/carouselfirst.dart';
+import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/todays_special.dart';
 
 class HomePage extends StatelessWidget {
@@ -8,11 +8,15 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            // Handle menu action
-          },
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+              Scaffold.of(context).openDrawer();
+              },
+            );
+          }
         ),
         title: Center(
           child: Image.asset(
@@ -37,7 +41,7 @@ class HomePage extends StatelessWidget {
                       minHeight: 12,
                     ),
                     child: Text(
-                      '0',
+                      '23',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 8,
@@ -54,6 +58,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      drawer: DrawerMenu(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
