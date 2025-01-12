@@ -126,7 +126,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
         ),
         ExpandableCategory(
           title: 'Fast Food',
-          items: ['Item 1', 'Item 2'],
+          items: ['MOMO', 'Fries','Grilled'],
         ),
         ExpandableCategory(
           title: 'Ice Cream',

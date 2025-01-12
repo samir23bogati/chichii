@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:padshala/carousel_second.dart';
 import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/drawer_menu.dart';
-import 'package:padshala/todays_special.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -59,34 +60,26 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: DrawerMenu(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TodaySpecialPage()),
-                  );
-                },
-                child: Center(
-                  child: Text(
-                    "Today's Special",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-           Carouselfirst(),
-          ],
+      body: ListView(
+        children: <Widget>[
+          // Padding(
+          //   padding: const EdgeInsets.all(16.0),
+          //   child: GestureDetector(
+          //     onTap: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => TodaySpecialPage()),
+          //       );
+          //     },
+          //   ),
+          // ),
+          Carouselfirst(),
+          Gap(20),
+          CarouselSecond(),
+        ],
+        
         ),
-      ),
-    );
+      );
+    
   }
 }
