@@ -22,11 +22,11 @@ class _CarouselSecondState extends State<CarouselSecond> {
       {'image': 'assets/images/chickendrum.jpg', 'title': 'Chicken Drum'},
     ];
 
-    return Container(
+    return SingleChildScrollView(
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               "Dish Discoveries",
               style: const TextStyle(
@@ -36,126 +36,137 @@ class _CarouselSecondState extends State<CarouselSecond> {
               ),
             ),
           ),
-          Stack(
-            children: [
-              CarouselSlider(
-                carouselController: _controller,
-                options: CarouselOptions(
-                  height: 210,
-                  enlargeCenterPage: true,
-                  enableInfiniteScroll: true,
-                  viewportFraction: 0.4,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                ),
-                items: imgList.map((item) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 150.0,
-                        height: 150.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              spreadRadius: 2,
-                              blurRadius: 4,
-                              offset: Offset(0, 3),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Stack(
+              children: [
+                CarouselSlider(
+                  carouselController: _controller,
+                  options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    enlargeCenterPage: true,
+                    enableInfiniteScroll: false,
+                    viewportFraction: 0.4,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
+                  items: imgList.map((item) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 150.0,
+                          height: 150.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                spreadRadius: 2,
+                                blurRadius: 4,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.asset(
+                              item['image']!,
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.asset(
-                            item['image']!,
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          item['title']!,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.black,
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            item['title']!,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-              
-              
-              Positioned(
-                left: 5,
-                top: 80,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white, 
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                child: IconButton(
-                  icon: Icon(Icons.keyboard_arrow_left, size: 35,color:Colors.black),
-                  onPressed: () {
-                    if (_currentIndex > 0) { // Fixed condition to avoid negative index
-                      _controller.previousPage(
-                        duration: Duration(milliseconds: 250),
-                        curve: Curves.linear,
-                      );
-                    }
-                  },
+                      ],
+                    );
+                  }).toList(),
                 ),
-              ),
-              ),
-              
-              // Right arrow
-              Positioned(
-                right: 18, 
-                top: 82,
-                 child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white, 
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
+
+                Positioned(
+                  left: 5,
+                  top: MediaQuery.of(context).size.height * 0.15,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.keyboard_arrow_left,
+                          size: 35, color: Colors.black),
+                      onPressed: () {
+                        setState(() {
+                          if (_currentIndex > 0) {
+                            // Fixed condition to avoid negative index
+                            _currentIndex--;
+                          } else {
+                            _currentIndex = imgList.length - 1;
+                          }
+                        });
+
+                        _controller.jumpToPage(_currentIndex);
+                      },
+                    ),
                   ),
-                child: IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right,size: 35,color: Colors.black),
-                  onPressed: () {
-                    if (_currentIndex < imgList.length - 1) { // Fixed condition for last index check
-                      _controller.nextPage(
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.linear,
-                      );
-                    }
-                  },
                 ),
-              ),
-              ),
-            ],
+
+                // Right arrow
+                Positioned(
+                  right: 18,
+                  top: MediaQuery.of(context).size.height * 0.15,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.keyboard_arrow_right,
+                          size: 35, color: Colors.black),
+                      onPressed: () {
+                        setState(() {
+                          if (_currentIndex < imgList.length - 1 ) {
+                            // Fixed condition for last index check
+                            _currentIndex++;
+                          } else {
+                            _currentIndex = 0;
+                          }
+                        });
+                        _controller.jumpToPage(_currentIndex);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

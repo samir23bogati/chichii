@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:padshala/carousel_second.dart';
 import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/drawer_menu.dart';
+import 'package:padshala/food_promopage1.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -76,6 +77,8 @@ class HomePage extends StatelessWidget {
           Carouselfirst(),
           Gap(20),
           CarouselSecond(),
+          Gap(20),
+           FoodPromopage1(),
         ],
         
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:padshala/expandable_category.dart';// Ensure correct path
+import 'package:padshala/expandable_category.dart';
 
 class DrawerMenu extends StatefulWidget {
   @override
@@ -7,56 +7,60 @@ class DrawerMenu extends StatefulWidget {
 }
 
 class _DrawerMenuState extends State<DrawerMenu> {
-  bool showMenu = true; // Control which section to show
+  bool showMenu = true; 
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: <Widget>[
-          //SearchBar(),
-          SizedBox(
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      showMenu = true;
-                    });
-                  },
-                  child: Text(
-                    'Menu',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: showMenu ? Colors.amber : Colors.black,
-                      fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 40),
+        child: Column(
+          children: <Widget>[
+            //SearchBar(),
+            SizedBox(height:10),
+            SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        showMenu = true;
+                      });
+                    },
+                    child: Text(
+                      'Menu',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: showMenu ? Colors.amber : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      showMenu = false;
-                    });
-                  },
-                  child: Text(
-                    'Categories',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: !showMenu ? Colors.amber : Colors.black,
-                      fontWeight: FontWeight.bold,
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        showMenu = false;
+                      });
+                    },
+                    child: Text(
+                      'Categories',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: !showMenu ? Colors.amber : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: showMenu ? _buildMenuSection() : _buildCategoriesSection(),
-          ),
-        ],
+            Expanded(
+              child: showMenu ? _buildMenuSection() : _buildCategoriesSection(),
+            ),
+          ],
+        ),
       ),
     );
   }
