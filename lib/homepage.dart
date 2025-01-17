@@ -79,6 +79,20 @@ class HomePage extends StatelessWidget {
           CarouselSecond(),
           Gap(20),
            FoodPromopage1(),
+           Gap(20),
+           Padding(
+             padding: const EdgeInsets.symmetric(horizontal: 16.0), 
+             child: Text(
+               "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
+                style: TextStyle( 
+                  fontSize: 20,
+                   fontWeight: FontWeight.w900,
+                   color: Colors.black, 
+                  )
+                  , textAlign: TextAlign.center,
+                   ),
+                   ),
+                   Gap(20),
         ],
         
         ),
