@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class FoodPromopage1 extends StatefulWidget {
   const FoodPromopage1({super.key});
@@ -9,44 +12,7 @@ class FoodPromopage1 extends StatefulWidget {
 
 class _FoodPromopage1State extends State<FoodPromopage1> {
   late PageController _pageController;
-  final List<Map<String, dynamic>> promoItems = [
-    {
-      'title': 'Brazilian Chicken Drum[1 Person]',
-      'oldPrice':'Nrs 2000',
-      'price': 'NRS 1525.00',
-      'imageUrl': 'assets/images/chickendrum.jpg',
-    },
-    {
-      'title': 'Jumbo Sour Marinated Chicken Sadeko[3 Person]',
-      'oldPrice': null,
-      'price': 'NRS 965.00',
-      'imageUrl': 'assets/images/sdhekochick.jpg',
-    },
-    {
-      'title': 'Brazilian Chicken Drum[1 Person]',
-      'oldPrice':'Nrs 2000',
-      'price': 'NRS 1525.00',
-      'imageUrl': 'assets/images/chickendrum.jpg',
-    },
-     {
-      'title': 'Jumbo Sour Marinated Chicken Sadeko[3 Person]',
-      'oldPrice': null,
-      'price': 'NRS 965.00',
-      'imageUrl': 'assets/images/sdhekochick.jpg',
-    },
-    {
-      'title': 'Jumbo Savoury Grilled Buff Sekuwa [1 Kg]',
-      'oldPrice': 'Rs 895.00',
-      'discountedPrice': 'Rs 799.00',
-      'imageUrl': 'assets/images/sdhekochick.jpg',
-    },
-    {
-      'title': 'Jumbo Umami Fried and Stirred Chicken Chili [3]',
-      'oldPrice': null,
-      'discountedPrice': 'Rs 975.00',
-      'imageUrl': 'assets/images/sdhekochick.jpg',
-    },
-  ];
+  List<Map<String, dynamic>> promoItems = [];
 
   @override
   void initState() {
@@ -55,7 +21,25 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
       viewportFraction: 0.5,
       initialPage: 0,
     );
+    _loadFoodPromoItems();
   }
+
+ Future<void> _loadFoodPromoItems() async {
+    String jsonString = await rootBundle.loadString('assets/json/foodpromo_items.json');
+    List<dynamic> jsonData = json.decode(jsonString);
+    setState(() {
+      promoItems = jsonData.map<Map<String, dynamic>>((item) {
+        return {
+          'title': item['title'] ?? 'No Title',
+          'description': item['description'] ?? 'Cooked Food',
+          'price': item['price'] ?? item['discountedPrice'] ?? 'N/A',
+          'imageUrl': item['imageUrl'] ?? 'assets/images/default.webp',
+        };
+      }).toList();
+    });
+}
+
+
 
   @override
   void dispose() {
@@ -63,8 +47,8 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
     super.dispose();
   }
   void _nextPage() { 
-    int nextPage = _pageController.page!.toInt() + 1;
-     if (nextPage >= promoItems.length) { 
+    int nextPage = (_pageController.page?.toInt()?? 0) + 1;
+    if (promoItems.isNotEmpty && nextPage >= promoItems.length) {
       nextPage = 0; // Loop back to the first item
        }
         _pageController.animateToPage(
@@ -108,10 +92,12 @@ class FoodPromoContent extends StatelessWidget {
   final VoidCallback nextPage;
   final VoidCallback previousPage;
 
-  FoodPromoContent({required this.pageController,
+  const FoodPromoContent({
+  required this.pageController,
   required this.promoItems,
   required this.nextPage,
-  required this.previousPage});
+  required this.previousPage}
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +126,7 @@ class FoodPromoContent extends StatelessWidget {
                     Expanded( 
                       child: SizedBox(
                          height: 340, 
+                         width: double.infinity,
                    child: PageView.builder(
                      controller: pageController,
                       itemCount: promoItems.length, 
@@ -147,16 +134,16 @@ class FoodPromoContent extends StatelessWidget {
                        { final item = promoItems[index];
                         return PromoItem(
                            title: item['title'] ?? 'No Title',
-                           description: item.containsKey('description')
-                      ?item['description'] ??"": 'Cooked Food',
+                           description: 'Cooked Food',
                        price: item['price'] ?? item['discountedPrice'] ?? 'N/A',
-                             imageUrl: item['imageUrl'] ?? 'assets/images/default.webp',
+                        imageUrl: item['imageUrl'] ?? 'assets/images/default.webp',
                               ); 
                               }, 
                               ),
                                ),
                                ),
-          IconButton( icon: Icon(Icons.arrow_forward_ios,
+          IconButton(
+             icon: Icon(Icons.arrow_forward_ios,
            color: Colors.black ),
             onPressed: nextPage,
            ),
@@ -183,68 +170,76 @@ class PromoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10.0),
-      shape:RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 180,
-                width: double.infinity,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(
-                    top:Radius.circular(10.0),
-                  ),
-                  child: Image.asset(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context,error,stackTrace){
-                    return const Icon(Icons.image,size: 50);
-                  },
-                  ),
-                ),
-              ),
-             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    maxLines: 2, 
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    maxLines: 2, 
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 4), 
-                  Text(price, style: TextStyle(color: Colors.green)),
-                  SizedBox(height: 4), 
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.add_shopping_cart),
-                      onPressed: () {
-                        // Add to cart functionality here
-                      },
+    return SizedBox(
+      height: 320,
+      child: Card(
+        margin: EdgeInsets.all(10.0),
+        shape:RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        elevation: 5,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 185,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top:Radius.circular(10.0),
+                    ),
+                    child: Image.asset(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context,error,stackTrace){
+                      return const Icon(Icons.image,size: 50);
+                    },
                     ),
                   ),
-                ],
-              ),
-            ),
-          ],
                 ),
-        ),
+               Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      maxLines: 2, 
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: TextStyle(fontSize: 15, 
+                      fontWeight:FontWeight.bold,
+                      color: Colors.grey[700]),
+                      maxLines: 2, 
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4), 
+                    Text(price, 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green)),
+                    SizedBox(height: 4), 
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(Icons.add_shopping_cart),
+                        onPressed: () {
+                          // Add to cart functionality here
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+                  ),
+          ),
+      ),
     );
   }
 }

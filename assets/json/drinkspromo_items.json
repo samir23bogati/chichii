@@ -1,0 +1,63 @@
+[
+    {
+      "title": "Big Master Sweet Red Wine [750 ML]",
+      "price": "Rs 950.00",
+      "imageUrl": "assets/images/sweetwine750.jpg"
+    },
+    {
+      "title": "Signature Premier Grain Whisky [750 ML]",
+      "price": "Rs 2,650.00",
+      "imageUrl": "assets/images/signaturewhisky.jpg"
+    },
+    {
+      "title": "Khukri Rum Bottle 180 ML",
+      "price": "Rs 580.00",
+      "imageUrl": "assets/images/khukri180.jpg"
+    },
+    {
+      "title": "Fanta Bottle 2.25Litre",
+      "price": "Rs 270.00",
+      "imageUrl": "assets/images/fantadrink.jpg"
+    },
+    {
+      "title": "Golden Oak Whisky Bottle 180 ML",
+      "price": "Rs 320.00",
+      "imageUrl": "assets/images/goldenoak180.jpg"
+    },
+    {
+      "title": "Xtreme Energy Drink 330 ML",
+      "price": "Rs 250.00",
+      "imageUrl": "assets/images/xtremedrink.jpg"
+    },
+    {
+      "title": "Golden Oak Whisky Bottle 750 ML",
+      "price": "Rs 1,350.00",
+      "imageUrl": "assets/images/goldeoak750.jpg"
+    },
+    {
+      "title": "Red Bull Energy Drink 250ML",
+      "price": "Rs 250.00",
+      "imageUrl": "assets/images/redbull.jpg"
+    },
+    {
+      "title": "Sprite Bottle 2.25Litre",
+      "price": "Rs 270.00",
+      "imageUrl": "assets/images/sprite2.25.jpg"
+    },
+    {
+      "title": "Carlsberg Bottle 650ML",
+      "price": "Rs 495.00",
+      "imageUrl": "assets/images/carlsberg750.jpg"
+    },
+    {
+      "title": "Gorkha Strong Bottle 650 ML",
+      "price": "Rs 220.00",
+      "imageUrl": "assets/images/gorkha650.jpg"
+    },
+    {
+      "title": "Khukri Rum Bottle 750 ML",
+      "price": "Rs 2,220.00",
+      "imageUrl": "assets/images/khukurirum.jpg"
+    }
+  ]
+  

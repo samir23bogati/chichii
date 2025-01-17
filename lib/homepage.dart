@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:padshala/beverage_promopage.dart';
 import 'package:padshala/carousel_second.dart';
 import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/food_promopage1.dart';
+import 'package:padshala/whatsapp_support.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -61,41 +63,43 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: DrawerMenu(),
-      body: ListView(
-        children: <Widget>[
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: GestureDetector(
-          //     onTap: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(builder: (context) => TodaySpecialPage()),
-          //       );
-          //     },
-          //   ),
-          // ),
-          Carouselfirst(),
-          Gap(20),
-          CarouselSecond(),
-          Gap(20),
-           FoodPromopage1(),
-           Gap(20),
-           Padding(
-             padding: const EdgeInsets.symmetric(horizontal: 16.0), 
-             child: Text(
-               "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
-                style: TextStyle( 
-                  fontSize: 20,
-                   fontWeight: FontWeight.w900,
-                   color: Colors.black, 
-                  )
-                  , textAlign: TextAlign.center,
-                   ),
-                   ),
-                   Gap(20),
-        ],
-        
-        ),
+      body: Stack(
+          children: <Widget>[
+            ListView(
+              children: <Widget>[
+            Carouselfirst(),
+            Gap(20),
+            CarouselSecond(),
+            Gap(20),
+             FoodPromopage1(),
+             Gap(20),
+             Padding(
+               padding: const EdgeInsets.symmetric(horizontal: 16.0), 
+               child: Text(
+                 "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
+                  style: TextStyle( 
+                    fontSize: 20,
+                     fontWeight: FontWeight.w900,
+                     color: Colors.black, 
+                    )
+                    , textAlign: TextAlign.center,
+                     ),
+                     ),
+                     Gap(20),
+                     BeveragePromoPage(),
+                     Gap(20),
+                     
+          ],
+          
+          ),
+          Positioned(
+            bottom:14,
+            right: 14,
+            child:  WhatsappSupportButton(),
+            ),
+          ],
+      ),
+
       );
     
   }
