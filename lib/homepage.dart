@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:padshala/beverage_promopage.dart';
+import 'package:padshala/brands.dart';
 import 'package:padshala/carousel_second.dart';
 import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/food_promopage1.dart';
+import 'package:padshala/food_promopage2.dart';
 import 'package:padshala/whatsapp_support.dart';
 
 class HomePage extends StatelessWidget {
@@ -88,6 +90,10 @@ class HomePage extends StatelessWidget {
                      Gap(20),
                      BeveragePromoPage(),
                      Gap(20),
+                     FoodPromopage2(),
+                     Gap(20),
+                     BrandsWeDeal(),
+                     
                      
           ],
           
