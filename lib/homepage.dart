@@ -7,6 +7,7 @@ import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/food_promopage1.dart';
 import 'package:padshala/food_promopage2.dart';
+import 'package:padshala/footer.dart';
 import 'package:padshala/whatsapp_support.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,16 +15,14 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
               Scaffold.of(context).openDrawer();
-              },
-            );
-          }
-        ),
+            },
+          );
+        }),
         title: Center(
           child: Image.asset(
             'assets/images/logo.webp',
@@ -66,47 +65,44 @@ class HomePage extends StatelessWidget {
       ),
       drawer: DrawerMenu(),
       body: Stack(
-          children: <Widget>[
-            ListView(
-              children: <Widget>[
-            Carouselfirst(),
-            Gap(20),
-            CarouselSecond(),
-            Gap(20),
-             FoodPromopage1(),
-             Gap(20),
-             Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 16.0), 
-               child: Text(
-                 "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
-                  style: TextStyle( 
+        children: <Widget>[
+          ListView(
+            children: <Widget>[
+              Carouselfirst(),
+              Gap(20),
+              CarouselSecond(),
+              Gap(20),
+              FoodPromopage1(),
+              Gap(20),
+              Container(
+                color: Colors.amber,
+                child: Text(
+                  "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
+                  style: TextStyle(
                     fontSize: 20,
-                     fontWeight: FontWeight.w900,
-                     color: Colors.black, 
-                    )
-                    , textAlign: TextAlign.center,
-                     ),
-                     ),
-                     Gap(20),
-                     BeveragePromoPage(),
-                     Gap(20),
-                     FoodPromopage2(),
-                     Gap(20),
-                     BrandsWeDeal(),
-                     
-                     
-          ],
-          
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Gap(20),
+              BeveragePromoPage(),
+              Gap(20),
+              FoodPromopage2(),
+              Gap(20),
+              BrandsWeDeal(),
+              Gap(20),
+              Footer(),
+            ],
           ),
           Positioned(
-            bottom:14,
+            bottom: 14,
             right: 14,
-            child:  WhatsappSupportButton(),
-            ),
-          ],
+            child: WhatsappSupportButton(),
+          ),
+        ],
       ),
-
-      );
-    
+    );
   }
 }

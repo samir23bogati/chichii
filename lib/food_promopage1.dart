@@ -39,8 +39,6 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
     });
 }
 
-
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -170,7 +168,7 @@ class PromoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SizedBox( 
       height: 320,
       child: Card(
         margin: EdgeInsets.all(10.0),
