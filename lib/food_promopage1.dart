@@ -169,48 +169,48 @@ class PromoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox( 
-      height: 320,
+      height: 350,
       child: Card(
         margin: EdgeInsets.all(10.0),
         shape:RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
         elevation: 5,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 185,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top:Radius.circular(10.0),
-                    ),
-                    child: Image.asset(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context,error,stackTrace){
-                      return const Icon(Icons.image,size: 50);
-                    },
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 150,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top:Radius.circular(10.0),
+                  ),
+                  child: Image.asset(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context,error,stackTrace){
+                    return const Icon(Icons.image,size: 50);
+                  },
                   ),
                 ),
-               Padding(
+              ),
+             Expanded(
+               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       maxLines: 2, 
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4),
                     Text(
                       description,
-                      style: TextStyle(fontSize: 15, 
+                      style: TextStyle(fontSize: 16, 
                       fontWeight:FontWeight.bold,
                       color: Colors.grey[700]),
                       maxLines: 2, 
@@ -219,9 +219,11 @@ class PromoItem extends StatelessWidget {
                     SizedBox(height: 4), 
                     Text(price, 
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green)),
-                    SizedBox(height: 4), 
+                      color: Colors.green,fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                    ),
+                      Spacer(),
+                    
                     Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
@@ -233,10 +235,10 @@ class PromoItem extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            ],
-                  ),
-          ),
+                           ),
+             ),
+          ],
+                ),
       ),
     );
   }
