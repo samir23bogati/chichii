@@ -8,60 +8,64 @@ import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/food_promopage1.dart';
 import 'package:padshala/food_promopage2.dart';
 import 'package:padshala/footer.dart';
+import 'package:padshala/model/cart_item.dart';
+import 'package:padshala/model/cartpage_track.dart';
 import 'package:padshala/whatsapp_support.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<CartItem> cartItems = [];
+
+    void _addToCart(CartItem newItem) {
+  setState(() {
+    // Check if the item already exists in the cart
+    final existingItemIndex =
+        cartItems.indexWhere((item) => item.title == newItem.title);
+
+    if (existingItemIndex != -1) {
+      // If item exists, increase its quantity
+      cartItems[existingItemIndex].quantity++;
+    } else {
+      // Otherwise, add a new item
+      cartItems.add(newItem);
+    }
+  });
+}
+void _updateQuantity(CartItem item, int change) {
+  setState(() {
+    final index = cartItems.indexWhere((cartItem) => cartItem.title == item.title);
+    if (index != -1) {
+      cartItems[index].quantity += change;
+      if (cartItems[index].quantity <= 0) {
+        cartItems.removeAt(index); // Remove item if quantity is 0 or less
+      }
+    }
+  });
+}
+
+ void _removeFromCart(CartItem item) {
+    setState(() {
+      cartItems.remove(item);
+    });
+  }
+  int get cartItemCount => cartItems.length;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        leading: Builder(builder: (context) {
-          return IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          );
-        }),
+          automaticallyImplyLeading:false,
         title: Center(
           child: Image.asset(
             'assets/images/logo.webp',
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Stack(
-              children: [
-                Icon(Icons.shopping_cart),
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 12,
-                      minHeight: 12,
-                    ),
-                    child: Text(
-                      '23',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 8,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              // Handle shopping cart action
-            },
-          ),
-        ],
       ),
       drawer: DrawerMenu(),
       body: Stack(
@@ -72,7 +76,9 @@ class HomePage extends StatelessWidget {
               Gap(20),
               CarouselSecond(),
               Gap(20),
-              FoodPromopage1(),
+              FoodPromopage1(
+                onAddToCart: _addToCart,
+              ),
               Gap(20),
               Container(
                 color: Colors.amber,
@@ -97,11 +103,86 @@ class HomePage extends StatelessWidget {
             ],
           ),
           Positioned(
-            bottom: 14,
+            bottom: 12,
             right: 14,
             child: WhatsappSupportButton(),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.amber,
+       
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Builder( builder: (context) {
+                return IconButton(
+                  icon: Icon(Icons.menu),
+                  color: Colors.black,
+                  onPressed: () {
+                    _scaffoldKey.currentState!.openDrawer();
+                  },
+                );
+              }
+            ),
+            IconButton(
+              icon: Icon(Icons.home),
+              color: Colors.black,
+              onPressed: () {
+                // Handle Home button tap
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.search),
+              color: Colors.black,
+              onPressed: () {
+                // Handle Search button tap
+              },
+            ),
+            IconButton(
+              icon: Stack(
+                children: [
+                  Icon(Icons.shopping_cart),
+                  if (cartItemCount > 0)
+                  Positioned(
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 12,
+                        minHeight: 12,
+                      ),
+                      child: Text(
+                       cartItemCount.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                // Handle shopping cart action
+                 Navigator.push(context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(
+          cartItems: cartItems,
+          onRemoveItem: _removeFromCart,
+          onUpdateQuantity: _updateQuantity,
+          ), 
+      ),
+                 );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

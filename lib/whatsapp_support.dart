@@ -19,8 +19,8 @@ class WhatsappSupportButton extends StatelessWidget {
       },
       icon: Image.asset(
         'assets/images/whatsapp.png', 
-        height: 20,
-        width: 18,
+        height: 18,
+        width: 14,
       ),
       label: Text('Support'),
       style: ElevatedButton.styleFrom(

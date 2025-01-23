@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:padshala/model/cart_item.dart';
+
+
 
 class FoodPromopage1 extends StatefulWidget {
-  const FoodPromopage1({super.key});
+  final Function(CartItem) onAddToCart;
+  const FoodPromopage1({super.key,required this.onAddToCart});
 
   @override
   State<FoodPromopage1> createState() => _FoodPromopage1State();
@@ -79,6 +83,7 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
         promoItems: promoItems,
         nextPage:_nextPage,
         previousPage:_previousPage,
+        onAddToCart:widget.onAddToCart,// callback passed here
     ),
     );
   }
@@ -89,13 +94,15 @@ class FoodPromoContent extends StatelessWidget {
   final List<Map<String, dynamic>> promoItems;
   final VoidCallback nextPage;
   final VoidCallback previousPage;
+  final Function(CartItem) onAddToCart;
 
   const FoodPromoContent({
   required this.pageController,
   required this.promoItems,
   required this.nextPage,
-  required this.previousPage}
-  );
+  required this.previousPage,
+  required this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +142,7 @@ class FoodPromoContent extends StatelessWidget {
                            description: 'Cooked Food',
                        price: item['price'] ?? item['discountedPrice'] ?? 'N/A',
                         imageUrl: item['imageUrl'] ?? 'assets/images/default.webp',
+                        onAddToCart: onAddToCart, // Pass onAddToCart to PromoItem
                               ); 
                               }, 
                               ),
@@ -158,12 +166,14 @@ class PromoItem extends StatelessWidget {
   final String description;
   final String price;
   final String imageUrl;
+  final Function(CartItem) onAddToCart; //accept the callback
 
   PromoItem({
     required this.title,
     required this.description,
     required this.price,
     required this.imageUrl,
+    required this.onAddToCart,
   });
 
   @override
@@ -229,7 +239,12 @@ class PromoItem extends StatelessWidget {
                       child: IconButton(
                         icon: Icon(Icons.add_shopping_cart),
                         onPressed: () {
-                          // Add to cart functionality here
+                           final cartItem = CartItem(
+                            title: title,
+                            price: price,
+                            imageUrl: imageUrl,
+                          );
+                          onAddToCart(cartItem); 
                         },
                       ),
                     ),
