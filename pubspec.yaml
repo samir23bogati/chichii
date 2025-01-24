@@ -37,6 +37,7 @@ dependencies:
   carousel_slider: ^5.0.0
   gap: ^3.0.1
   url_launcher: ^6.3.1
+  flutter_bloc: ^9.0.0
 
 dev_dependencies:
   flutter_test:
