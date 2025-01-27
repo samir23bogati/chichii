@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/homepage.dart';
 
 void main() {
@@ -10,16 +12,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ChiChii', 
-      theme: ThemeData(
-        useMaterial3: false, 
-        primarySwatch: Colors.amber, 
-      ),
-      home: HomePage(), 
-    
+    return BlocProvider<CartBloc>(
+      create: (context) => CartBloc(),// provided cartbloc to widget tree
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'ChiChii',
+        theme: ThemeData(
+          useMaterial3: false,
+          primarySwatch: Colors.amber,
+        ),
+        home: HomePage(),
+        ),
     );
-  }//jkjhjkhkjkjhkjh
+  }
 }
-

@@ -2,13 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/model/cart_item.dart';
 
 
 
 class FoodPromopage1 extends StatefulWidget {
   final Function(CartItem) onAddToCart;
-  const FoodPromopage1({super.key,required this.onAddToCart});
+  const FoodPromopage1({super.key,
+  required this.onAddToCart});
 
   @override
   State<FoodPromopage1> createState() => _FoodPromopage1State();
@@ -83,8 +87,13 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
         promoItems: promoItems,
         nextPage:_nextPage,
         previousPage:_previousPage,
-        onAddToCart:widget.onAddToCart,// callback passed here
-    ),
+       // Pass the function to dispatch the event here
+        onAddToCart: (CartItem item) {
+          // Here you can dispatch your event
+          // Dispatch the event to CartBloc to add item to the cart
+          context.read<CartBloc>().add(AddToCartEvent(item)); // Add to cart event
+        },
+      ),
     );
   }
 }
@@ -250,10 +259,10 @@ class PromoItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                           ),
+              ),
              ),
           ],
-                ),
+       ),
       ),
     );
   }
