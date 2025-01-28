@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CartPage(
-                            cartItems: (state is CartUpdatedState)
+                            initialCartItems: (state is CartUpdatedState)
                                 ? state.cartItems
                                 : [], // Pass the updated cart items
                             onRemoveItem: (item) {
