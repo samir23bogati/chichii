@@ -8,15 +8,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     // Registering event handlers
     on<AddToCartEvent>(_onAddToCart);
     on<UpdateQuantityEvent>(_onUpdateQuantity);
-    on<RemoveFromCartEvent>(_onRemoveFromCart); // Handler for RemoveFromCartEvent
-    // You can add handlers for other events here, such as RemoveFromCartEvent and UpdateQuantityEvent.
+    on<RemoveFromCartEvent>(_onRemoveFromCart);
   }
 
   // Handler for AddToCartEvent
   void _onAddToCart(AddToCartEvent event, Emitter<CartState> emit) {
     List<CartItem> updatedCartItems = [];
 
-    // Check if the current state is CartUpdatedState
     if (state is CartUpdatedState) {
       updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
     }
@@ -32,46 +30,49 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       updatedCartItems.add(event.cartItem);
     }
 
-    // Emit the updated cart state
     emit(CartUpdatedState(cartItems: updatedCartItems));
   }
 
-  //Handler for UpdateQuantityEvent
-
-  void _onUpdateQuantity(UpdateQuantityEvent event, Emitter<CartState> emit){
+  // Handler for UpdateQuantityEvent
+  void _onUpdateQuantity(UpdateQuantityEvent event, Emitter<CartState> emit) {
     List<CartItem> updatedCartItems = [];
 
-    // Check if the current state is CartUpdatedState
     if (state is CartUpdatedState) {
       updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
     }
 
-    // Find the item in the cart and update its quantity
     final existingItemIndex = updatedCartItems.indexWhere((item) => item.title == event.cartItem.title);
 
     if (existingItemIndex != -1) {
-      updatedCartItems[existingItemIndex].quantity = event.quantity; // Update the quantity
+      // Validate quantity to avoid setting a negative value
+      if (event.quantity <= 0) {
+        // Remove item if quantity is less than or equal to 0
+        updatedCartItems.removeAt(existingItemIndex);
+      } else {
+        updatedCartItems[existingItemIndex].quantity = event.quantity;
+      }
     }
 
-    // Emit the updated cart state
     emit(CartUpdatedState(cartItems: updatedCartItems));
-
   }
 
-  //Handler for RemoveFromCartEvent
-
-  void _onRemoveFromCart(RemoveFromCartEvent event,Emitter<CartState> emit){
+  // Handler for RemoveFromCartEvent
+  void _onRemoveFromCart(RemoveFromCartEvent event, Emitter<CartState> emit) {
     List<CartItem> updatedCartItems = [];
 
-     // Check if the current state is CartUpdatedState
     if (state is CartUpdatedState) {
       updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
     }
 
-    // Remove the item from the cart
     updatedCartItems.removeWhere((item) => item.title == event.cartItem.title);
 
-    // Emit the updated cart state (after removal)
     emit(CartUpdatedState(cartItems: updatedCartItems));
   }
+  List<CartItem> _getCurrentCartItems() {
+  if (state is CartUpdatedState) {
+    return List<CartItem>.from((state as CartUpdatedState).cartItems);
+  }
+  return [];
+}
+
 }

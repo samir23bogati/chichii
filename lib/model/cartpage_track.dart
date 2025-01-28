@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:padshala/model/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {
   final List<CartItem> initialCartItems;
@@ -19,13 +21,15 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   late List<CartItem> cartItems;
 
-  @override
-  void initState() {
-    super.initState();
-    cartItems = List.from(widget.initialCartItems); // Initialize with initial cart items
-  }
+ @override
+void initState() {
+  super.initState();
+  cartItems = List.from(widget.initialCartItems); // Initialize with initial cart items
+  // Initialize the cart items using Provider
+  Provider.of<CartProvider>(context, listen: false).setCartItems(widget.initialCartItems, context);
+}
 
-  // Calculate the total price of all items in the cart
+  // Calculate the total price of all items in the carta
   double calculateTotalPrice() {
     double total = 0;
     for (var item in cartItems) {
@@ -62,55 +66,62 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         title: const Text("Your Cart"),
       ),
-      body: cartItems.isNotEmpty
-          ? ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  child: ListTile(
-                    leading: Image.asset(
-                      item.imageUrl,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
+      body: Consumer<CartProvider>(
+        builder: (context, cartProvider, _) {
+          final cartItems = cartProvider.cartItems;
+          
+          return cartItems.isNotEmpty
+              ? ListView.builder(
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartItems[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: ListTile(
+                      leading: Image.asset(
+                        item.imageUrl,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(item.title),
+                      subtitle: Text(
+                        'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}',
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: () {
+                                cartProvider.updateQuantity(item, -1); // Decrease quantity
+                            },
+                          ),
+                          Text(
+                            '${item.quantity}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                                cartProvider.updateQuantity(item, 1); // Increase quantity
+                               },
+                          ),
+                        ],
+                      ),
                     ),
-                    title: Text(item.title),
-                    subtitle: Text(
-                      'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}',
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed: () {
-                            updateQuantity(item, -1); // Decrease quantity
-                          },
-                        ),
-                        Text(
-                          '${item.quantity}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () {
-                            updateQuantity(item, 1); // Increase quantity
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
-          : const Center(
-              child: Text(
-                'Your cart is empty.',
-                style: TextStyle(fontSize: 18),
+                  );
+                },
+              )
+            : const Center(
+                child: Text(
+                  'Your cart is empty.',
+                  style: TextStyle(fontSize: 18),
+                ),
+            );
+        },
               ),
-            ),
+      
       bottomNavigationBar: cartItems.isNotEmpty
           ? BottomAppBar(
               child: Padding(

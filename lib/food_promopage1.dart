@@ -239,7 +239,7 @@ class PromoItem extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4), 
-                    Text(price, 
+                    Text('Rs $price',
                     style: TextStyle(
                       color: Colors.green,fontSize: 16,
                       fontWeight: FontWeight.bold),
