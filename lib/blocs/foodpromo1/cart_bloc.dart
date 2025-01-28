@@ -8,6 +8,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     // Registering event handlers
     on<AddToCartEvent>(_onAddToCart);
     on<UpdateQuantityEvent>(_onUpdateQuantity);
+    on<RemoveFromCartEvent>(_onRemoveFromCart); // Handler for RemoveFromCartEvent
     // You can add handlers for other events here, such as RemoveFromCartEvent and UpdateQuantityEvent.
   }
 
@@ -55,5 +56,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     // Emit the updated cart state
     emit(CartUpdatedState(cartItems: updatedCartItems));
 
+  }
+
+  //Handler for RemoveFromCartEvent
+
+  void _onRemoveFromCart(RemoveFromCartEvent event,Emitter<CartState> emit){
+    List<CartItem> updatedCartItems = [];
+
+     // Check if the current state is CartUpdatedState
+    if (state is CartUpdatedState) {
+      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
+    }
+
+    // Remove the item from the cart
+    updatedCartItems.removeWhere((item) => item.title == event.cartItem.title);
+
+    // Emit the updated cart state (after removal)
+    emit(CartUpdatedState(cartItems: updatedCartItems));
   }
 }

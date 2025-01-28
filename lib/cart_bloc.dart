@@ -10,21 +10,29 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   @override
   Stream<CartState> mapEventToState(CartEvent event) async* {
+      print('Received event: $event'); 
     if (event is AddToCartEvent) {
       _cartItems.add(event.cartItem);
-       yield CartUpdatedState(cartItems: _cartItems);
+      // Yielding a new CartUpdatedState with a new copy of the list
+      yield CartUpdatedState(cartItems: List.from(_cartItems));
     } else if (event is RemoveFromCartEvent) {
       _cartItems.remove(event.cartItem);
-       yield CartUpdatedState(cartItems: _cartItems);
+      // Yielding a new CartUpdatedState with a new copy of the list
+      yield CartUpdatedState(cartItems: List.from(_cartItems));
     } else if (event is UpdateQuantityEvent) {
       final index = _cartItems.indexOf(event.cartItem);
       if (index != -1) {
         _cartItems[index].quantity += event.quantity;
+
+      print('Updated quantity: ${_cartItems[index].quantity}');
+
+    print('Updated quantity: ${_cartItems[index].quantity}'); // Check the updated quantity
         if (_cartItems[index].quantity <= 0) {
           _cartItems.removeAt(index); // Remove item if quantity is 0 or less
         }
-         yield CartUpdatedState(cartItems: _cartItems);
       }
+      // Yielding a new CartUpdatedState with a new copy of the list
+      yield CartUpdatedState(cartItems: List.from(_cartItems));
     }
   }
 }

@@ -1,32 +1,32 @@
 [
     {
         "title": "Brazilian Chicken Drum[1 Person]",
-        "price": "NRS 1525.00",
+        "price": "1525.00",
         "imageUrl": "assets/images/chickendrum.jpg"
     },
     {
         "title": "Jumbo Sour Marinated Chicken Sadeko[3 Person]",
-        "price": "NRS 965.00",
+        "price": "965.00",
         "imageUrl": "assets/images/sdhekochick.jpg"
     },
     {
         "title": "Brazilian Chicken Drum[1 Person]",
-       "price": "NRS 1525.00",
+       "price": "1525.00",
         "imageUrl": "assets/images/chickendrum.jpg"
     },
     {
         "title": "Jumbo Sour Marinated Chicken Sadeko[3 Person]",
-        "price": "NRS 965.00",
+        "price": "965.00",
         "imageUrl": "assets/images/sdhekochick.jpg"
     },
     {
         "title": "Jumbo Savoury Grilled Buff Sekuwa [1 Kg]",
-       "price": "Rs 799.00",
+       "price": "799.00",
         "imageUrl": "assets/images/sdhekochick.jpg"
     },
     {
         "title": "Jumbo Umami Fried and Stirred Chicken Chili [3]",
-       "price": "Rs 975.00",
+       "price": "975.00",
         "imageUrl": "assets/images/sdhekochick.jpg"
     }
 ]

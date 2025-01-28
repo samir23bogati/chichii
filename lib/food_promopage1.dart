@@ -33,6 +33,8 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
   }
 
  Future<void> _loadFoodPromoItems() async {
+  try{
+
     String jsonString = await rootBundle.loadString('assets/json/foodpromo_items.json');
     List<dynamic> jsonData = json.decode(jsonString);
     setState(() {
@@ -45,8 +47,11 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
         };
       }).toList();
     });
-}
-
+  }catch (e) {
+      // Handle JSON load error
+      print("Error loading promo items: $e");
+    }
+  }
   @override
   void dispose() {
     _pageController.dispose();
@@ -87,9 +92,7 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
         promoItems: promoItems,
         nextPage:_nextPage,
         previousPage:_previousPage,
-       // Pass the function to dispatch the event here
         onAddToCart: (CartItem item) {
-          // Here you can dispatch your event
           // Dispatch the event to CartBloc to add item to the cart
           context.read<CartBloc>().add(AddToCartEvent(item)); // Add to cart event
         },
@@ -250,7 +253,7 @@ class PromoItem extends StatelessWidget {
                         onPressed: () {
                            final cartItem = CartItem(
                             title: title,
-                            price: price,
+                            price: double.tryParse(price) ?? 0.0, 
                             imageUrl: imageUrl,
                           );
                           onAddToCart(cartItem); 

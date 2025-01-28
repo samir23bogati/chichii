@@ -1,6 +1,6 @@
 class CartItem {
   final String title;
-  final String price;
+  final double price;
   final String imageUrl;
   int quantity;
 
@@ -22,7 +22,7 @@ class CartItem {
   // CopyWith method to create a new CartItem with updated fields
   CartItem copyWith({
     String? title,
-    String? price,
+    double? price,
     String? imageUrl,
     int? quantity,
   }) {

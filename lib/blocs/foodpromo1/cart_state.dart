@@ -13,4 +13,16 @@ class CartUpdatedState extends CartState {
   CartUpdatedState({required this.cartItems}); 
 
     int get cartItemCount => cartItems.length; 
+
+    // Get the total price of the items in the cart
+  double get totalPrice {
+    double total = 0.0;
+    for (var item in cartItems) {
+      total +=  item.price * item.quantity;
+    }
+    return total;
+  }
 }
+
+class CartEmptyState extends CartState {}
+

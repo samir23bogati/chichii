@@ -42,8 +42,9 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Carouselfirst(),
                   SizedBox(height: 20),
-                  CarouselSecond(),
+                   CarouselSecond(),
                   SizedBox(height: 20),
+                  // Passing the onAddToCart function to FoodPromopage1
                   FoodPromopage1(
                     onAddToCart: (newItem) {
                       // Dispatch AddToCartEvent to CartBloc
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                   icon: Icon(Icons.menu),
                   color: Colors.black,
                   onPressed: () {
-                    _scaffoldKey.currentState!.openDrawer();
+                    _scaffoldKey.currentState!.openDrawer(); // Open the drawer
                   },
                 );
               }),
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.home),
                 color: Colors.black,
                 onPressed: () {
-                  // Handle Home button tap
+                  // Handle Home button tap (you can navigate if needed)
                 },
               ),
               BlocBuilder<CartBloc, CartState>(
@@ -116,33 +117,33 @@ class _HomePageState extends State<HomePage> {
                     icon: Stack(
                       children: [
                         Icon(Icons.shopping_cart),
-                        // Show badge with item count or 0 if cart is empty
-                         Positioned(
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.all(1),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(6),
-              ), constraints: BoxConstraints(
-                minWidth: 12,
-                minHeight: 12,
-              ),
-              child: Text(
-                cartItemCount > 0 ? cartItemCount.toString() : '0',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 8,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ],
-      ),
-             
+                        // Display badge with item count
+                        Positioned(
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              cartItemCount > 0 ? cartItemCount.toString() : '0',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     onPressed: () {
-                      // Navigate to CartPage with the cart items from CartBloc state
+                      // Navigate to CartPage and pass the updated cart items
                       Navigator.push(
                         context,
                         MaterialPageRoute(
