@@ -252,6 +252,7 @@ class PromoItem extends StatelessWidget {
                         icon: Icon(Icons.add_shopping_cart),
                         onPressed: () {
                            final cartItem = CartItem(
+                            id: title, 
                             title: title,
                             price: double.tryParse(price) ?? 0.0, 
                             imageUrl: imageUrl,

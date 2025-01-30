@@ -15,13 +15,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-   BlocProvider<CartBloc>(
-        create: (context) => CartBloc(),// provided cartbloc to widget tree
- ),
- ChangeNotifierProvider<CartProvider>(
-  create: (context) => CartProvider(),
- ),
+     providers: [
+        // Provide CartBloc to the widget tree
+        BlocProvider<CartBloc>(
+          create: (context) => CartBloc(), // Instantiating CartBloc
+        ),
+        // Provide CartProvider (for ChangeNotifier) to the widget tree
+        ChangeNotifierProvider<CartProvider>(
+          create: (context) => CartProvider(),
+        ),
       ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

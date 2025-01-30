@@ -26,7 +26,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       // If the item exists, increase the quantity
       updatedCartItems[existingItemIndex].increaseQuantity();
     } else {
-      // If the item doesn't exist, add a new one
+      // If the item doesn't exist, add a new one 
       updatedCartItems.add(event.cartItem);
     }
 
@@ -74,5 +74,4 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
   return [];
 }
-
 }

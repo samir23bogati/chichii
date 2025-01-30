@@ -2,9 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_event.dart';
+import 'package:padshala/model/cart_item.dart';
+import 'package:provider/provider.dart';
 
 class BeveragePromoPage extends StatefulWidget {
-  const BeveragePromoPage({super.key});
+  
+  final Function(CartItem) onAddToCart;
+  const BeveragePromoPage({super.key,
+  required this.onAddToCart});
 
   @override
   State<BeveragePromoPage> createState() => _BeveragePromoPageState();
@@ -72,6 +79,10 @@ Future<void> _loaddrinkPromoItems()async{
         promoItems: promoItems,
         nextPage: _nextPage,
         previousPage: _previousPage,
+         onAddToCart: (CartItem item) {
+          // Dispatch the event to CartBloc to add item to the cart
+          context.read<CartBloc>().add(AddToCartEvent(item)); // Add to cart event
+        },
       ),
     );
   }
@@ -82,12 +93,16 @@ class BeveragePromoContent extends StatelessWidget {
   final List<Map<String, dynamic>> promoItems;
   final VoidCallback nextPage;
   final VoidCallback previousPage;
+  
+  final Function(CartItem) onAddToCart;
 
   const BeveragePromoContent({
     required this.pageController,
     required this.promoItems,
     required this.nextPage,
     required this.previousPage,
+    
+  required this.onAddToCart,
   });
 
   @override
@@ -127,6 +142,7 @@ class BeveragePromoContent extends StatelessWidget {
                         description: 'Alcoholic Beverage',
                         price: item['price'] ?? 'N/A',
                         imageUrl: item['imageUrl'] ?? 'assets/images/default.webp',
+                        onAddToCart: onAddToCart, 
                       );
                     },
                   ),
@@ -149,12 +165,16 @@ class PromoItem extends StatelessWidget {
   final String description;
   final String price;
   final String imageUrl;
+  
+  final Function(CartItem) onAddToCart;
 
   PromoItem({
     required this.title,
     required this.description,
     required this.price,
     required this.imageUrl,
+    
+    required this.onAddToCart,
   });
 
   @override
@@ -208,7 +228,9 @@ class PromoItem extends StatelessWidget {
                      overflow: TextOverflow.ellipsis,
                    ),
                    SizedBox(height: 4),
-                   Text(price, style: TextStyle(color: Colors.green,
+                   Text(
+                    'Rs $price', 
+                   style: TextStyle(color: Colors.green,
                    fontSize: 16,
                    fontWeight: FontWeight.bold),
                    ),
@@ -218,8 +240,14 @@ class PromoItem extends StatelessWidget {
                      child: IconButton(
                        icon: Icon(Icons.add_shopping_cart),
                        onPressed: () {
-                         // Add to cart functionality here
-                       },
+                           final cartItem = CartItem(
+                            id: title, 
+                            title: title,
+                            price: double.tryParse(price) ?? 0.0, 
+                            imageUrl: imageUrl,
+                          );
+                          onAddToCart(cartItem); 
+                        },
                      ),
                    ),
                  ],

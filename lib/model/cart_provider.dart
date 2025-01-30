@@ -17,30 +17,23 @@ class CartProvider with ChangeNotifier {
   }
 
   // Calculate total price
-  double calculateTotalPrice() {
-    double total = 0;
-    for (var item in _cartItems) {
-      total += item.price * item.quantity;
-    }
-    return total;
-  }
+ double calculateTotalPrice() {
+  return _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+}
 
   // Update the quantity of an item
-  void updateQuantity(CartItem item, int change) {
-    final index = _cartItems.indexOf(item);
-    if (index != -1) {
-      final newQuantity = _cartItems[index].quantity + change;
-      if (newQuantity > 0) {
-        _cartItems[index] = _cartItems[index].copyWith(quantity: newQuantity);
-      } else {
-        _cartItems.removeAt(index); // Remove the item if quantity becomes zero
-      }
-       // Delay notifyListeners to avoid triggering rebuild during build phase
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+void updateQuantity(CartItem item, int change) {
+  final index = _cartItems.indexWhere((cartItem) => cartItem.id == item.id);
+  if (index != -1) {
+    final newQuantity = _cartItems[index].quantity + change;
+    if (newQuantity > 0) {
+      _cartItems[index] = _cartItems[index].copyWith(quantity: newQuantity);
+    } else {
+      _cartItems.removeAt(index);
     }
+    notifyListeners(); // Notify UI to update
   }
+}
 
   // Remove an item from the cart
   void removeItem(CartItem item) {

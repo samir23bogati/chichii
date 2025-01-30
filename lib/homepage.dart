@@ -65,7 +65,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  BeveragePromoPage(),
+                  BeveragePromoPage(
+                    onAddToCart: (newItem) {
+                      // Dispatch AddToCartEvent to CartBloc
+                      context.read<CartBloc>().add(AddToCartEvent(newItem));
+                    },
+                  ),
                   SizedBox(height: 20),
                   FoodPromopage2(),
                   SizedBox(height: 20),
