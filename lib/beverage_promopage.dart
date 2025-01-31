@@ -173,7 +173,6 @@ class PromoItem extends StatelessWidget {
     required this.description,
     required this.price,
     required this.imageUrl,
-    
     required this.onAddToCart,
   });
 
