@@ -1,0 +1,28 @@
+[
+    {
+      "imageUrl": "assets/images/fastfood.jpg",
+      "title": "Jumbo Jeera Stirred Jeera Rice [3 Person]",
+      "price": "395.00"
+    },
+    {
+      "imageUrl": "assets/images/fastfood.jpg",
+      "title": "Spicy Fried & Stirred Chicken / Murga Lollipop 6pc [1 Person]",
+      "price": "380.00"
+    },
+    {
+      "imageUrl": "assets/images/fastfood.jpg",
+      "title": "Umami Fried and Stirred Chicken Chili [1 Person]",
+      "price": "375.00"
+    },
+    {
+        "imageUrl": "assets/images/fastfood.jpg",
+        "title": "Umami Fried and Stirred Chicken Chili [1 Person]",
+        "price": "375.00"
+      }, {
+        "imageUrl": "assets/images/fastfood.jpg",
+        "title": "Umami Fried and Stirred Chicken Chili [1 Person]",
+        "price": "375.00"
+      }
+    
+  ]
+  
