@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 class CartPage extends StatelessWidget {
 
+
   final List<CartItem> initialCartItems;
 
   final Function(CartItem) onRemoveItem;

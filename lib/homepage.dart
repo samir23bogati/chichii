@@ -37,12 +37,13 @@ class _HomePageState extends State<HomePage> {
         drawer: DrawerMenu(),
         body: Stack(
           children: <Widget>[
-            SizedBox.expand(// This ensures the ListView gets the full available space
+            SizedBox.expand(
+              // This ensures the ListView gets the full available space
               child: ListView(
                 children: <Widget>[
                   Carouselfirst(),
                   SizedBox(height: 20),
-                   CarouselSecond(),
+                  CarouselSecond(),
                   SizedBox(height: 20),
                   // Passing the onAddToCart function to FoodPromopage1
                   FoodPromopage1(
@@ -72,11 +73,11 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   SizedBox(height: 20),
-                  FoodPromopage2( 
+                  FoodPromopage2(
                     onAddToCart: (newItem) {
-                      // Dispatch AddToCartEvent to CartBloc
                       context.read<CartBloc>().add(AddToCartEvent(newItem));
-                    },),
+                    },
+                  ),
                   SizedBox(height: 20),
                   BrandsWeDeal(),
                   SizedBox(height: 20),
@@ -140,7 +141,9 @@ class _HomePageState extends State<HomePage> {
                               minHeight: 12,
                             ),
                             child: Text(
-                              cartItemCount > 0 ? cartItemCount.toString() : '0',
+                              cartItemCount > 0
+                                  ? cartItemCount.toString()
+                                  : '0',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 8,

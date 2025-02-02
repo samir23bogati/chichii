@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:provider/provider.dart';
 
 class FoodPromopage2 extends StatefulWidget {
   final Function(CartItem) onAddToCart;
-  const FoodPromopage2({super.key,required this.onAddToCart});
+  const FoodPromopage2({super.key, required this.onAddToCart});
 
   @override
   State<FoodPromopage2> createState() => _FoodPromopage2State();
@@ -26,11 +29,13 @@ class _FoodPromopage2State extends State<FoodPromopage2> {
   }
 
   Future<void> _loadFeastPromoItems() async {
-    final String response= await rootBundle.loadString('assets/json/feastpromo_items.json');
+    final String response =
+        await rootBundle.loadString('assets/json/feastpromo_items.json');
     final List<dynamic> data = json.decode(response);
-     setState(() {
-    foodpromoItems = data.map((item) => item as Map<String,dynamic>).toList();
-  });
+    setState(() {
+      foodpromoItems =
+          data.map((item) => item as Map<String, dynamic>).toList();
+    });
   }
 
   @override
@@ -185,21 +190,23 @@ class FoodItemCard extends StatelessWidget {
             bottom: 10,
             right: 10,
             child: IconButton(
-              icon: Icon(Icons.add_shopping_cart),
-              color: Colors.black,
-              onPressed: () {
-                // Add to cart functionality here
-                print("Adding to cart...");
-                onAddToCart(
-                  CartItem(
-                     id: DateTime.now().toString(),
-                    imageUrl: imagePath,
-                    title: title,
-                    price: double.parse(price) ?? 0.0,
-                  ),
-                );
-              },
-            ),
+                icon: Icon(Icons.add_shopping_cart),
+                color: Colors.black,
+                onPressed: () {
+                  try {
+                    double itemPrice = double.tryParse(price) ?? 0.0;
+                    CartItem newItem = CartItem(
+                      id: DateTime.now().toString(),
+                      imageUrl: imagePath,
+                      title: title,
+                      price: itemPrice,
+                    );
+                    // Dispatch AddToCartEvent
+      context.read<CartBloc>().add(AddToCartEvent(newItem));
+                  } catch (e) {
+                    print("Error adding item to cart: $e");
+                  }
+                }),
           ),
         ],
       ),
