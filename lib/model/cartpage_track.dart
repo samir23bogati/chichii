@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:padshala/login/auth_provider.dart';
+import 'package:padshala/login/login_page.dart';
+import 'package:padshala/login/map/address_selection_page.dart';
 import 'package:padshala/model/cart_item.dart';
 import 'package:padshala/model/cart_provider.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +14,8 @@ class CartPage extends StatelessWidget {
   final Function(CartItem) onRemoveItem;
   final Function(CartItem, int) onUpdateQuantity;
 
-   const CartPage({Key? key, required this.initialCartItems,
-   
+   const CartPage({Key? key,
+    required this.initialCartItems,
     required this.onRemoveItem,
     required this.onUpdateQuantity,}) : super(key: key);
 
@@ -104,18 +107,36 @@ return cartItems.isNotEmpty
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Proceeding to checkout...")),
-                            );
-                          },
-                          child: const Text("Checkout"),
-                        ),
+                          onPressed: ()async {
+                            final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                             if (authProvider.user == null) {
+      bool? loggedIn = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+
+      if (loggedIn == null || !loggedIn) 
+      return; // If login fails, stop here
+    }
+
+    // Navigate to Address Selection Page
+   final selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddressSelectionPage()),
+    );
+      if (selectedLocation != null) {
+      print("Selected Address: $selectedLocation");
+      // Proceed to Payment Page
+    }
+  },
+  child:const Text(" PROCEED TO CHECKOUT"),
+  ),
                       ],
                     ),
                   ),
                 )
-              :  const SizedBox.shrink();// return empty widget instead of null
+
+  :  const SizedBox.shrink();// return empty widget instead of null
         },
       ),
     );

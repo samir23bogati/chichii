@@ -1,11 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
+import 'package:padshala/firebase_options.dart';
 import 'package:padshala/homepage.dart';
+import 'package:padshala/login/auth_provider.dart';
 import 'package:padshala/model/cart_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -14,17 +21,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
      providers: [
         // Provide CartBloc to the widget tree
         BlocProvider<CartBloc>(
           create: (context) => CartBloc(), // Instantiating CartBloc
         ),
-        // Provide CartProvider (for ChangeNotifier) to the widget tree
-        ChangeNotifierProvider<CartProvider>(
-          create: (context) => CartProvider(),
-        ),
-      ],
+     ],
+     child: MultiProvider(
+      providers: [
+          ChangeNotifierProvider<AuthProvider>( 
+            create: (context) => AuthProvider(),
+          ),
+          ChangeNotifierProvider<CartProvider>(
+            create: (context) => CartProvider(),
+          ),
+        ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'ChiChii',
@@ -34,6 +46,7 @@ class MyApp extends StatelessWidget {
           ),
           home: HomePage(),
       ),
+     ),
     );
   }
 }
