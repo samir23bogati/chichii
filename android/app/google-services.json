@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "186899771699",
-    "project_id": "chichii-online-a6af6",
-    "storage_bucket": "chichii-online-a6af6.firebasestorage.app"
+    "project_number": "581466934152",
+    "project_id": "chichii-online-a8e9f",
+    "storage_bucket": "chichii-online-a8e9f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:186899771699:android:04c2ad0618da5d189cce46",
+        "mobilesdk_app_id": "1:581466934152:android:6080c032d8511ac44c083d",
         "android_client_info": {
           "package_name": "com.example.padshala"
         }
       },
       "oauth_client": [
         {
-          "client_id": "186899771699-a5u2isgjvn715uf6l2fuc9kpktgogu31.apps.googleusercontent.com",
+          "client_id": "581466934152-pst0botokbv0m58sbdcqi3bh094ctpio.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.padshala",
@@ -22,28 +22,21 @@
           }
         },
         {
-          "client_id": "186899771699-7600jjuic2c8kosjor9eumb801l6kpkt.apps.googleusercontent.com",
+          "client_id": "581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD_jPqNdd0be753KceO7rpYbt5bX4dmXI4"
+          "current_key": "AIzaSyBPT7UYSMljC7EQCVYaa-0T9Fax4dr4D3w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "186899771699-7600jjuic2c8kosjor9eumb801l6kpkt.apps.googleusercontent.com",
+              "client_id": "581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "186899771699-iqpel3se7brkecn2f5gnuk0cvmi9iuc6.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.padshala"
-              }
             }
           ]
         }

@@ -3,7 +3,62 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:padshala/login/auth_provider.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _phoneController = TextEditingController();
+  bool isLoading = false;
+
+  void _showPhoneNumberDialog(BuildContext context, AuthProvider authProvider) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Enter Phone Number'),
+        content: TextField(
+          controller: _phoneController,
+          keyboardType: TextInputType.phone,
+          decoration: const InputDecoration(hintText: 'Phone number'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final phoneNumber = _phoneController.text;
+              if (phoneNumber.isNotEmpty && phoneNumber.length >= 10) {
+                setState(() {
+                  isLoading = true;
+                });
+                authProvider.signInWithPhoneNumber(context, phoneNumber).then((_) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                  if (authProvider.user != null) {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, '/home');
+                  }
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a valid phone number')),
+                );
+              }
+            },
+            child: const Text('Send Code'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -55,8 +110,37 @@ class LoginPage extends StatelessWidget {
 
               // Phone Number Login Button
               ElevatedButton.icon(
-                onPressed: () {
+                onPressed: () async{
                   // Implement phone authentication
+               showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Enter Phone Number'),
+                      content: TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(hintText: 'Phone number'),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            final phoneNumber = _phoneController.text;
+                            if (phoneNumber.isNotEmpty) {
+                              authProvider.signInWithPhoneNumber(context, phoneNumber);
+                            }
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Send Code'),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 icon: const FaIcon(FontAwesomeIcons.phone, color: Colors.white),
                 label: const Text("Login with Phone Number"),
