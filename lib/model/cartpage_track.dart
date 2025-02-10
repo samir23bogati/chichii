@@ -1,142 +1,171 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_event.dart';
+import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/login/auth_provider.dart';
 import 'package:padshala/login/login_page.dart';
-import 'package:padshala/login/map/address_selection_page.dart';
 import 'package:padshala/model/cart_item.dart';
-import 'package:padshala/model/cart_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../login/map/address_selection_page.dart';
+
 class CartPage extends StatelessWidget {
-
-
-  final List<CartItem> initialCartItems;
-
+  final List<CartItem> cartItems; // Cart items passed as argument
   final Function(CartItem) onRemoveItem;
   final Function(CartItem, int) onUpdateQuantity;
 
-   const CartPage({Key? key,
-    required this.initialCartItems,
+  CartPage({
+    required this.cartItems,
     required this.onRemoveItem,
-    required this.onUpdateQuantity,}) : super(key: key);
+    required this.onUpdateQuantity,
+  });
 
   @override
   Widget build(BuildContext context) {
-      // Get the CartProvider instance without listening to changes
-    final cartProvider = Provider.of<CartProvider>(context, listen: false);
-
-    // Ensure initial cart items are set
+    // Trigger cart load when the page is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (cartProvider.cartItems.isEmpty && initialCartItems.isNotEmpty) {
-        cartProvider.setCartItems(initialCartItems, context);
-      }
+      context.read<CartBloc>().add(LoadCartEvent()); // Dispatch LoadCartEvent
     });
 
-   
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Cart"),
       ),
-      body: Consumer<CartProvider>(
-        builder: (context, cartProvider, _) {
-          final cartItems = cartProvider.cartItems;
-return cartItems.isNotEmpty
-              ? ListView.builder(
-                  itemCount: cartItems.length,
-                  itemBuilder: (context, index) {
-                    final item = cartItems[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      child: ListTile(
-                        leading: Image.asset(
-                          item.imageUrl,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                        title: Text(item.title),
-                        subtitle: Text(
-                          'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}',
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              onPressed: () {
-                                cartProvider.updateQuantity(item, -1);
-                              },
-                            ),
-                            Text(
-                              '${item.quantity}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: () {
-                                cartProvider.updateQuantity(item, 1);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : const Center(
-                  child: Text(
-                    'Your cart is empty.',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                );
-        },
-      ),
-      bottomNavigationBar: Consumer<CartProvider>(
-        builder: (context, cartProvider, _) {
-          return cartProvider.cartItems.isNotEmpty
-              ? BottomAppBar(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total: NRS ${cartProvider.calculateTotalPrice().toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+      body: BlocBuilder<CartBloc, CartState>( // Listen to CartBloc changes
+        builder: (context, state) {
+          print("Cart State: $state");  // Debug: Check which state is being emitted
+
+          if (state is CartLoadingState) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is CartUpdatedState) {
+            final cartItems = state.cartItems;
+            return cartItems.isNotEmpty
+                ? ListView.builder(
+                    itemCount: cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = cartItems[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        child: ListTile(
+                          leading: Image.asset(item.imageUrl),
+                          title: Text(item.title),
+                          subtitle: Text('Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                onPressed: () {
+                                  if (item.quantity > 1) {
+                                    // Decrease quantity by 1
+                                    context.read<CartBloc>().add(
+                                          UpdateQuantityEvent(
+                                            cartItem: item.copyWith(quantity: item.quantity - 1),
+                                            isIncrement: false,
+                                             quantity: item.quantity - 1, // Decrement
+                                          ),
+                                        );
+                                  } else {
+                                    context.read<CartBloc>().add(
+                                          RemoveFromCartEvent(cartItem: item), // Remove if quantity is 1
+                                        );
+                                  }
+                                },
+                              ),
+                              Text('${item.quantity}', style: const TextStyle(fontSize: 16)),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () {
+                                  // Increase quantity by 1
+                                  context.read<CartBloc>().add(
+                                          UpdateQuantityEvent(
+                                            cartItem: item.copyWith(quantity: item.quantity + 1),
+                                            isIncrement: true, 
+                                            quantity: item.quantity + 1, // Increment
+                                          ),
+                                        );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  context.read<CartBloc>().add(
+                                        RemoveFromCartEvent(cartItem: item), // Delete the item
+                                      );
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: ()async {
-                            final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                             if (authProvider.user == null) {
-      bool? loggedIn = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
-
-      if (loggedIn == null || !loggedIn) 
-      return; // If login fails, stop here
-    }
-
-    // Navigate to Address Selection Page
-   final selectedLocation = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddressSelectionPage()),
-    );
-      if (selectedLocation != null) {
-      print("Selected Address: $selectedLocation");
-      // Proceed to Payment Page
-    }
-  },
-  child:const Text(" PROCEED TO CHECKOUT"),
-  ),
-                      ],
+                      );
+                    },
+                  )
+                : const Center(
+                    child: Text(
+                      'Your cart is empty.',
+                      style: TextStyle(fontSize: 18),
                     ),
-                  ),
-                )
+                  );
+          } else if (state is CartErrorState) {
+            return Center(
+              child: Text(
+                state.errorMessage,
+                style: const TextStyle(fontSize: 18, color: Colors.red),
+              ),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
+      bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+          if (state is CartUpdatedState && state.cartItems.isNotEmpty) {
+            return BottomAppBar(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total: NRS ${state.totalPrice.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final authProvider =
+                            Provider.of<AuthProvider>(context, listen: false);
+                        if (authProvider.user == null) {
+                          bool? loggedIn = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
 
-  :  const SizedBox.shrink();// return empty widget instead of null
+                          if (loggedIn == null || !loggedIn) return;
+                        }
+
+                        // Navigate to Address Selection Page
+                        final selectedLocation = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddressSelectionPage()),
+                        );
+                        if (selectedLocation != null) {
+                          print("Selected Address: $selectedLocation");
+                          // Proceed to Payment Page
+                        }
+                      },
+                      child: const Text("PROCEED TO CHECKOUT"),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return const SizedBox.shrink(); // Hide if cart is empty
         },
       ),
     );

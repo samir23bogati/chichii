@@ -1,33 +1,100 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:convert';
+import 'package:bloc/bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  List<CartItem> _cartItems = [];
+  CartBloc() : super(CartInitialState()) {
+    on<AddToCartEvent>(_onAddToCart);
+    on<UpdateQuantityEvent>(_onUpdateQuantity);  // Ensure UpdateQuantityEvent is correctly imported
+    on<RemoveFromCartEvent>(_onRemoveFromCart);
+    on<LoadCartEvent>(_onLoadCart); 
+  }
 
-  CartBloc() : super(CartInitialState());
+  // Handler for AddToCartEvent
+ void _onAddToCart(AddToCartEvent event, Emitter<CartState> emit) async {
+  List<CartItem> updatedCartItems = (state is CartUpdatedState)
+      ? List<CartItem>.from((state as CartUpdatedState).cartItems)
+      : [];
 
-  @override
-  Stream<CartState> mapEventToState(CartEvent event) async* {
-    if (event is AddToCartEvent) {
-      _cartItems.add(event.cartItem);
-      // Yielding a new CartUpdatedState with a new copy of the list
-      yield CartUpdatedState(cartItems: List.from(_cartItems));
-    } else if (event is RemoveFromCartEvent) {
-      _cartItems.remove(event.cartItem);
-      // Yielding a new CartUpdatedState with a new copy of the list
-      yield CartUpdatedState(cartItems: List.from(_cartItems));
-    } else if (event is UpdateQuantityEvent) {
-      final index = _cartItems.indexOf(event.cartItem);
-      if (index != -1) {
-        _cartItems[index].quantity += event.quantity; 
-        if (_cartItems[index].quantity <= 0) {
-          _cartItems.removeAt(index); // Remove item if quantity is 0 or less
-        }
-      }
-      // Yielding a new CartUpdatedState with a new copy of the list
-      yield CartUpdatedState(cartItems: List.from(_cartItems));
+  // Check if the item already exists in the cart
+  int existingIndex = updatedCartItems.indexWhere((item) => item.id == event.cartItem.id);
+
+  if (existingIndex != -1) {
+    // Update the existing item's quantity
+    updatedCartItems[existingIndex] = updatedCartItems[existingIndex].copyWith(
+      quantity: updatedCartItems[existingIndex].quantity + event.cartItem.quantity,
+    );
+  } else {
+    // Add new item
+    updatedCartItems.add(event.cartItem);
+  }
+
+  emit(CartUpdatedState(cartItems: updatedCartItems));
+
+  // Save to SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> cartJson = updatedCartItems.map((item) => jsonEncode(item.toJson())).toList();
+  await prefs.setStringList('cart_items', cartJson);
+}
+
+  // Handler for UpdateQuantityEvent
+  void _onUpdateQuantity(UpdateQuantityEvent event, Emitter<CartState> emit) {
+    List<CartItem> updatedCartItems = [];
+
+    if (state is CartUpdatedState) {
+      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
     }
+
+    final existingItemIndex = updatedCartItems.indexWhere((item) => item.title == event.cartItem.title);
+
+    if (existingItemIndex != -1) {
+      // Validate quantity to avoid setting a negative value
+      if (event.quantity <= 0) {
+        // Remove item if quantity is less than or equal to 0
+        updatedCartItems.removeAt(existingItemIndex);
+      } else {
+        updatedCartItems[existingItemIndex].quantity = event.quantity;
+      }
+    }
+
+    emit(CartUpdatedState(cartItems: updatedCartItems));
+  }
+
+  // Handler for RemoveFromCartEvent
+  void _onRemoveFromCart(RemoveFromCartEvent event, Emitter<CartState> emit) {
+    List<CartItem> updatedCartItems = [];
+
+    if (state is CartUpdatedState) {
+      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
+    }
+
+    updatedCartItems.removeWhere((item) => item.title == event.cartItem.title);
+
+    emit(CartUpdatedState(cartItems: updatedCartItems));
+  }
+
+  // Handler for LoadCartEvent
+  void _onLoadCart(LoadCartEvent event, Emitter<CartState> emit) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? cartJson = prefs.getStringList('cart_items');
+
+    if (cartJson == null) {
+      emit(CartUpdatedState(cartItems: []));
+      return;
+    }
+
+    List<CartItem> loadedCart = cartJson.map((item) => CartItem.fromJson(jsonDecode(item))).toList();
+
+    emit(CartUpdatedState(cartItems: loadedCart));
+  }
+
+  List<CartItem> _getCurrentCartItems() {
+    if (state is CartUpdatedState) {
+      return List<CartItem>.from((state as CartUpdatedState).cartItems);
+    }
+    return [];
   }
 }

@@ -5,23 +5,28 @@ class CartItem {
   final String imageUrl;
   int quantity;
 
+  // Constructor with default value for quantity
   CartItem({
     required this.id,
     required this.title,
-     required this.price, 
-     required this.imageUrl,
-     this.quantity = 1, //default
-     });
+    required this.price,
+    required this.imageUrl,
+    this.quantity = 1, // Default quantity is 1
+  });
 
-     void increaseQuantity() {
+  // Method to increase quantity by 1
+  void increaseQuantity() {
     quantity++;
-}
- void decreaseQuantity() {
+  }
+
+  // Method to decrease quantity by 1
+  void decreaseQuantity() {
     if (quantity > 1) {
       quantity--;
     }
   }
-  // CopyWith method to create a new CartItem with updated fields
+
+  // Method to copy the CartItem with a new quantity or other fields
   CartItem copyWith({
     String? id,
     String? title,
@@ -30,7 +35,6 @@ class CartItem {
     int? quantity,
   }) {
     return CartItem(
-
       id: id ?? this.id,
       title: title ?? this.title,
       price: price ?? this.price,
@@ -38,4 +42,28 @@ class CartItem {
       quantity: quantity ?? this.quantity,
     );
   }
+
+  // To convert CartItem to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'price': price,
+      'imageUrl': imageUrl,
+      'quantity': quantity,
+    };
+  }
+
+  // From JSON to CartItem with default quantity handling
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      id: json['id'],
+      title: json['title'],
+      price: json['price'],
+      imageUrl: json['imageUrl'],
+      quantity: json['quantity'] ?? 1, // Default to 1 if quantity is not provided
+    );
+  }
+
+  
 }

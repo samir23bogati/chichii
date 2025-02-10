@@ -31,21 +31,26 @@ class _LoginPageState extends State<LoginPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async{
               final phoneNumber = _phoneController.text;
               if (phoneNumber.isNotEmpty && phoneNumber.length >= 10) {
                 setState(() {
                   isLoading = true;
                 });
-                authProvider.signInWithPhoneNumber(context, phoneNumber).then((_) {
-                  setState(() {
-                    isLoading = false;
-                  });
+                 try {
+                  await authProvider.signInWithPhoneNumber(context, phoneNumber);
                   if (authProvider.user != null) {
                     Navigator.pop(context);
                     Navigator.pushReplacementNamed(context, '/home');
                   }
-                });
+                } catch (e) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Please enter a valid phone number')),
@@ -87,10 +92,16 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
 
-              // Google Sign-In Button
+           // Google Sign-In Button
               ElevatedButton.icon(
                 onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
                   await authProvider.signInWithGoogle();
+                  setState(() {
+                    isLoading = false;
+                  });
                   if (authProvider.user != null) {
                     Navigator.pop(context, true);
                   }
@@ -110,38 +121,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Phone Number Login Button
               ElevatedButton.icon(
-                onPressed: () async{
-                  // Implement phone authentication
-               showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Enter Phone Number'),
-                      content: TextField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(hintText: 'Phone number'),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            final phoneNumber = _phoneController.text;
-                            if (phoneNumber.isNotEmpty) {
-                              authProvider.signInWithPhoneNumber(context, phoneNumber);
-                            }
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Send Code'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                onPressed: () => _showPhoneNumberDialog(context, authProvider),
                 icon: const FaIcon(FontAwesomeIcons.phone, color: Colors.white),
                 label: const Text("Login with Phone Number"),
                 style: ElevatedButton.styleFrom(

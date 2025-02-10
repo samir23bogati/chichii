@@ -1,77 +1,108 @@
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartInitialState()) {
-    // Registering event handlers
     on<AddToCartEvent>(_onAddToCart);
     on<UpdateQuantityEvent>(_onUpdateQuantity);
     on<RemoveFromCartEvent>(_onRemoveFromCart);
+    on<LoadCartEvent>(_onLoadCart);
   }
 
-  // Handler for AddToCartEvent
-  void _onAddToCart(AddToCartEvent event, Emitter<CartState> emit) {
-    List<CartItem> updatedCartItems = [];
+  // Handler for AddToCartEvent (Adds item to cart or increases quantity)
+void _onAddToCart(AddToCartEvent event, Emitter<CartState> emit) async {
+  final currentState = state;
+  List<CartItem> updatedCartItems = (currentState is CartUpdatedState)
+      ? List<CartItem>.from(currentState.cartItems)
+      : [];
 
-    if (state is CartUpdatedState) {
-      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
-    }
+  // Check if item already exists in the cart
+  int existingIndex = updatedCartItems.indexWhere((item) => item.id == event.cartItem.id);
 
-    // Check if the item already exists in the cart
-    final existingItemIndex = updatedCartItems.indexWhere((item) => item.title == event.cartItem.title);
-
-    if (existingItemIndex != -1) {
-      // If the item exists, increase the quantity
-      updatedCartItems[existingItemIndex].increaseQuantity();
-    } else {
-      // If the item doesn't exist, add a new one 
-      updatedCartItems.add(event.cartItem);
-    }
-
-    emit(CartUpdatedState(cartItems: updatedCartItems));
+  if (existingIndex != -1) {
+    // Increase quantity if item exists
+    updatedCartItems[existingIndex] = updatedCartItems[existingIndex].copyWith(
+      quantity: updatedCartItems[existingIndex].quantity + 1,
+    );
+  } else {
+    // Add new item if not found
+    updatedCartItems.add(event.cartItem);
   }
 
-  // Handler for UpdateQuantityEvent
-  void _onUpdateQuantity(UpdateQuantityEvent event, Emitter<CartState> emit) {
-    List<CartItem> updatedCartItems = [];
+  emit(CartUpdatedState(cartItems: updatedCartItems));
 
-    if (state is CartUpdatedState) {
-      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
-    }
+  // Save updated cart to SharedPreferences
+  await _saveCartToPrefs(updatedCartItems);
+}
 
-    final existingItemIndex = updatedCartItems.indexWhere((item) => item.title == event.cartItem.title);
+  // Handler for UpdateQuantityEvent (Increases or decreases item quantity)
+  void _onUpdateQuantity(UpdateQuantityEvent event, Emitter<CartState> emit) async {
+    final currentState = state;
+    if (currentState is! CartUpdatedState) return;
 
-    if (existingItemIndex != -1) {
-      // Validate quantity to avoid setting a negative value
-      if (event.quantity <= 0) {
-        // Remove item if quantity is less than or equal to 0
-        updatedCartItems.removeAt(existingItemIndex);
+    List<CartItem> updatedCartItems = List<CartItem>.from(currentState.cartItems);
+
+    final existingIndex = updatedCartItems.indexWhere((item) => item.id == event.cartItem.id);
+
+    if (existingIndex != -1) {
+      if (event.isIncrement) {
+        // Increase quantity
+        updatedCartItems[existingIndex] = updatedCartItems[existingIndex].copyWith(
+          quantity: updatedCartItems[existingIndex].quantity + 1,
+        );
       } else {
-        updatedCartItems[existingItemIndex].quantity = event.quantity;
+        // Decrease quantity or remove item if quantity becomes 0
+        if (updatedCartItems[existingIndex].quantity > 1) {
+          updatedCartItems[existingIndex] = updatedCartItems[existingIndex].copyWith(
+            quantity: updatedCartItems[existingIndex].quantity - 1,
+          );
+        } else {
+          updatedCartItems.removeAt(existingIndex);
+        }
       }
     }
 
     emit(CartUpdatedState(cartItems: updatedCartItems));
+
+    // Save updated cart to SharedPreferences
+    await _saveCartToPrefs(updatedCartItems);
   }
 
-  // Handler for RemoveFromCartEvent
-  void _onRemoveFromCart(RemoveFromCartEvent event, Emitter<CartState> emit) {
-    List<CartItem> updatedCartItems = [];
+  // Handler for RemoveFromCartEvent (Deletes the item completely)
+  void _onRemoveFromCart(RemoveFromCartEvent event, Emitter<CartState> emit) async {
+    final currentState = state;
+    if (currentState is! CartUpdatedState) return;
 
-    if (state is CartUpdatedState) {
-      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
-    }
-
-    updatedCartItems.removeWhere((item) => item.title == event.cartItem.title);
+    List<CartItem> updatedCartItems = List<CartItem>.from(currentState.cartItems);
+    
+    updatedCartItems.removeWhere((item) => item.id == event.cartItem.id);
 
     emit(CartUpdatedState(cartItems: updatedCartItems));
+
+    // Save updated cart to SharedPreferences
+    await _saveCartToPrefs(updatedCartItems);
   }
-  List<CartItem> _getCurrentCartItems() {
-  if (state is CartUpdatedState) {
-    return List<CartItem>.from((state as CartUpdatedState).cartItems);
+
+  // Handler for LoadCartEvent (Loads cart data from SharedPreferences)
+  void _onLoadCart(LoadCartEvent event, Emitter<CartState> emit) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> cartJson = prefs.getStringList('cart_items') ?? [];
+    
+    List<CartItem> cartItems = cartJson
+        .map((item) => CartItem.fromJson(jsonDecode(item)))
+        .toList();
+
+    emit(CartUpdatedState(cartItems: cartItems));
   }
-  return [];
-}
+
+  // Helper function to save cart data to SharedPreferences
+  Future<void> _saveCartToPrefs(List<CartItem> cartItems) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> cartJson = cartItems.map((item) => jsonEncode(item.toJson())).toList();
+    await prefs.setStringList('cart_items', cartJson);
+  }
 }

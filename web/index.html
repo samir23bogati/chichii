@@ -15,7 +15,7 @@
     the `--base-href` argument provided to `flutter build`.
   -->
 
-  <meta name="google-signin-client_id" content="YOUR_CLIENT_ID">
+  <meta name="google-signin-client_id" content="581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com">
 
   <base href="$FLUTTER_BASE_HREF">
 
@@ -36,6 +36,27 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+ <!-- Firebase JS SDK -->
+  <!-- Include Firebase SDK for authentication and other Firebase services -->
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script> <!-- Firebase Core SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script> <!-- Firebase Auth SDK -->
+
+  <script>
+    // Firebase configuration object for your app (replace with your actual Firebase config)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAbaWcn-KHsCuIg73Kt_oK70haf-MNPERU",  // Your Web API Key
+      authDomain: "chichii-online-a8e9f.firebaseapp.com",
+      projectId: "chichii-online-a8e9f",
+      storageBucket: "chichii-online-a8e9f.appspot.com",
+      messagingSenderId: "581466934152",
+      appId: "1:581466934152:web:63a7dc862ec8c2904c083d"
+    };
+
+    // Initialize Firebase with the config object
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- Load the Flutter bootstrap script -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

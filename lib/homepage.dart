@@ -23,10 +23,16 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    // Dispatch LoadCartEvent when the HomePage is initialized
+    context.read<CartBloc>().add(LoadCartEvent());
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider<CartBloc>(
-      create: (context) => CartBloc(),
-      child: Scaffold(
+      return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -49,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                   FoodPromopage1(
                     onAddToCart: (newItem) {
                       // Dispatch AddToCartEvent to CartBloc
-                      context.read<CartBloc>().add(AddToCartEvent(newItem));
+                      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
                     },
                   ),
                   SizedBox(height: 20),
@@ -69,13 +75,13 @@ class _HomePageState extends State<HomePage> {
                   BeveragePromoPage(
                     onAddToCart: (newItem) {
                       // Dispatch AddToCartEvent to CartBloc
-                      context.read<CartBloc>().add(AddToCartEvent(newItem));
+                      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
                     },
                   ),
                   SizedBox(height: 20),
                   FoodPromopage2(
                     onAddToCart: (newItem) {
-                      context.read<CartBloc>().add(AddToCartEvent(newItem));
+                      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
                     },
                   ),
                   SizedBox(height: 20),
@@ -120,6 +126,7 @@ class _HomePageState extends State<HomePage> {
 
                   // Update the cartItemCount when CartUpdatedState is emitted
                   if (state is CartUpdatedState) {
+                      print("Cart Items: ${state.cartItems}");
                     cartItemCount = state.cartItems.length;
                   }
 
@@ -127,23 +134,21 @@ class _HomePageState extends State<HomePage> {
                     icon: Stack(
                       children: [
                         Icon(Icons.shopping_cart),
-                        // Display badge with item count
+                       if (cartItemCount > 0)
                         Positioned(
                           right: 0,
                           child: Container(
-                            padding: EdgeInsets.all(1),
+                            padding: EdgeInsets.all(4),
                             decoration: BoxDecoration(
                               color: Colors.red,
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             constraints: BoxConstraints(
                               minWidth: 12,
                               minHeight: 12,
                             ),
                             child: Text(
-                              cartItemCount > 0
-                                  ? cartItemCount.toString()
-                                  : '0',
+                              cartItemCount.toString(),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 8,
@@ -160,18 +165,14 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CartPage(
-                            initialCartItems: (state is CartUpdatedState)
+                           cartItems: (state is CartUpdatedState)
                                 ? state.cartItems
                                 : [], // Pass the updated cart items
                             onRemoveItem: (item) {
-                              context
-                                  .read<CartBloc>()
-                                  .add(RemoveFromCartEvent(item));
+                              context.read<CartBloc>().add(RemoveFromCartEvent(cartItem: item));
                             },
                             onUpdateQuantity: (item, change) {
-                              context
-                                  .read<CartBloc>()
-                                  .add(UpdateQuantityEvent(item, change));
+                               context.read<CartBloc>().add(UpdateQuantityEvent(cartItem: item, quantity:change,isIncrement: change > 0,));
                             },
                           ),
                         ),
@@ -181,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ],
-          ),
+          
         ),
       ),
     );

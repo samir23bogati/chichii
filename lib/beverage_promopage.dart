@@ -81,7 +81,8 @@ Future<void> _loaddrinkPromoItems()async{
         previousPage: _previousPage,
          onAddToCart: (CartItem item) {
           // Dispatch the event to CartBloc to add item to the cart
-          context.read<CartBloc>().add(AddToCartEvent(item)); // Add to cart event
+         context.read<CartBloc>().add(AddToCartEvent(cartItem: item)); // Add to cart event
+       
         },
       ),
     );

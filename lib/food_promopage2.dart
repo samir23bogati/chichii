@@ -202,7 +202,7 @@ class FoodItemCard extends StatelessWidget {
                       price: itemPrice,
                     );
                     // Dispatch AddToCartEvent
-      context.read<CartBloc>().add(AddToCartEvent(newItem));
+      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
                   } catch (e) {
                     print("Error adding item to cart: $e");
                   }

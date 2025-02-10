@@ -93,7 +93,9 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
         previousPage:_previousPage,
         onAddToCart: (CartItem item) {
           // Dispatch the event to CartBloc to add item to the cart
-          context.read<CartBloc>().add(AddToCartEvent(item)); // Add to cart event
+          context.read<CartBloc>().add(AddToCartEvent(cartItem: item)); // Add to cart event
+      
+        
         },
       ),
     );
@@ -153,7 +155,7 @@ class FoodPromoContent extends StatelessWidget {
                            description: 'Cooked Food',
                        price: item['price'] ?? item['discountedPrice'] ?? 'N/A',
                         imageUrl: item['imageUrl'] ?? 'assets/images/default.webp',
-                        onAddToCart: onAddToCart, // Pass onAddToCart to PromoItem
+                        onAddToCart: onAddToCart, // Pass onAddToCart to PromoItem 
                               ); 
                               }, 
                               ),
@@ -256,6 +258,7 @@ class PromoItem extends StatelessWidget {
                             price: double.tryParse(price) ?? 0.0, 
                             imageUrl: imageUrl,
                           );
+                       
                           onAddToCart(cartItem); 
                         },
                       ),
