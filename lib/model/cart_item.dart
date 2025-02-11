@@ -64,6 +64,4 @@ class CartItem {
       quantity: json['quantity'] ?? 1, // Default to 1 if quantity is not provided
     );
   }
-
-  
 }

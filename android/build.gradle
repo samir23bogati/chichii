@@ -2,8 +2,8 @@ buildscript {
 ext.kotlin_version = '2.1.0'
 
     repositories {
-        google()  // Add the Google repository
-        mavenCentral()  // Add Maven Central repository
+        google() 
+        mavenCentral()  
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'  

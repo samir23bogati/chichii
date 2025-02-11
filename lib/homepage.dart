@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Dispatch LoadCartEvent when the HomePage is initialized
     context.read<CartBloc>().add(LoadCartEvent());
   }
 
@@ -44,17 +43,14 @@ class _HomePageState extends State<HomePage> {
         body: Stack(
           children: <Widget>[
             SizedBox.expand(
-              // This ensures the ListView gets the full available space
               child: ListView(
                 children: <Widget>[
                   Carouselfirst(),
                   SizedBox(height: 20),
                   CarouselSecond(),
                   SizedBox(height: 20),
-                  // Passing the onAddToCart function to FoodPromopage1
                   FoodPromopage1(
                     onAddToCart: (newItem) {
-                      // Dispatch AddToCartEvent to CartBloc
                       context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
                     },
                   ),
@@ -74,7 +70,6 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height: 20),
                   BeveragePromoPage(
                     onAddToCart: (newItem) {
-                      // Dispatch AddToCartEvent to CartBloc
                       context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
                     },
                   ),
@@ -120,13 +115,9 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               BlocBuilder<CartBloc, CartState>(
-                // Listen to CartBloc state updates
                 builder: (context, state) {
                   int cartItemCount = 0;
-
-                  // Update the cartItemCount when CartUpdatedState is emitted
                   if (state is CartUpdatedState) {
-                      print("Cart Items: ${state.cartItems}");
                     cartItemCount = state.cartItems.length;
                   }
 

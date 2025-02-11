@@ -33,8 +33,7 @@ class CartPage extends StatelessWidget {
         title: const Text("Your Cart"),
       ),
       body: BlocBuilder<CartBloc, CartState>( // Listen to CartBloc changes
-        builder: (context, state) {
-          print("Cart State: $state");  // Debug: Check which state is being emitted
+        builder: (context, state) { 
 
           if (state is CartLoadingState) {
             return const Center(child: CircularProgressIndicator());
