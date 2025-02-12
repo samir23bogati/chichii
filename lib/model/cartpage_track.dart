@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:padshala/Billing/BillingConfirmationPage.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
@@ -25,6 +26,7 @@ class CartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Trigger cart load when the page is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("triggering loadcartevent");
       context.read<CartBloc>().add(LoadCartEvent()); // Dispatch LoadCartEvent
     });
 
@@ -36,6 +38,7 @@ class CartPage extends StatelessWidget {
         builder: (context, state) { 
 
           if (state is CartLoadingState) {
+            print("cart is loading");
             return const Center(child: CircularProgressIndicator());
           } else if (state is CartUpdatedState) {
             final cartItems = state.cartItems;
@@ -44,6 +47,7 @@ class CartPage extends StatelessWidget {
                     itemCount: cartItems.length,
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
+                      print("Displaying Item: ${item.title}, Quantity: ${item.quantity}");
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         child: ListTile(
@@ -56,8 +60,10 @@ class CartPage extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(Icons.remove),
                                 onPressed: () {
+                                   print("Decreasing Quantity for: ${item.title}");
                                   if (item.quantity > 1) {
                                     // Decrease quantity by 1
+                                  
                                     context.read<CartBloc>().add(
                                           UpdateQuantityEvent(
                                             cartItem: item.copyWith(quantity: item.quantity - 1),
@@ -66,6 +72,7 @@ class CartPage extends StatelessWidget {
                                           ),
                                         );
                                   } else {
+                                       print("Removing Item: ${item.title}");
                                     context.read<CartBloc>().add(
                                           RemoveFromCartEvent(cartItem: item), // Remove if quantity is 1
                                         );
@@ -76,6 +83,7 @@ class CartPage extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(Icons.add),
                                 onPressed: () {
+                                  print("Increasing Quantity for: ${item.title}");
                                   // Increase quantity by 1
                                   context.read<CartBloc>().add(
                                           UpdateQuantityEvent(
@@ -89,6 +97,7 @@ class CartPage extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () {
+                                   print("Deleting Item: ${item.title}");
                                   context.read<CartBloc>().add(
                                         RemoveFromCartEvent(cartItem: item), // Delete the item
                                       );
@@ -135,26 +144,44 @@ class CartPage extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        print("Proceed to Checkout Pressed");
                         final authProvider =
                             Provider.of<AuthProvider>(context, listen: false);
                         if (authProvider.user == null) {
                           bool? loggedIn = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
+                            MaterialPageRoute(builder: (context) => LoginPage(
+                                 cartItems: cartItems,
+                                 totalPrice: state.totalPrice,
+                            ),),
                           );
 
                           if (loggedIn == null || !loggedIn) return;
                         }
 
                         // Navigate to Address Selection Page
+                        print("Navigating to Address Selection Page");
                         final selectedLocation = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AddressSelectionPage()),
+                              builder: (context) => AddressSelectionPage(
+                                 cartItems: cartItems,
+                                 totalPrice: state.totalPrice,
+                              )),
                         );
                         if (selectedLocation != null) {
                           print("Selected Address: $selectedLocation");
-                          // Proceed to Payment Page
+                         
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>BillingConfirmationPage(
+                              address: selectedLocation,
+                             cartItems: cartItems, totalPrice: state.totalPrice,
+                             ),
+
+                          ),
+                         );
                         }
                       },
                       child: const Text("PROCEED TO CHECKOUT"),

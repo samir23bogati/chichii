@@ -7,7 +7,7 @@ class BillingConfirmationPage extends StatelessWidget {
   final List<CartItem> cartItems;
   final double totalPrice;
 
-  const BillingConfirmationPage({
+  BillingConfirmationPage({
     required this.address,
     required this.cartItems,
     required this.totalPrice,
@@ -22,24 +22,39 @@ class BillingConfirmationPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          
           children: [
             Text("Delivery Address: $address", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
+
             Text("Order Summary:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
             Expanded(
               child: ListView.builder(
                 itemCount: cartItems.length,
                 itemBuilder: (context, index) {
                   final item = cartItems[index];
                   return ListTile(
-                    title: Text(item.title),
+                   leading: item.imageUrl.isNotEmpty
+                        ? Image.network(
+                            item.imageUrl,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.image, size: 50),
+                    title: Text(item.title), // Display item title
                     subtitle: Text("Quantity: ${item.quantity} - Price: NRS ${item.price}"),
                   );
                 },
               ),
             ),
+            
+            // Display total price
             Text("Total Price: NRS $totalPrice", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
+
+            // Payment buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -64,39 +79,47 @@ class BillingConfirmationPage extends StatelessWidget {
     );
   }
 
+  // Function to place an order
   void _placeOrder(BuildContext context, String paymentMethod) async {
+    // Prepare order data to store in Firestore
     final orderData = {
-      "address": address,
+      "address": address, // Add the address
       "items": cartItems.map((item) => {
-            "title": item.title,
-            "quantity": item.quantity,
-            "price": item.price,
+            "title": item.title, // Item title
+            "quantity": item.quantity, // Item quantity
+            "price": item.price, // Item price
+             "imageUrl": item.imageUrl, // Item image URL
           }).toList(),
-      "totalPrice": totalPrice,
-      "paymentMethod": paymentMethod,
-      "status": "Pending",
-      "timestamp": Timestamp.now(),
+      "totalPrice": totalPrice, // Total price of all items
+      "paymentMethod": paymentMethod, // Chosen payment method
+      "status": "Pending", // Default status for new orders
+      "timestamp": Timestamp.now(), // Current timestamp for the order
     };
 
-    // Place the order in Firebase Firestore
+    // Call the service to save the order data in Firestore
     await OrderService().placeOrder(orderData);
 
-    // Show success message
+    // Show a success message after placing the order
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Order placed successfully!")),
     );
 
-    Navigator.pop(context); // Go back to previous page
+    // Go back to the previous page
+    Navigator.pop(context);
   }
 }
 
+// OrderService class to interact with Firebase Firestore
 class OrderService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Function to add order data to Firestore
   Future<void> placeOrder(Map<String, dynamic> orderData) async {
     try {
-      await _firestore.collection('orders').add(orderData); // Add order data to Firestore collection
+      // Add the order data to the 'orders' collection in Firestore
+      await _firestore.collection('orders').add(orderData);
     } catch (e) {
+      // Handle errors if any
       print("Error placing order: $e");
     }
   }

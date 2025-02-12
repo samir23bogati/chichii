@@ -1,29 +1,40 @@
-import 'dart:convert'; 
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http; // Add this import for HTTP requests
+import 'package:http/http.dart' as http;  
+import 'package:google_maps_flutter/google_maps_flutter.dart' as google_maps;
+import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart' as places;
+import 'package:padshala/Billing/BillingConfirmationPage.dart';
+import 'package:padshala/model/cart_item.dart';
 
 class AddressSelectionPage extends StatefulWidget {
+  final List<CartItem> cartItems;
+  final double totalPrice;
+
+  AddressSelectionPage({
+    required this.cartItems,
+    required this.totalPrice,
+    Key? key,
+  }) : super(key: key);
+
   @override
   _AddressSelectionPageState createState() => _AddressSelectionPageState();
 }
 
 class _AddressSelectionPageState extends State<AddressSelectionPage> {
-  GoogleMapController? mapController;
-  LatLng? selectedLocation;
+  google_maps.GoogleMapController? mapController;
+  google_maps.LatLng? selectedLocation;
   String address = "Move the marker to select an address";
-  TextEditingController _searchController = TextEditingController(); // Controller for search input
+  TextEditingController _searchController = TextEditingController();
+  final _places = places.FlutterGooglePlacesSdk("AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y");
 
   @override
   void initState() {
     super.initState();
-    _determinePosition(); // Get initial location when the page is loaded
+    _determinePosition();
   }
 
-  // Get user location
   Future<void> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -44,27 +55,20 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     }
 
     try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       setState(() {
-        selectedLocation = LatLng(position.latitude, position.longitude);
+        selectedLocation = google_maps.LatLng(position.latitude, position.longitude);
       });
-
       if (mapController != null) {
-        mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(selectedLocation!, 15),
-        );
+        mapController!.animateCamera(google_maps.CameraUpdate.newLatLngZoom(selectedLocation!, 15));
       }
-
-      _getAddressFromLatLng(selectedLocation!); // Call method to get address from LatLng
+      _getAddressFromLatLng(selectedLocation!);
     } catch (e) {
       _showLocationError("Failed to get current location.");
     }
   }
 
-  // Convert LatLng to Address
-  Future<void> _getAddressFromLatLng(LatLng location) async {
+  Future<void> _getAddressFromLatLng(google_maps.LatLng location) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(location.latitude, location.longitude);
       if (placemarks.isNotEmpty) {
@@ -77,54 +81,38 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     }
   }
 
-  // Convert Address to LatLng
-  Future<LatLng?> _getLatLngFromAddress(String address) async {
-    final apiKey = "YOUR_GOOGLE_PLACES_API_KEY"; // Replace with your API Key
-    final url =
-        "https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=$apiKey";
-
-    try {
-      final response = await http.get(Uri.parse(url)); // Use the http package
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data["status"] == "OK") {
-          final location = data["results"][0]["geometry"]["location"];
-          return LatLng(location["lat"], location["lng"]);
-        }
-      }
-    } catch (e) {
-      print("Error converting address to coordinates: $e");
-    }
-    return null; // Return null if there's an error
+  Future<List<places.AutocompletePrediction>> _getSuggestions(String query) async {
+    final result = await _places.findAutocompletePredictions(query);
+    return result.predictions;
   }
 
-  // Show error message
+  Future<google_maps.LatLng?> _getLatLngFromPlaceId(String placeId) async {
+    final details = await _fetchPlaceDetails(placeId); // Fetch place details using HTTP request
+    final location = details['result']['geometry']['location'];
+    if (location != null) {
+      return google_maps.LatLng(location['lat'], location['lng']);
+    }
+    return null;
+  }
+
+  // Fetch place details from Google Places API using HTTP
+  Future<Map<String, dynamic>> _fetchPlaceDetails(String placeId) async {
+    final apiKey = 'AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y';
+    final url =
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch place details');
+    }
+  }
+
   void _showLocationError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
-  }
-
-  // Search for an address using Google Places API
-  Future<List<String>> _getSuggestions(String query) async {
-    final apiKey = "YOUR_GOOGLE_PLACES_API_KEY"; // Replace with your actual key
-    final url =
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=$apiKey&components=country:np"; // Restrict to Nepal (change as needed)
-
-    try {
-      final response = await http.get(Uri.parse(url)); // Use the http package
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data["status"] == "OK") {
-          return (data["predictions"] as List)
-              .map((item) => item["description"].toString())
-              .toList();
-        }
-      }
-    } catch (e) {
-      print("Error fetching suggestions: $e");
-    }
-    return []; // Return empty list if there's an error
   }
 
   @override
@@ -135,25 +123,20 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
         children: [
           selectedLocation == null
               ? const Center(child: CircularProgressIndicator())
-              : GoogleMap(
+              : google_maps.GoogleMap(
                   onMapCreated: (controller) {
                     mapController = controller;
                     if (selectedLocation != null) {
-                      mapController!.animateCamera(
-                        CameraUpdate.newLatLngZoom(selectedLocation!, 15),
-                      );
+                      mapController!.animateCamera(google_maps.CameraUpdate.newLatLngZoom(selectedLocation!, 15));
                     }
                   },
-                  initialCameraPosition: CameraPosition(
-                    target: selectedLocation!,
-                    zoom: 15,
-                  ),
+                  initialCameraPosition: google_maps.CameraPosition(target: selectedLocation!, zoom: 15),
                   markers: {
-                    Marker(
-                      markerId: const MarkerId("selected"),
+                    google_maps.Marker(
+                      markerId: const google_maps.MarkerId("selected"),
                       position: selectedLocation!,
                       draggable: true,
-                      onDragEnd: (LatLng newPosition) {
+                      onDragEnd: (google_maps.LatLng newPosition) {
                         setState(() {
                           selectedLocation = newPosition;
                         });
@@ -162,49 +145,53 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
                     ),
                   },
                 ),
-          // GPS Tracking Icon Button
           Positioned(
-            top: 50,
-            right: 20,
-            child: IconButton(
-              icon: Icon(Icons.my_location, size: 30),
-              onPressed: () {
-                _determinePosition(); // Recenter map to current location
+            top: 10,
+            left: 10,
+            right: 10,
+            child: Autocomplete<places.AutocompletePrediction>(
+              optionsBuilder: (textEditingValue) async {
+                if (textEditingValue.text.isEmpty) return [];
+                return await _getSuggestions(textEditingValue.text);
               },
-            ),
-          ),
-          // Search bar for Address search using Google Places API
-          Positioned(
-            top: 100,
-            left: 20,
-            right: 20,
-            child: TypeAheadField<String>(
-              controller: _searchController,
-              suggestionsCallback: (pattern) async {
-                return await _getSuggestions(pattern); // Fetch suggestions
-              },
-              itemBuilder: (context, suggestion) {
-                return ListTile(
-                  title: Text(suggestion),
-                );
-              },
-              onSelected: (suggestion) async {
-                // Update the map view to the selected address
-                LatLng? newLocation = await _getLatLngFromAddress(suggestion);
+              displayStringForOption: (option) => option.fullText,
+              onSelected: (selectedPrediction) async {
+                google_maps.LatLng? newLocation = await _getLatLngFromPlaceId(selectedPrediction.placeId);
                 if (newLocation != null) {
                   setState(() {
                     selectedLocation = newLocation;
-                    address = suggestion;
+                    address = selectedPrediction.fullText;
                   });
-                  mapController?.animateCamera(
-                    CameraUpdate.newLatLngZoom(selectedLocation!, 15),
-                  );
+                  mapController?.animateCamera(google_maps.CameraUpdate.newLatLngZoom(selectedLocation!, 15));
                 }
+              },
+              fieldViewBuilder: (context, controller, focusNode, onSubmitted) {
+                _searchController = controller;
+                return TextField(
+                  controller: _searchController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    hintText: "Search Address",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                );
               },
             ),
           ),
           Positioned(
-            bottom: 50,
+            bottom: 98,
+            right: 10,
+            child: IconButton(
+              icon:Icon(Icons.my_location),
+              onPressed: _determinePosition, 
+              iconSize: 50,
+              color: Colors.green,
+          ),
+          ),
+          Positioned(
+            bottom: 20,
             left: 20,
             right: 20,
             child: Column(
@@ -214,23 +201,29 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black26, blurRadius: 5),
-                    ],
+                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
                   ),
-                  child: Text(
-                    address,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  child: Text(address, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: selectedLocation != null
-                      ? () => Navigator.pop(context, selectedLocation)
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BillingConfirmationPage(
+                                address: address,
+                                cartItems: widget.cartItems,
+                                totalPrice: widget.totalPrice,
+                              ),
+                            ),
+                          );
+                        }
                       : null,
                   child: const Text("Confirm Address"),
                 ),
+                
               ],
             ),
           ),

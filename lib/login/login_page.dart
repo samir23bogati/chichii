@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:padshala/login/auth_provider.dart';
+import 'package:padshala/model/cart_item.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
+   final List<CartItem> cartItems;
+  final double totalPrice;
+
+  LoginPage({
+    required this.cartItems,
+    required this.totalPrice,
+  });
+
+
 
   @override
   State<LoginPage> createState() => _LoginPageState();
