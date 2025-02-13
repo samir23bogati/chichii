@@ -54,7 +54,8 @@ dependencies:
   http: ^1.3.0
   khalti_checkout_flutter: ^1.0.0-dev.8
   flutter_google_places_sdk: ^0.3.10
-
+  firebase_messaging: ^15.2.2
+  flutter_local_notifications: ^18.0.1
   
 
 

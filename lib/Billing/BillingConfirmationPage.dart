@@ -22,39 +22,80 @@ class BillingConfirmationPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          
           children: [
-            Text("Delivery Address: $address", style: TextStyle(fontSize: 16)),
+            // Delivery Address
+            Text("Delivery Address:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(address, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
             const SizedBox(height: 10),
 
+            // Order Summary
             Text("Order Summary:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
 
+            // List of Items
             Expanded(
               child: ListView.builder(
                 itemCount: cartItems.length,
                 itemBuilder: (context, index) {
                   final item = cartItems[index];
-                  return ListTile(
-                   leading: item.imageUrl.isNotEmpty
-                        ? Image.network(
-                            item.imageUrl,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          )
-                        : Icon(Icons.image, size: 50),
-                    title: Text(item.title), // Display item title
-                    subtitle: Text("Quantity: ${item.quantity} - Price: NRS ${item.price}"),
+                  bool isLocalAsset = !item.imageUrl.startsWith('http');
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        // Image Section
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child:isLocalAsset
+                                  ? Image.asset(
+                                    item.imageUrl,
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  )
+                                  :Image.network(
+                                    item.imageUrl,
+                                    width: 60,
+                                    height: 60,
+                                    fit:BoxFit.cover,
+                                    errorBuilder: (context,error,StackTrace) => Icon(Icons.broken_image,size: 50,color: Colors.grey),
+                                  ),
+                                  ),
+                                ),
+                        const SizedBox(width: 12),
+
+                        // Item Details Section
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(item.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Quantity: ${item.quantity}", style: TextStyle(color: Colors.grey[600])),
+                              Text("Price: NRS ${item.price}", style: TextStyle(color: Colors.grey[600])),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
             ),
-            
-            // Display total price
-            Text("Total Price: NRS $totalPrice", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+            // Total Price
+            Divider(),
+            Text("Total Price: NRS $totalPrice",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
 
-            // Payment buttons
+            // Payment Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -62,14 +103,15 @@ class BillingConfirmationPage extends StatelessWidget {
                   onPressed: () {
                     _placeOrder(context, "COD");
                   },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   child: const Text("Cash on Delivery"),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Placeholder for Khalti payment integration, can be implemented later
-                    _placeOrder(context, "Khalti (Placeholder)");
+                    _placeOrder(context, "Khalti");
                   },
-                  child: const Text("Pay with Khalti (Later)"),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+                  child: const Text("Pay with Khalti"),
                 ),
               ],
             ),
@@ -81,46 +123,36 @@ class BillingConfirmationPage extends StatelessWidget {
 
   // Function to place an order
   void _placeOrder(BuildContext context, String paymentMethod) async {
-    // Prepare order data to store in Firestore
     final orderData = {
-      "address": address, // Add the address
+      "address": address,
       "items": cartItems.map((item) => {
-            "title": item.title, // Item title
-            "quantity": item.quantity, // Item quantity
-            "price": item.price, // Item price
-             "imageUrl": item.imageUrl, // Item image URL
+            "title": item.title,
+            "quantity": item.quantity,
+            "price": item.price,
+            "imageUrl": item.imageUrl,
           }).toList(),
-      "totalPrice": totalPrice, // Total price of all items
-      "paymentMethod": paymentMethod, // Chosen payment method
-      "status": "Pending", // Default status for new orders
-      "timestamp": Timestamp.now(), // Current timestamp for the order
+      "totalPrice": totalPrice,
+      "paymentMethod": paymentMethod,
+      "status": "Pending",
+      "timestamp": Timestamp.now(),
     };
 
-    // Call the service to save the order data in Firestore
-    await OrderService().placeOrder(orderData);
+    DocumentReference orderRef = await FirebaseFirestore.instance.collection('orders').add(orderData);
+    await _sendAdminNotification(orderRef.id, orderData);
 
-    // Show a success message after placing the order
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Order placed successfully!")),
     );
 
-    // Go back to the previous page
     Navigator.pop(context);
   }
-}
 
-// OrderService class to interact with Firebase Firestore
-class OrderService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  // Function to add order data to Firestore
-  Future<void> placeOrder(Map<String, dynamic> orderData) async {
-    try {
-      // Add the order data to the 'orders' collection in Firestore
-      await _firestore.collection('orders').add(orderData);
-    } catch (e) {
-      // Handle errors if any
-      print("Error placing order: $e");
-    }
+  // Function to send admin notification
+  Future<void> _sendAdminNotification(String orderId, Map<String, dynamic> orderData) async {
+    await FirebaseFirestore.instance.collection('admin_notifications').add({
+      "orderId": orderId,
+      "message": "New order placed with ID: $orderId",
+      "timestamp": Timestamp.now(),
+    });
   }
 }
