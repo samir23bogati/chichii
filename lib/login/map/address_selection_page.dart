@@ -1,10 +1,9 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;  
-import 'package:google_maps_flutter/google_maps_flutter.dart' as google_maps;
-import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart' as places;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:padshala/Billing/BillingConfirmationPage.dart';
 import 'package:padshala/model/cart_item.dart';
 
@@ -12,22 +11,18 @@ class AddressSelectionPage extends StatefulWidget {
   final List<CartItem> cartItems;
   final double totalPrice;
 
-  AddressSelectionPage({
-    required this.cartItems,
-    required this.totalPrice,
-    Key? key,
-  }) : super(key: key);
+  AddressSelectionPage({required this.cartItems, required this.totalPrice, Key? key}) : super(key: key);
 
   @override
   _AddressSelectionPageState createState() => _AddressSelectionPageState();
 }
 
 class _AddressSelectionPageState extends State<AddressSelectionPage> {
-  google_maps.GoogleMapController? mapController;
-  google_maps.LatLng? selectedLocation;
+  GoogleMapController? mapController;
+  LatLng? selectedLocation;
   String address = "Move the marker to select an address";
-  TextEditingController _searchController = TextEditingController();
-  final _places = places.FlutterGooglePlacesSdk("AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y");
+  TextEditingController searchController = TextEditingController();
+  List<dynamic> predictions = [];
 
   @override
   void initState() {
@@ -35,40 +30,75 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     _determinePosition();
   }
 
-  Future<void> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  // Fetch autocomplete predictions from Google Places API
+  Future<void> _fetchAutocompleteSuggestions(String query) async {
+    final apiKey = 'AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0'; // Replace with your actual API key
+    final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&components=country:np&key=$apiKey';
+    final response = await http.get(Uri.parse(url));
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      _showLocationError("Location services are disabled.");
-      return;
+    if (response.statusCode == 200) {
+      setState(() {
+        predictions = json.decode(response.body)['predictions'];
+      });
+    } else {
+      throw Exception('Failed to fetch autocomplete predictions');
     }
+  }
 
-    permission = await Geolocator.checkPermission();
+  // Handle the selection of a place from the suggestions
+Future<void> _onPlaceSelected(String placeId) async {
+  final apiKey = 'AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y'; // Replace with your actual API key
+  final url = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final details = json.decode(response.body)['result'];
+
+    if (details != null && details['geometry'] != null) {
+      final location = details['geometry']['location'];
+      final newLocation = LatLng(location['lat'], location['lng']);
+
+      setState(() {
+        selectedLocation = newLocation;
+        address = details['formatted_address'];
+        predictions.clear(); // Clear suggestions after selection
+      });
+
+      FocusScope.of(context).unfocus(); // Close the dropdown menu
+
+      if (mapController != null) {
+        mapController!.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 15));
+      }
+    } else {
+      print('Failed to retrieve valid location data.');
+    }
+  } else {
+    throw Exception('Failed to fetch place details');
+  }
+}
+
+  Future<void> _determinePosition() async {
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
-        _showLocationError("Location permission is denied permanently.");
-        return;
-      }
+      if (permission == LocationPermission.deniedForever) return;
     }
 
     try {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       setState(() {
-        selectedLocation = google_maps.LatLng(position.latitude, position.longitude);
+        selectedLocation = LatLng(position.latitude, position.longitude);
       });
       if (mapController != null) {
-        mapController!.animateCamera(google_maps.CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+        mapController!.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
       }
       _getAddressFromLatLng(selectedLocation!);
     } catch (e) {
-      _showLocationError("Failed to get current location.");
+      print("Failed to get location: $e");
     }
   }
 
-  Future<void> _getAddressFromLatLng(google_maps.LatLng location) async {
+  Future<void> _getAddressFromLatLng(LatLng location) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(location.latitude, location.longitude);
       if (placemarks.isNotEmpty) {
@@ -81,40 +111,6 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     }
   }
 
-  Future<List<places.AutocompletePrediction>> _getSuggestions(String query) async {
-    final result = await _places.findAutocompletePredictions(query);
-    return result.predictions;
-  }
-
-  Future<google_maps.LatLng?> _getLatLngFromPlaceId(String placeId) async {
-    final details = await _fetchPlaceDetails(placeId); // Fetch place details using HTTP request
-    final location = details['result']['geometry']['location'];
-    if (location != null) {
-      return google_maps.LatLng(location['lat'], location['lng']);
-    }
-    return null;
-  }
-
-  // Fetch place details from Google Places API using HTTP
-  Future<Map<String, dynamic>> _fetchPlaceDetails(String placeId) async {
-    final apiKey = 'AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y';
-    final url =
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to fetch place details');
-    }
-  }
-
-  void _showLocationError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,20 +119,20 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
         children: [
           selectedLocation == null
               ? const Center(child: CircularProgressIndicator())
-              : google_maps.GoogleMap(
+              : GoogleMap(
                   onMapCreated: (controller) {
                     mapController = controller;
                     if (selectedLocation != null) {
-                      mapController!.animateCamera(google_maps.CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+                      mapController!.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
                     }
                   },
-                  initialCameraPosition: google_maps.CameraPosition(target: selectedLocation!, zoom: 15),
+                  initialCameraPosition: CameraPosition(target: selectedLocation!, zoom: 15),
                   markers: {
-                    google_maps.Marker(
-                      markerId: const google_maps.MarkerId("selected"),
+                    Marker(
+                      markerId: const MarkerId("selected"),
                       position: selectedLocation!,
                       draggable: true,
-                      onDragEnd: (google_maps.LatLng newPosition) {
+                      onDragEnd: (newPosition) {
                         setState(() {
                           selectedLocation = newPosition;
                         });
@@ -149,46 +145,69 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
             top: 10,
             left: 10,
             right: 10,
-            child: Autocomplete<places.AutocompletePrediction>(
-              optionsBuilder: (textEditingValue) async {
-                if (textEditingValue.text.isEmpty) return [];
-                return await _getSuggestions(textEditingValue.text);
+            child: GestureDetector(
+              onTap: () {
+                _fetchAutocompleteSuggestions(searchController.text); // Trigger autocomplete fetch on tap
               },
-              displayStringForOption: (option) => option.fullText,
-              onSelected: (selectedPrediction) async {
-                google_maps.LatLng? newLocation = await _getLatLngFromPlaceId(selectedPrediction.placeId);
-                if (newLocation != null) {
-                  setState(() {
-                    selectedLocation = newLocation;
-                    address = selectedPrediction.fullText;
-                  });
-                  mapController?.animateCamera(google_maps.CameraUpdate.newLatLngZoom(selectedLocation!, 15));
-                }
-              },
-              fieldViewBuilder: (context, controller, focusNode, onSubmitted) {
-                _searchController = controller;
-                return TextField(
-                  controller: _searchController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(
-                    hintText: "Search Address",
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                );
-              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: Colors.grey[600]),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Search for a place',
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (query) {
+                          _fetchAutocompleteSuggestions(query); // Update suggestions on text change
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
+          if (predictions.isNotEmpty)
+            Positioned(
+              top: 60,
+              left: 10,
+              right: 10,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                color: Colors.white,
+                child: ListView.builder(
+                  itemCount: predictions.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(predictions[index]['description']),
+                      onTap: () {
+                        _onPlaceSelected(predictions[index]['place_id']);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           Positioned(
             bottom: 98,
             right: 10,
             child: IconButton(
-              icon:Icon(Icons.my_location),
-              onPressed: _determinePosition, 
+              icon: Icon(Icons.my_location),
+              onPressed: _determinePosition,
               iconSize: 50,
               color: Colors.green,
-          ),
+            ),
           ),
           Positioned(
             bottom: 20,
@@ -223,7 +242,6 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
                       : null,
                   child: const Text("Confirm Address"),
                 ),
-                
               ],
             ),
           ),

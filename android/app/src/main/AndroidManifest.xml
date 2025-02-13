@@ -44,7 +44,7 @@
 
         <meta-data
             android:name="com.google.android.places.API_KEY"
-            android:value="AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y" />
+            android:value="AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0" />
             
     </application>
     <!-- Required to query activities that can process text, see:

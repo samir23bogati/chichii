@@ -26,7 +26,6 @@ class CartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Trigger cart load when the page is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("triggering loadcartevent");
       context.read<CartBloc>().add(LoadCartEvent()); // Dispatch LoadCartEvent
     });
 
