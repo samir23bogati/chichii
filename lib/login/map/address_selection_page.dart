@@ -33,7 +33,12 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
   // Fetch autocomplete predictions from Google Places API
   Future<void> _fetchAutocompleteSuggestions(String query) async {
     final apiKey = 'AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0'; // Replace with your actual API key
-    final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&components=country:np&key=$apiKey';
+    final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+    '?input=$query'
+    '&components=country:np'
+    '&location=27.7172,85.3240' // Approx. location of Kathmandu
+    '&radius=40000' // 20km to cover nearby districts
+    '&key=$apiKey';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -115,137 +120,145 @@ Future<void> _onPlaceSelected(String placeId) async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Select Address")),
-      body: Stack(
-        children: [
-          selectedLocation == null
-              ? const Center(child: CircularProgressIndicator())
-              : GoogleMap(
-                  onMapCreated: (controller) {
-                    mapController = controller;
-                    if (selectedLocation != null) {
-                      mapController!.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
-                    }
-                  },
-                  initialCameraPosition: CameraPosition(target: selectedLocation!, zoom: 15),
-                  markers: {
-                    Marker(
-                      markerId: const MarkerId("selected"),
-                      position: selectedLocation!,
-                      draggable: true,
-                      onDragEnd: (newPosition) {
-                        setState(() {
-                          selectedLocation = newPosition;
-                        });
-                        _getAddressFromLatLng(newPosition);
-                      },
-                    ),
-                  },
-                ),
-          Positioned(
-            top: 10,
-            left: 10,
-            right: 10,
-            child: GestureDetector(
-              onTap: () {
-                _fetchAutocompleteSuggestions(searchController.text); // Trigger autocomplete fetch on tap
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, color: Colors.grey[600]),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Search for a place',
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (query) {
-                          _fetchAutocompleteSuggestions(query); // Update suggestions on text change
+      body: GestureDetector(
+        onTap: (){
+          setState(() {
+            predictions.clear();
+          });
+          FocusScope.of(context).unfocus();
+        },
+        child: Stack(
+          children: [
+            selectedLocation == null
+                ? const Center(child: CircularProgressIndicator())
+                : GoogleMap(
+                    onMapCreated: (controller) {
+                      mapController = controller;
+                      if (selectedLocation != null) {
+                        mapController!.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+                      }
+                    },
+                    initialCameraPosition: CameraPosition(target: selectedLocation!, zoom: 15),
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId("selected"),
+                        position: selectedLocation!,
+                        draggable: true,
+                        onDragEnd: (newPosition) {
+                          setState(() {
+                            selectedLocation = newPosition;
+                          });
+                          _getAddressFromLatLng(newPosition);
                         },
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          if (predictions.isNotEmpty)
+                    },
+                  ),
             Positioned(
-              top: 60,
+              top: 10,
               left: 10,
               right: 10,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                color: Colors.white,
-                child: ListView.builder(
-                  itemCount: predictions.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(predictions[index]['description']),
-                      onTap: () {
-                        _onPlaceSelected(predictions[index]['place_id']);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          Positioned(
-            bottom: 98,
-            right: 10,
-            child: IconButton(
-              icon: Icon(Icons.my_location),
-              onPressed: _determinePosition,
-              iconSize: 50,
-              color: Colors.green,
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
+              child: GestureDetector(
+                onTap: () {
+                  _fetchAutocompleteSuggestions(searchController.text); // Trigger autocomplete fetch on tap
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
                   ),
-                  child: Text(address, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search, color: Colors.grey[600]),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            hintText: 'Search for a place',
+                            border: InputBorder.none,
+                          ),
+                          onChanged: (query) {
+                            _fetchAutocompleteSuggestions(query); // Update suggestions on text change
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: selectedLocation != null
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BillingConfirmationPage(
-                                address: address,
-                                cartItems: widget.cartItems,
-                                totalPrice: widget.totalPrice,
-                              ),
-                            ),
-                          );
-                        }
-                      : null,
-                  child: const Text("Confirm Address"),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            if (predictions.isNotEmpty)
+              Positioned(
+                top: 60,
+                left: 10,
+                right: 10,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.white,
+                  child: ListView.builder(
+                    itemCount: predictions.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(predictions[index]['description']),
+                        onTap: () {
+                          _onPlaceSelected(predictions[index]['place_id']);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            Positioned(
+              bottom: 98,
+              right: 10,
+              child: IconButton(
+                icon: Icon(Icons.my_location),
+                onPressed: _determinePosition,
+                iconSize: 50,
+                color: Colors.green,
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+                    ),
+                    child: Text(address, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: selectedLocation != null
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BillingConfirmationPage(
+                                  address: address,
+                                  cartItems: widget.cartItems,
+                                  totalPrice: widget.totalPrice,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
+                    child: const Text("Confirm Address"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
