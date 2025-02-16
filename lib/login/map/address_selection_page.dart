@@ -52,33 +52,38 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
 
   // Handle the selection of a place from the suggestions
 Future<void> _onPlaceSelected(String placeId) async {
-  final apiKey = 'AIzaSyDub1Zi-dM0YXcoQB_DJKIYFGhRsvevA5Y'; // Replace with your actual API key
-  final url = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
-  final response = await http.get(Uri.parse(url));
+  print("Fetching details for place ID: $placeId");
+  final apiKey = 'AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0'; // Replace with your actual API key
+  final url = Uri.https('maps.googleapis.com', '/maps/api/place/details/json', {
+    'place_id': placeId,
+    'key': apiKey,
+  });
+  final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    final details = json.decode(response.body)['result'];
-
-    if (details != null && details['geometry'] != null) {
-      final location = details['geometry']['location'];
+    final data = json.decode(response.body);
+    if (data['status'] == 'OK' && data['result'] != null) {
+      final location = data['result']['geometry']['location'];
+      final formattedAddress = data['result']['formatted_address'] ?? "Selected Location";
       final newLocation = LatLng(location['lat'], location['lng']);
 
       setState(() {
         selectedLocation = newLocation;
-        address = details['formatted_address'];
+        address = formattedAddress;
         predictions.clear(); // Clear suggestions after selection
+        searchController.text = formattedAddress; // Update search bar with selected address
       });
-
+       print("New Location: $selectedLocation, Address: $address");
       FocusScope.of(context).unfocus(); // Close the dropdown menu
 
       if (mapController != null) {
         mapController!.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 15));
       }
     } else {
-      print('Failed to retrieve valid location data.');
+     print('Failed to retrieve valid location data: ${data['status']}');
     }
   } else {
-    throw Exception('Failed to fetch place details');
+     print('Failed to fetch place details: ${response.statusCode}');
   }
 }
 
@@ -140,6 +145,7 @@ Future<void> _onPlaceSelected(String placeId) async {
                     },
                     initialCameraPosition: CameraPosition(target: selectedLocation!, zoom: 15),
                     markers: {
+                      if (selectedLocation != null)
                       Marker(
                         markerId: const MarkerId("selected"),
                         position: selectedLocation!,
