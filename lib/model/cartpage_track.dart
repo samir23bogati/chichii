@@ -4,6 +4,7 @@ import 'package:padshala/Billing/BillingConfirmationPage.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
+import 'package:padshala/login/map/address_selection_page.dart' as address_selection_page;
 import 'package:padshala/login/auth_provider.dart';
 import 'package:padshala/login/login_page.dart';
 import 'package:padshala/model/cart_item.dart';
@@ -152,7 +153,7 @@ class CartPage extends StatelessWidget {
                         }
                        final selectedLocation = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AddressSelectionPage(
+                          MaterialPageRoute(builder: (context) => address_selection_page.AddressSelectionPage(
                             cartItems: state.cartItems, // Ensure updated cartItems
                             totalPrice: state.totalPrice,
                           )),
