@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatelessWidget {
@@ -16,6 +18,7 @@ class SearchBar extends StatelessWidget {
             borderRadius: BorderRadius.zero,
             borderSide: BorderSide(color: Colors.grey),
           ),
+          
           focusedBorder: OutlineInputBorder(
              borderRadius: BorderRadius.zero,
              borderSide: BorderSide(color: Colors.amber),

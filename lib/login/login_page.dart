@@ -10,7 +10,7 @@ class LoginPage extends StatefulWidget {
 
   LoginPage({
     required this.cartItems,
-    required this.totalPrice,
+    required this.totalPrice,s
   });
 
 

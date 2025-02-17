@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
-import 'package:padshala/homepage.dart';
 import 'package:padshala/login/auth_provider.dart';
+import 'package:padshala/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 // Initialize local notifications
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: false,
           primarySwatch: Colors.amber,
         ),
-        home: HomePage(),
+        home: SplashScreen(),
       ),
     );
   }
