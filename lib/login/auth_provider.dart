@@ -20,7 +20,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Google Sign-In
-  Future<void> signInWithGoogle(BuildContext context) async {
+  Future<bool> signInWithGoogle(BuildContext context) async {
     print("Google Sign-In button clicked!");
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
@@ -35,7 +35,7 @@ class AuthProvider with ChangeNotifier {
         await _auth.signInWithPopup(googleProvider);
       } else {
         googleUser = await googleSignIn.signIn();
-        if (googleUser == null) return; // User canceled sign-in
+        if (googleUser == null) return false; // User canceled sign-in
 
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
@@ -48,11 +48,13 @@ class AuthProvider with ChangeNotifier {
 
       _user = _auth.currentUser;
       notifyListeners();
+      return true;
 
      
 
     } catch (e) {
       print('Error during Google Sign-In: $e');
+      return false;
     }
   }
 
