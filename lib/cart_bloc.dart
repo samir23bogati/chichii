@@ -95,6 +95,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     if (state is CartUpdatedState) {
       return List<CartItem>.from((state as CartUpdatedState).cartItems);
     }
-    return [];
+    return [ ];
   }
 }

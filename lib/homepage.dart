@@ -12,6 +12,8 @@ import 'package:padshala/food_promopage1.dart';
 import 'package:padshala/food_promopage2.dart';
 import 'package:padshala/footer.dart';
 import 'package:padshala/model/cartpage_track.dart';
+import 'package:padshala/screens/explore_items.dart';
+import 'package:padshala/screens/explore_page.dart';
 import 'package:padshala/whatsapp_support.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,7 +48,13 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 children: <Widget>[
                   Carouselfirst(),
+                  ExplorePage(),
+                  
+                  // ExploreItemPage(onAddToCart: (newItem) {
+                  //     context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
+                  //   },),
                   SizedBox(height: 20),
+
                   CarouselSecond(),
                   SizedBox(height: 20),
                   FoodPromopage1(
@@ -173,7 +181,6 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ],
-          
         ),
       ),
     );

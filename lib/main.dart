@@ -3,22 +3,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/login/auth_provider.dart';
 import 'package:padshala/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
-// Initialize local notifications
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-// Background notification handler (Required for iOS and Android)
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling background message: ${message.messageId}");
-}
 
 
 void main() async {
@@ -71,7 +62,7 @@ class MyApp extends StatelessWidget {
           create: (context) => CartBloc()..add(LoadCartEvent()),
         ),
       ],
-      child: MaterialApp(
+      child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'ChiChii',
         theme: ThemeData(
@@ -82,4 +73,14 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+// Initialize local notifications
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+// Background notification handler (Required for iOS and Android)
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling background message: ${message.messageId}");
 }

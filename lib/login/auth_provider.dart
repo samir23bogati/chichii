@@ -8,7 +8,6 @@ class AuthProvider with ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   String? verificationId; // Store the verificationId here
   User? _user;
-
   User? get user => _user;
 
   AuthProvider() {
@@ -21,23 +20,16 @@ class AuthProvider with ChangeNotifier {
 
   // Google Sign-In
   Future<bool> signInWithGoogle(BuildContext context) async {
-    print("Google Sign-In button clicked!");
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: kIsWeb
-            ? null
-            : "581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com", // Your Web Client ID for mobile
-        signInOption: SignInOption.standard,
-      );
-      GoogleSignInAccount? googleUser;
       if (kIsWeb) {
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
         await _auth.signInWithPopup(googleProvider);
       } else {
-        googleUser = await googleSignIn.signIn();
-        if (googleUser == null) return false; // User canceled sign-in
+        GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) return false; // User canceled
 
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
@@ -49,17 +41,14 @@ class AuthProvider with ChangeNotifier {
       _user = _auth.currentUser;
       notifyListeners();
       return true;
-
-     
-
     } catch (e) {
-      print('Error during Google Sign-In: $e');
+      _showSnackBar(context, 'Google Sign-In failed: ${e.toString()}');
       return false;
     }
   }
 
   // Phone Number Authentication
-  Future<String> signInWithPhoneNumber(BuildContext context, String phoneNumber) async {
+  Future<String?> signInWithPhoneNumber(BuildContext context, String phoneNumber) async {
     try {
       await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
@@ -67,57 +56,52 @@ class AuthProvider with ChangeNotifier {
           await _auth.signInWithCredential(credential);
           _user = _auth.currentUser;
           notifyListeners();
-
-          
         },
         verificationFailed: (FirebaseAuthException e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Phone number verification failed: ${e.message}')),
-          );
-          throw Exception('Phone number verification failed: ${e.message}');
+          _showSnackBar(context, 'Phone verification failed: ${e.message}');
+          print('Error: ${e.message}');
         },
         codeSent: (String verificationId, int? resendToken) async {
           this.verificationId = verificationId;
-          String? smsCode = await _getSmsCodeFromUser(context);
-          if (smsCode != null) {
-            PhoneAuthCredential credential = PhoneAuthProvider.credential(
-              verificationId: verificationId,
-              smsCode: smsCode,
-            );
-            await _auth.signInWithCredential(credential);
-            _user = _auth.currentUser;
-            notifyListeners();
-
-            } else {
-            throw Exception("SMS code not provided");
-          }
+          print('Verification ID: $verificationId'); // Log it here
+          notifyListeners();
         },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+        timeout: const Duration(seconds: 490),
+        codeAutoRetrievalTimeout: (String verificationId) {
+          this.verificationId = verificationId;
+        },
       );
-      return "Verification in progress";
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $e')),
-      );
-      throw Exception("An error occurred during phone number sign-in: $e");
+      _showSnackBar(context, 'Error: ${e.toString()}');
+      return "Error occurred";
     }
   }
 
   // OTP Verification
-  Future<bool> verifyOtp(BuildContext context, String otp, String verificationId) async {
+  Future<bool> verifyOtp(BuildContext context, String otp) async {
     try {
+      if (otp.isEmpty) {
+        _showSnackBar(context, 'Please enter the OTP.');
+        return false;
+      }
+
+      if (verificationId == null) {
+        _showSnackBar(
+            context, 'Verification ID is null, please request OTP again.');
+        return false;
+      }
+
       final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
+        verificationId: verificationId!,
         smsCode: otp,
       );
+
       await _auth.signInWithCredential(credential);
       _user = _auth.currentUser;
       notifyListeners();
       return true;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verification failed: $e')),
-      );
+      _showSnackBar(context, 'OTP verification failed: ${e.toString()}');
       return false;
     }
   }
@@ -126,42 +110,18 @@ class AuthProvider with ChangeNotifier {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+      await _googleSignIn.signOut();
       _user = null;
       notifyListeners();
     } catch (e) {
-      print('Error during sign-out: $e');
+      print('Sign-out error: $e');
     }
   }
-
-  // Helper function to get SMS code from the user
-  Future<String> _getSmsCodeFromUser(BuildContext context) async {
-    TextEditingController smsController = TextEditingController();
-    String smsCode = '';
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Enter the SMS Code'),
-          content: TextField(
-            controller: smsController,
-            decoration: InputDecoration(hintText: 'SMS Code'),
-            keyboardType: TextInputType.number,
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                smsCode = smsController.text.trim();
-                Navigator.of(context).pop();
-              },
-              child: Text('Submit'),
-            ),
-          ],
-        );
-      },
-    );
-    if (smsCode.isEmpty) {
-      throw Exception("SMS code is required");
-    }
-    return smsCode;
+  // Show SnackBar
+  void _showSnackBar(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    });
   }
 }

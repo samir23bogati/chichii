@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:padshala/login/auth_provider.dart';
 import 'package:padshala/login/map/address_selection_page.dart';
@@ -39,9 +40,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future <void> _sendPhoneNumber(AuthProvider authProvider) async {
+  Future<void> _sendPhoneNumber(AuthProvider authProvider) async {
     final phoneNumber = _phoneController.text.trim();
-    if (phoneNumber.isNotEmpty && phoneNumber.length >= 10) {
+    if (phoneNumber.isNotEmpty && phoneNumber.length == 10) {
       final formattedPhoneNumber = '+977$phoneNumber';
       setState(() => isLoading = true);
       try {
@@ -56,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
+        print("Error during OTP sending: $e");
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -64,14 +66,16 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-void _verifyOtp(AuthProvider authProvider) async {
+ Future<void> _verifyOtp(AuthProvider authProvider) async { 
   final otp = _otpController.text.trim();
+  print("Entered OTP: $otp");
+  print("Verification ID: $_verificationId");
   if (otp.isNotEmpty && _verificationId != null) {
     setState(() => isLoading = true);
     try {
-      final success = await authProvider.verifyOtp(context, otp, _verificationId!);
+      final success = await authProvider.verifyOtp(context, otp);
       if (success) {
-        _navigateToAddressSelectionPage(); // Redirect if OTP is verified
+        _navigateToAddressSelectionPage(); 
       } else {
         setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -90,8 +94,6 @@ void _verifyOtp(AuthProvider authProvider) async {
     );
   }
 }
-
-
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -102,9 +104,9 @@ void _verifyOtp(AuthProvider authProvider) async {
         child: Column(
           children: [
             _buildHeader(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             isOtpSent ? _buildOtpInput(authProvider) : _buildPhoneInput(authProvider),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             const Text("Login With Social Media Accounts"),
             _buildSocialLogin(authProvider),
           ],
@@ -120,23 +122,23 @@ void _verifyOtp(AuthProvider authProvider) async {
       color: const Color.fromRGBO(55, 39, 6, 1),
       child: Column(
         children: [
-          Image.asset('assets/images/chichiisplash.png', height: 60),
+          Image.asset('assets/images/chichiisplash.png', height: 120),
           const SizedBox(height: 10),
           const Text(
             "Login To Unlock Awesome",
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           const Text(
             "New Features",
             style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text("Finger Licking Good", style: TextStyle(color: Colors.white, fontSize: 12)),
-              Text("Great Deals & Offers", style: TextStyle(color: Colors.white, fontSize: 12)),
-              Text("Easy Ordering", style: TextStyle(color: Colors.white, fontSize: 12)),
+              Text("Finger Licking Good", style: TextStyle(color: Colors.white, fontSize: 13)),
+              Text("Great Deals & Offers", style: TextStyle(color: Colors.white, fontSize: 13)),
+              Text("Easy Ordering", style: TextStyle(color: Colors.white, fontSize: 13)),
             ],
           ),
         ],
@@ -163,18 +165,19 @@ void _verifyOtp(AuthProvider authProvider) async {
   Widget _buildPhoneNumberField() {
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey)),
       child: Row(
         children: [
-          Image.asset('assets/images/nepal_flag.png', height: 30),
-          const SizedBox(width: 10),
+          Image.asset('assets/images/nepal_flag.png', height: 36),
+          const SizedBox(width: 12),
           const Text("+977"),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(border: InputBorder.none, hintText: "Mobile Number"),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
         ],
@@ -186,18 +189,18 @@ void _verifyOtp(AuthProvider authProvider) async {
     return Column(
       children: [
         const Text("Verify Your OTP sent via SMS"),
-        const SizedBox(height: 10),
+        const SizedBox(height: 13),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
           child: PinCodeTextField(
             appContext: context,
-            length: 6,// cccchaanges 
+            length: 6,
             controller: _otpController,
             keyboardType: TextInputType.number,
             pinTheme: PinTheme(shape: PinCodeFieldShape.box, borderRadius: BorderRadius.circular(5), fieldHeight: 50, fieldWidth: 40, activeFillColor: Colors.white),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
           onPressed: () => _verifyOtp(authProvider),
@@ -208,7 +211,7 @@ void _verifyOtp(AuthProvider authProvider) async {
   }
 
  Widget _buildSocialLogin(AuthProvider authProvider) {
-  return _socialButton(FontAwesomeIcons.google, "Google", () {
+  return _socialButton(FontAwesomeIcons.googlePlusG, "Google", () {
     _handleGoogleSignIn(authProvider);
   });
 }
@@ -224,7 +227,7 @@ void _handleGoogleSignIn(AuthProvider authProvider) async {
   Widget _socialButton(IconData icon, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
-      child: FaIcon(icon, size: 30),
+      child: FaIcon(icon, size: 33),
     );
   }
 } 

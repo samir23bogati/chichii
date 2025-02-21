@@ -170,7 +170,7 @@ class CartPage extends StatelessWidget {
                           );
                         }
                       },
-                      child: const Text("PROCEED TO CHECKOUT"),
+                      child: const Text("PLACE ORDER"),
                     ),
                   ],
                 ),
