@@ -1,12 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
+import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/model/cart_item.dart';
-import 'package:provider/provider.dart';
 
 class ExploretabPage extends StatefulWidget {
   final int initialIndex;
@@ -21,13 +21,14 @@ class ExploretabPage extends StatefulWidget {
 class _ExploretabPageState extends State<ExploretabPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> tabs = [
     "Exclusive Deals",
     "Chicken Buckets",
     "Sides",
     "Chicken Meals",
-    "Burgers & Twisters",
+    "Veg Items",
     "Beverages"
   ];
   @override
@@ -60,7 +61,7 @@ class _ExploretabPageState extends State<ExploretabPage>
       case "Chicken Meals":
         jsonPath = 'assets/json/chicken_meals.json';
         break;
-      case "Burgers & Twisters":
+      case "Veg Items":
         jsonPath = 'assets/json/burgers_twisters.json';
         break;
       case "Beverages":
@@ -107,47 +108,34 @@ class _ExploretabPageState extends State<ExploretabPage>
           );
         }).toList(),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Consumer<CartBloc>(
-          builder: (context, cartBloc, child) {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.shopping_cart),
-                    onPressed: () {
-                      // Navigate to the cart page or show cart summary
-                    },
-                  ),
-                  Text(
-                    'Items in Cart: ${(cartBloc.state is CartUpdatedState) ? (cartBloc.state as CartUpdatedState).cartItems.length : 0}',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+      bottomNavigationBar: BottomNavBar(scaffoldKey: _scaffoldKey),
     );
   }
 }
 
-class MenuList extends StatelessWidget {
+class MenuList extends StatefulWidget {
   final List<Map<String, dynamic>> menuItems;
 
-  const MenuList({required this.menuItems});
+  const MenuList({required this.menuItems, Key? key}): super(key: key);
+
+   @override
+  _MenuListState createState() => _MenuListState();
+}
+
+class _MenuListState extends State<MenuList> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        final cartItems = state is CartUpdatedState ? state.cartItems : [];
+
     return ListView.builder(
       padding: EdgeInsets.all(16.0),
-      itemCount: menuItems.length,
+      itemCount: widget.menuItems.length,
       itemBuilder: (context, index) {
-        final item = menuItems[index];
+        final item = widget.menuItems[index];
+        final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]); 
         return Card(
           margin: EdgeInsets.only(bottom: 16),
           shape:
@@ -167,12 +155,17 @@ class MenuList extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16)),
                       SizedBox(height: 4),
-                      Text(item["price"],
+                      Text("Rs.${item["price"]}",
                           style: TextStyle(color: Colors.red, fontSize: 14)),
                     ],
                   ),
                 ),
-                ElevatedButton(
+                 AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+                  child: isAdded
+                      ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
+                      :ElevatedButton(
                   onPressed: () {
                     final cartItem = CartItem(
                       id: item["title"],
@@ -183,9 +176,10 @@ class MenuList extends StatelessWidget {
                     // Dispatch the event to CartBloc to add item to the cart
                     context
                         .read<CartBloc>()
-                        .add(AddToCartEvent(cartItem: cartItem));
+                        .add(AddToCartEvent(cartItem: cartItem));               
                   },
                   child: Text("Add to Cart"),
+                      ),
                 ),
               ],
             ),
@@ -193,5 +187,7 @@ class MenuList extends StatelessWidget {
         );
       },
     );
-  }
+  },
+    );
+}
 }

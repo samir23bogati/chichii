@@ -1,12 +1,12 @@
 [
     {
       "title": "Fries",
-      "price": "NRs 5000",
+      "price": "5000",
       "image": "assets/images/sides.jpg"
     },
     {
       "title": "Coleslaw",
-      "price": "NRs 5000",
+      "price": "5000",
       "image": "assets/images/sides.jpg"
     }
   ]

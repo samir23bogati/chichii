@@ -10,8 +10,6 @@ import 'package:padshala/login/login_page.dart';
 import 'package:padshala/model/cart_item.dart';
 import 'package:provider/provider.dart';
 
-import '../login/map/address_selection_page.dart';
-
 class CartPage extends StatelessWidget {
   final List<CartItem> cartItems; // Cart items passed as argument
   final Function(CartItem) onRemoveItem;

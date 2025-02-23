@@ -7,7 +7,7 @@ class ExplorePage extends StatelessWidget {
     {'title': 'Chicken Buckets', 'image': 'assets/images/chicken_buckets.jpg'},
     {'title': 'Sides', 'image': 'assets/images/sides.jpg'},
     {'title': 'Chicken Meals', 'image': 'assets/images/chicken_buckets.jpg'},
-    {'title': 'Burgers & Twisters', 'image': 'assets/images/chicken_buckets.jpg'},
+    {'title': 'Veg Items', 'image': 'assets/images/chicken_buckets.jpg'},
     {'title': 'Beverages', 'image': 'assets/images/chicken_buckets.jpg'},
   ];
 
@@ -32,13 +32,13 @@ class ExplorePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             GridView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: categories.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 3,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
