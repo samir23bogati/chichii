@@ -1,11 +1,11 @@
 [
     {
-      "title": "Fries",
+      "title": "Spicy Fries",
       "price": "5000",
       "image": "assets/images/sides.jpg"
     },
     {
-      "title": "Coleslaw",
+      "title": "Crispy Coleslaw",
       "price": "5000",
       "image": "assets/images/sides.jpg"
     }

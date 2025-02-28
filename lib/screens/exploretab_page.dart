@@ -136,58 +136,110 @@ class _MenuListState extends State<MenuList> {
       itemBuilder: (context, index) {
         final item = widget.menuItems[index];
         final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]); 
-        return Card(
-          margin: EdgeInsets.only(bottom: 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                Image.asset(item["image"],
-                    height: 80, width: 80, fit: BoxFit.cover),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item["title"],
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                      SizedBox(height: 4),
-                      Text("Rs.${item["price"]}",
-                          style: TextStyle(color: Colors.red, fontSize: 14)),
+        return GestureDetector(
+          onTap: (){
+            _showItemDialog(context,item);
+          },
+          child: Card(
+            margin: EdgeInsets.only(bottom: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Image.asset(item["image"], height: 80, width: 80, fit: BoxFit.cover),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(item["title"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
+                        SizedBox(height: 4),
+                        Text("Rs.${item["price"]}",
+                            style: TextStyle(color: Colors.red, fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                   AnimatedSwitcher(
+                    duration: Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+                    child: isAdded
+                        ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
+                        :ElevatedButton(
+                    onPressed: () {
+                       _showItemDialog(context, item);
+                                 
+                    },
+                    child: Text("Add to Cart"),
+                      ),
+                      ),
                     ],
                   ),
                 ),
-                 AnimatedSwitcher(
-                  duration: Duration(milliseconds: 300),
-                  transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-                  child: isAdded
-                      ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
-                      :ElevatedButton(
-                  onPressed: () {
-                    final cartItem = CartItem(
-                      id: item["title"],
-                      title: item["title"],
-                      price: double.tryParse(item["price"]) ?? 0.0,
-                      imageUrl: item["image"],
-                    );
-                    // Dispatch the event to CartBloc to add item to the cart
-                    context
-                        .read<CartBloc>()
-                        .add(AddToCartEvent(cartItem: cartItem));               
-                  },
-                  child: Text("Add to Cart"),
-                      ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
-  },
+  }
+
+  void _showItemDialog(BuildContext context, Map<String, dynamic> item) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        bool isAddedToCart = false; // State inside the dialog
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(item["image"], height: 200, width: 200, fit: BoxFit.cover),
+                  SizedBox(height: 12),
+                  Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  SizedBox(height: 4),
+                  Text("Rs.${item["price"]}", style: TextStyle(color: Colors.red, fontSize: 16)),
+                  SizedBox(height: 12),
+                  AnimatedSwitcher(
+                    duration: Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+                    child: isAddedToCart
+                        ? Icon(Icons.check_circle, color: Colors.green, size: 40, key: ValueKey("added_${item["title"]}"))
+                        : ElevatedButton(
+                            onPressed: () {
+                              final cartItem = CartItem(
+                                id: item["title"],
+                                title: item["title"],
+                                price: double.tryParse(item["price"]) ?? 0.0,
+                                imageUrl: item["image"],
+                              );
+                              context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
+
+                              setDialogState(() {
+                                isAddedToCart = true; // Update the UI in the dialog
+                              });
+
+                              // Close the dialog after 3 seconds
+                              Future.delayed(Duration(seconds: 2), () {
+                                if (Navigator.canPop(context)) {
+                                  Navigator.pop(context);
+                                }
+                              });
+                            },
+                            child: Text("Add to Cart"),
+                          ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
-}
+  }
 }

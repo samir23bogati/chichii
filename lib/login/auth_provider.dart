@@ -28,8 +28,7 @@ class AuthProvider with ChangeNotifier {
         GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return false; // User canceled
 
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
