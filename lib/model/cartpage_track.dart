@@ -4,11 +4,12 @@ import 'package:padshala/Billing/BillingConfirmationPage.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
-import 'package:padshala/login/map/address_selection_page.dart' as address_selection_page;
-import 'package:padshala/login/auth_provider.dart';
+import 'package:padshala/login/auth/auth_bloc.dart';
+import 'package:padshala/login/auth/auth_state.dart';
+import 'package:padshala/login/map/address_selection_page.dart'
+    as address_selection_page;
 import 'package:padshala/login/login_page.dart';
 import 'package:padshala/model/cart_item.dart';
-import 'package:provider/provider.dart';
 
 class CartPage extends StatelessWidget {
   final List<CartItem> cartItems; // Cart items passed as argument
@@ -23,18 +24,16 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Trigger cart load when the page is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadCartEvent()); // Dispatch LoadCartEvent
+      context.read<CartBloc>().add(LoadCartEvent());
     });
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Cart"),
       ),
-      body: BlocBuilder<CartBloc, CartState>( // Listen to CartBloc changes
-        builder: (context, state) { 
-
+      body: BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
           if (state is CartLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CartUpdatedState) {
@@ -45,11 +44,13 @@ class CartPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
                         child: ListTile(
                           leading: Image.asset(item.imageUrl),
                           title: Text(item.title),
-                          subtitle: Text('Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}'),
+                          subtitle: Text(
+                              'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -58,40 +59,48 @@ class CartPage extends StatelessWidget {
                                 onPressed: () {
                                   if (item.quantity > 1) {
                                     // Decrease quantity by 1
-                                  
+
                                     context.read<CartBloc>().add(
                                           UpdateQuantityEvent(
-                                            cartItem: item.copyWith(quantity: item.quantity - 1),
+                                            cartItem: item.copyWith(
+                                                quantity: item.quantity - 1),
                                             isIncrement: false,
-                                             quantity: item.quantity - 1, // Decrement
+                                            quantity:
+                                                item.quantity - 1, // Decrement
                                           ),
                                         );
                                   } else {
                                     context.read<CartBloc>().add(
-                                          RemoveFromCartEvent(cartItem: item), // Remove if quantity is 1
+                                          RemoveFromCartEvent(
+                                              cartItem:
+                                                  item), // Remove if quantity is 1
                                         );
                                   }
                                 },
                               ),
-                              Text('${item.quantity}', style: const TextStyle(fontSize: 16)),
+                              Text('${item.quantity}',
+                                  style: const TextStyle(fontSize: 16)),
                               IconButton(
                                 icon: const Icon(Icons.add),
                                 onPressed: () {
                                   // Increase quantity by 1
                                   context.read<CartBloc>().add(
-                                          UpdateQuantityEvent(
-                                            cartItem: item.copyWith(quantity: item.quantity + 1),
-                                            isIncrement: true, 
-                                            quantity: item.quantity + 1, // Increment
-                                          ),
-                                        );
+                                        UpdateQuantityEvent(
+                                          cartItem: item.copyWith(
+                                              quantity: item.quantity + 1),
+                                          isIncrement: true,
+                                          quantity:
+                                              item.quantity + 1, // Increment
+                                        ),
+                                      );
                                 },
                               ),
                               IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () {
                                   context.read<CartBloc>().add(
-                                        RemoveFromCartEvent(cartItem: item), // Delete the item
+                                        RemoveFromCartEvent(
+                                            cartItem: item), // Delete the item
                                       );
                                 },
                               ),
@@ -136,36 +145,45 @@ class CartPage extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        final authProvider =
-                            Provider.of<AuthProvider>(context, listen: false);
-                        if (authProvider.user == null) {
-                          bool? loggedIn = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage(
-                                 cartItems: cartItems,
-                                 totalPrice: state.totalPrice,
-                            ),),
-                          );
+                        final authState = context.read<AuthBloc>().state;
+                        print('Current auth state: $authState');
 
-                          if (loggedIn == null || !loggedIn) return;
+                        if (authState is! Authenticated) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(
+                                cartItems: state.cartItems,
+                                totalPrice: state.totalPrice,
+                              ),
+                            ),
+                          );
                         }
-                       final selectedLocation = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => address_selection_page.AddressSelectionPage(
-                            cartItems: state.cartItems, // Ensure updated cartItems
-                            totalPrice: state.totalPrice,
-                          )),
-                        );
-
-                        if (selectedLocation != null) {
-                          Navigator.push(
+                        final updatedAuthState = context.read<AuthBloc>().state;
+                        if (updatedAuthState is Authenticated) {
+                          final selectedLocation = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => BillingConfirmationPage(
-                              address: selectedLocation,
-                              cartItems: state.cartItems, // Ensure updated cartItems
-                              totalPrice: state.totalPrice,
-                            )),
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  address_selection_page.AddressSelectionPage(
+                                cartItems: state.cartItems,
+                                totalPrice: state.totalPrice,
+                              ),
+                            ),
                           );
+
+                          if (selectedLocation != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BillingConfirmationPage(
+                                  address: selectedLocation,
+                                  cartItems: state.cartItems,
+                                  totalPrice: state.totalPrice,
+                                ),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: const Text("PLACE ORDER"),
@@ -181,4 +199,3 @@ class CartPage extends StatelessWidget {
     );
   }
 }
-

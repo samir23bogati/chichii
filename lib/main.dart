@@ -6,22 +6,18 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
-import 'package:padshala/login/auth_provider.dart';
+import 'package:padshala/login/auth/auth_bloc.dart';
 import 'package:padshala/screens/splash_screen.dart';
-import 'package:provider/provider.dart';
 
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Check if Firebase is already initialized
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp();
   }
- // Initialize Firebase Messaging
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  // Request notification permissions
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
     badge: true,
@@ -53,13 +49,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (context) => AuthProvider(),
-        ),
-        BlocProvider<CartBloc>(
-          create: (context) => CartBloc()..add(LoadCartEvent()),
+        BlocProvider<AuthBloc>( create: (context) => AuthBloc()),
+       
+        BlocProvider<CartBloc>(create: (context) => CartBloc()..add(LoadCartEvent()),
         ),
       ],
       child: GetMaterialApp(

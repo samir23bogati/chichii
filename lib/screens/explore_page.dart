@@ -32,10 +32,11 @@ class ExplorePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 15),
-            GridView.builder(
+            SizedBox(
+             height: (categories.length / 3).ceil() * 120,
+            child: GridView.builder(
               physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
+          
               itemCount: categories.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
@@ -67,6 +68,7 @@ class ExplorePage extends StatelessWidget {
                   ),
                 );
               },
+            ),
             ),
           ],
         ),

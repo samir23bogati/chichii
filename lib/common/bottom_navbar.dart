@@ -18,108 +18,141 @@ class BottomNavBar extends StatelessWidget {
       clipBehavior: Clip.none,
       alignment: Alignment.topCenter,
       children: [
-          ClipPath(
-            clipper: BottomNavBarClipper(),
-          child: Container(
-            height: 70,
-            decoration: BoxDecoration(
-             color: Colors.brown[900], // Dark brown background
-               boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 5,
-                  offset: Offset(0, -3),
-                )
-              ],
+        IgnorePointer( 
+    ignoring: true,
+    child: ClipPath(
+      clipper: BottomNavBarClipper(),
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.brown[900],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5,
+              offset: Offset(0, -3),
             ),
-              child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.home, "Home", isActive: true, onTap: () {
-                 Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-               );
-                }),
-                _buildNavItem(Icons.list_alt, "Menu", onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ExploretabPage(initialIndex: 0)),
-                  );
-                }),
-          
-                SizedBox(width: 60), // Space for floating button
-                _buildNavItem(Icons.account_circle, "Account", onTap: () {}),
-                _buildNavItem(Icons.grid_view, "More", onTap: () {
-                  scaffoldKey.currentState!.openDrawer();
-                }),
-              ],
-            ),
-          ),
+          ],
         ),
+      ),
+    ),
+        ),
+    
+    // Navigation Items (Placed on Top of Clipped Navbar)
         Positioned(
-          top: -28, // Lift the cart button
-          child: BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              int cartItemCount = (state is CartUpdatedState) ? state.cartItems.length : 0;
-
-             return Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
-                ),
-                child: FloatingActionButton(
-                  backgroundColor: Colors.brown[800],
-                  elevation: 5,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CartPage(
-                          cartItems: (state is CartUpdatedState) ? state.cartItems : [],
-                          onRemoveItem: (item) {
-                            context.read<CartBloc>().add(RemoveFromCartEvent(cartItem: item));
-                          },
-                          onUpdateQuantity: (item, change) {
-                            context.read<CartBloc>().add(UpdateQuantityEvent(cartItem: item, quantity: change, isIncrement: change > 0));
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Icon(Icons.shopping_cart, color: Colors.amber, size: 28),
-                    if (cartItemCount > 0)
-                      Positioned(
-                        right: -2,
-                        top: -2,
-                        child: Container(
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+    bottom: 10,
+    left: 0,
+    right: 0,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildNavItem(Icons.home, "Home", isActive: true, onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        }),
+        _buildNavItem(Icons.list_alt, "Menu", onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ExploretabPage(initialIndex: 0)),
+          );
+        }),
+        SizedBox(width: 60), // Space for FloatingActionButton
+        _buildNavItem(Icons.account_circle, "Account", onTap: () {}),
+        _buildNavItem(Icons.grid_view, "More", onTap: () {
+          scaffoldKey.currentState!.openDrawer();
+        }),
+      ],
+    ),
+        ),
+    
+        // Floating Action Button (Positioned in the Transparent Gap)
+        Positioned(
+    top: -35, // Adjust based on gap depth
+      child: BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+    int cartItemCount = (state is CartUpdatedState) ? state.cartItems.length : 0;
+    
+    return GestureDetector(
+        onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(
+          cartItems: (state is CartUpdatedState) ? state.cartItems : [],
+          onRemoveItem: (item) {
+            context.read<CartBloc>().add(RemoveFromCartEvent(cartItem: item));
+          },
+          onUpdateQuantity: (item, change) {
+            context.read<CartBloc>().add(UpdateQuantityEvent(cartItem: item, quantity: change, isIncrement: change > 0));
+          },
+        ),
+      ),
+    );
+        },
+        behavior: HitTestBehavior.translucent, // Ensures the entire area detects taps
+        child: ClipRect(
+    child: Container(
+      padding: EdgeInsets.all(10), // Increase tappable area
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [BoxShadow(color: Colors.transparent, blurRadius: 8)],
+      ),
+      child: FloatingActionButton(
+        backgroundColor: Colors.brown[800],
+        elevation: 1,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CartPage(
+                cartItems: (state is CartUpdatedState) ? state.cartItems : [],
+                onRemoveItem: (item) {
+                  context.read<CartBloc>().add(RemoveFromCartEvent(cartItem: item));
+                },
+                onUpdateQuantity: (item, change) {
+                  context.read<CartBloc>().add(UpdateQuantityEvent(cartItem: item, quantity: change, isIncrement: change > 0));
+                },
+              ),
+            ),
+          );
+        },
+                  child: Stack(                             
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(Icons.shopping_cart, color: Colors.amber, size: 28),
+                      if (cartItemCount > 0)
+                        Positioned(
+                          right: -2,
+                          top: -2,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              cartItemCount.toString(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  ),
+                              textAlign: TextAlign.center,
+                           ),
+                            ),
                           ),
-                          constraints: BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: Text(
-                            cartItemCount.toString(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                                ),
-                            textAlign: TextAlign.center,
-                         ),
-                          ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              );
+        ),
+    );
             },
           ),
         ),
@@ -149,29 +182,23 @@ class BottomNavBarClipper extends CustomClipper<Path> {
     double width = size.width;
     double height = size.height;
     double centerX = width / 2;
-    double curveRadius = 75; // Depth of the dip
-    double curveWidth = 95; // Width of the curved section
-     double fabHeight = 40;
+    double curveDepth = 59; // Depth of the dip
+    double curveWidth = 110; // Width of the curved section
 
     Path path = Path();
-    path.moveTo(0, 0);
-    
-    // Left straight section
-    path.lineTo(centerX - curveWidth / 2, 0);
+    path.lineTo(centerX - curveWidth / 2, 0); // Move to left side of curve
 
-    // Concave curve for FAB
-    path.quadraticBezierTo(centerX, curveRadius, centerX + curveWidth / 2, 0);
+    // Create transparent curve
+    path.quadraticBezierTo(centerX, curveDepth * 1.8, centerX + curveWidth / 2, 0);
 
-    // Right straight section
     path.lineTo(width, 0);
-        // Clipping the remaining area except the transparent gap for the FAB
-    path.lineTo(width, height );
-    path.lineTo(0, height );
-    
+    path.lineTo(width, height);
+    path.lineTo(0, height);
     path.close();
+
     return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

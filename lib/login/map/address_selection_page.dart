@@ -203,9 +203,9 @@ Future<void> _onPlaceSelected(String placeId) async {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   color: Colors.white,
+                  height: 200,
                   child: ListView.builder(
                     itemCount: predictions.length,
-                    shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(predictions[index]['description']),
@@ -258,7 +258,7 @@ Future<void> _onPlaceSelected(String placeId) async {
                             );
                           }
                         : null,
-                    child: const Text("Confirm Address"),
+                    child: const Text("CONFIRM LOCATION"),
                   ),
                 ],
               ),

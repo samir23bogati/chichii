@@ -169,8 +169,13 @@ class _MenuListState extends State<MenuList> {
                         ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
                         :ElevatedButton(
                     onPressed: () {
-                       _showItemDialog(context, item);
-                                 
+                      final cartItem = CartItem(
+                        id: item["title"],
+                        title: item["title"],
+                        price: double.tryParse(item["price"]) ?? 0.0,
+                        imageUrl: item["image"],
+                      );
+                      context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
                     },
                     child: Text("Add to Cart"),
                       ),
@@ -190,48 +195,47 @@ class _MenuListState extends State<MenuList> {
     showDialog(
       context: context,
       builder: (context) {
-        bool isAddedToCart = false; // State inside the dialog
+        return BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+          final cartItems = state is CartUpdatedState ? state.cartItems : [];
+          bool isAddedToCart = cartItems.any((cartItem) => cartItem.id == item["title"]);
 
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(item["image"], height: 200, width: 200, fit: BoxFit.cover),
-                  SizedBox(height: 12),
-                  Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                  SizedBox(height: 4),
-                  Text("Rs.${item["price"]}", style: TextStyle(color: Colors.red, fontSize: 16)),
-                  SizedBox(height: 12),
-                  AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-                    child: isAddedToCart
-                        ? Icon(Icons.check_circle, color: Colors.green, size: 40, key: ValueKey("added_${item["title"]}"))
-                        : ElevatedButton(
-                            onPressed: () {
-                              final cartItem = CartItem(
-                                id: item["title"],
-                                title: item["title"],
-                                price: double.tryParse(item["price"]) ?? 0.0,
-                                imageUrl: item["image"],
-                              );
-                              context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
 
-                              setDialogState(() {
-                                isAddedToCart = true; // Update the UI in the dialog
-                              });
+        return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(item["image"], height: 200, width: 200, fit: BoxFit.cover),
+                SizedBox(height: 12),
+                Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                SizedBox(height: 4),
+                Text("Rs.${item["price"]}", style: TextStyle(color: Colors.red, fontSize: 16)),
+                SizedBox(height: 12),
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
+                  child: isAddedToCart
+                      ? Icon(Icons.check_circle, color: Colors.green, size: 40, key: ValueKey("added_${item["title"]}"))
+                      : ElevatedButton(
+                          onPressed: () {
+                            final cartItem = CartItem(
+                              id: item["title"],
+                              title: item["title"],
+                              price: double.tryParse(item["price"]) ?? 0.0,
+                              imageUrl: item["image"],
+                            );
+                            context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
 
-                              // Close the dialog after 3 seconds
-                              Future.delayed(Duration(seconds: 2), () {
-                                if (Navigator.canPop(context)) {
-                                  Navigator.pop(context);
-                                }
-                              });
-                            },
-                            child: Text("Add to Cart"),
+                            // Wait for the Bloc state to update, then close the dialog after 2 seconds
+                            Future.delayed(Duration(milliseconds: 200), () {
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              }
+                            });
+                          },
+                          child: Text("Add to Cart"),
                           ),
                   ),
                 ],

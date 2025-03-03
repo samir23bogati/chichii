@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:padshala/login/auth_provider.dart';
+import 'package:padshala/login/auth/auth_bloc.dart';
+import 'package:padshala/login/auth/auth_event.dart';
+import 'package:padshala/login/auth/auth_state.dart';
 import 'package:padshala/login/map/address_selection_page.dart';
 import 'package:padshala/model/cart_item.dart';
-import 'package:provider/provider.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,97 +26,59 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  String? _verificationId;
   bool isOtpSent = false;
   bool isLoading = false;
 
-  void _navigateToAddressSelectionPage() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddressSelectionPage(
-          cartItems: widget.cartItems,
-          totalPrice: widget.totalPrice,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _sendPhoneNumber(AuthProvider authProvider) async {
-    final phoneNumber = _phoneController.text.trim();
-    if (phoneNumber.isNotEmpty && phoneNumber.length == 10) {
-      final formattedPhoneNumber = '+977$phoneNumber';
-      setState(() => isLoading = true);
-      try {
-        final verificationId = await authProvider.signInWithPhoneNumber(context, formattedPhoneNumber);
-        setState(() {
-          _verificationId = verificationId;
-          isOtpSent = true;
-          isLoading = false;
-        });
-      } catch (e) {
-        setState(() => isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-        print("Error during OTP sending: $e");
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid phone number')),
-      );
+  @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is Authenticated) {
+      _navigateToAddressSelectionPage();
     }
-  }
-
- Future<void> _verifyOtp(AuthProvider authProvider) async { 
-  final otp = _otpController.text.trim();
-  print("Entered OTP: $otp");
-  print("Verification ID: $_verificationId");
-  if (otp.isNotEmpty && _verificationId != null) {
-    setState(() => isLoading = true);
-    try {
-      final success = await authProvider.verifyOtp(context, otp);
-      if (success) {
-        _navigateToAddressSelectionPage(); 
-      } else {
-        setState(() => isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('OTP verification failed, please try again')),
-        );
-      }
-    } catch (e) {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter the OTP')),
-    );
-  }
+  });
 }
+
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 25),
-            isOtpSent ? _buildOtpInput(authProvider) : _buildPhoneInput(authProvider),
-            const SizedBox(height: 25),
-            const Text("Login With Social Media Accounts"),
-            _buildSocialLogin(authProvider),
-          ],
+    return BlocProvider(
+    create: (context) => AuthBloc()..add(CheckAuthStatus()),  
+    child: BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is Authenticated) {
+          _navigateToAddressSelectionPage();  
+        } else if (state is AuthError) {
+          setState(() => isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }else if (state is OtpSentState) {
+            setState(() {
+              isOtpSent = true;
+            });
+          }
+        },
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 25),
+                isOtpSent ? _buildOtpInput() : _buildPhoneInput(),
+                const SizedBox(height: 25),
+                const Text("Login With Social Media Accounts"),
+                 const SizedBox(height: 10),
+                _buildGoogleSignInButton(),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
-
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
@@ -146,18 +110,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildPhoneInput(AuthProvider authProvider) {
+  Widget _buildPhoneInput() {
     return Column(
       children: [
         _buildPhoneNumberField(),
         const SizedBox(height: 10),
-        isLoading 
-        ? CircularProgressIndicator() // Show loading spinner while waiting for OTP
-        : ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
-          onPressed: () => _sendPhoneNumber(authProvider),
-          child: const Text("OTP via SMS", style: TextStyle(color: Colors.white)),
-        ),
+        isLoading
+            ? const CircularProgressIndicator()
+            : ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
+                onPressed: _sendPhoneNumber,
+                child: const Text("OTP via SMS", style: TextStyle(color: Colors.white)),
+              ),
       ],
     );
   }
@@ -165,7 +129,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildPhoneNumberField() {
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey),
+      ),
       child: Row(
         children: [
           Image.asset('assets/images/nepal_flag.png', height: 36),
@@ -176,7 +143,10 @@ class _LoginPageState extends State<LoginPage> {
             child: TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(border: InputBorder.none, hintText: "Mobile Number"),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: "Mobile Number",
+              ),
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
@@ -185,7 +155,20 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildOtpInput(AuthProvider authProvider) {
+  void _sendPhoneNumber() {
+    final phoneNumber = _phoneController.text.trim();
+    if (phoneNumber.isNotEmpty && phoneNumber.length == 10) {
+      final formattedPhoneNumber = '+977$phoneNumber';
+       print('Sending OTP for $formattedPhoneNumber'); // Debugging line
+      context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid phone number')),
+      );
+    }
+  }
+
+  Widget _buildOtpInput() {
     return Column(
       children: [
         const Text("Verify Your OTP sent via SMS"),
@@ -197,37 +180,72 @@ class _LoginPageState extends State<LoginPage> {
             length: 6,
             controller: _otpController,
             keyboardType: TextInputType.number,
-            pinTheme: PinTheme(shape: PinCodeFieldShape.box, borderRadius: BorderRadius.circular(5), fieldHeight: 50, fieldWidth: 40, activeFillColor: Colors.white),
+            pinTheme: PinTheme(
+              shape: PinCodeFieldShape.box,
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 50,
+              fieldWidth: 40,
+              activeFillColor: Colors.white,
+            ),
           ),
         ),
         const SizedBox(height: 12),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
-          onPressed: () => _verifyOtp(authProvider),
+          onPressed: _verifyOtp,
           child: const Text("Verify OTP", style: TextStyle(color: Colors.white)),
         ),
       ],
     );
   }
 
- Widget _buildSocialLogin(AuthProvider authProvider) {
-  return _socialButton(FontAwesomeIcons.googlePlusG, "Google", () {
-    _handleGoogleSignIn(authProvider);
-  });
-}
+  void _verifyOtp() {
+    final otp = _otpController.text.trim();
+    if (otp.isNotEmpty) {
+      context.read<AuthBloc>().add(VerifyOtpRequested(otp));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter the OTP')),
+      );
+    }
+  }
 
-void _handleGoogleSignIn(AuthProvider authProvider) async {
-  final isLoggedIn = await authProvider.signInWithGoogle(context);
-  if (isLoggedIn) {
-    _navigateToAddressSelectionPage();
-}
-}
-
-
-  Widget _socialButton(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: FaIcon(icon, size: 33),
+ Widget _buildGoogleSignInButton() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: const BorderSide(color: Colors.grey),
+            ),
+          ),
+          icon: state is GoogleAuthLoading
+              ? const CircularProgressIndicator() // Show loading indicator
+              : const FaIcon(FontAwesomeIcons.google, color: Colors.red),
+          label: const Text("Sign in with Google"),
+          onPressed: state is GoogleAuthLoading
+              ? null
+              : () {
+                  context.read<AuthBloc>().add(GoogleSignInRequested());
+                },
+        );
+      },
     );
   }
-} 
+
+  void _navigateToAddressSelectionPage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddressSelectionPage(
+          cartItems: widget.cartItems,
+          totalPrice: widget.totalPrice,
+        ),
+      ),
+    );
+  }
+}
