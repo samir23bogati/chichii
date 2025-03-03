@@ -107,7 +107,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       return userCredential.user;
     } else {
-      throw Exception('Verification ID is missing');
+      throw Exception('Verification ID missing');
     }
   }
 
