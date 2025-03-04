@@ -159,8 +159,11 @@ void initState() {
     final phoneNumber = _phoneController.text.trim();
     if (phoneNumber.isNotEmpty && phoneNumber.length == 10) {
       final formattedPhoneNumber = '+977$phoneNumber';
-       print('Sending OTP for $formattedPhoneNumber'); // Debugging line
-      context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
+     setState(() {
+      isLoading = true;
+    });
+    print('Sending OTP for $formattedPhoneNumber'); // Debugging line
+    context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a valid phone number')),

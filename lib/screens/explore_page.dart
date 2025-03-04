@@ -4,11 +4,11 @@ import 'package:padshala/screens/exploretab_page.dart';
 class ExplorePage extends StatelessWidget {
   final List<Map<String, String>> categories = [
     {'title': 'Exclusive Deals', 'image': 'assets/images/exclusive_deals.jpg'},
-    {'title': 'Chicken Buckets', 'image': 'assets/images/chicken_buckets.jpg'},
+    {'title': 'Cooked Food', 'image': 'assets/images/cookedfood.png'},
     {'title': 'Sides', 'image': 'assets/images/sides.jpg'},
     {'title': 'Chicken Meals', 'image': 'assets/images/chicken_buckets.jpg'},
     {'title': 'Veg Items', 'image': 'assets/images/chicken_buckets.jpg'},
-    {'title': 'Beverages', 'image': 'assets/images/chicken_buckets.jpg'},
+    {'title': 'Beverages', 'image': 'assets/images/beverages2.jpg'},
   ];
 
   @override

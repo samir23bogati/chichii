@@ -182,8 +182,8 @@ class BottomNavBarClipper extends CustomClipper<Path> {
     double width = size.width;
     double height = size.height;
     double centerX = width / 2;
-    double curveDepth = 59; // Depth of the dip
-    double curveWidth = 110; // Width of the curved section
+    double curveDepth = 45; // Depth of the dip
+    double curveWidth = 102; // Width of the curved section
 
     Path path = Path();
     path.lineTo(centerX - curveWidth / 2, 0); // Move to left side of curve

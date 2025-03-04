@@ -22,10 +22,11 @@ class _ExploretabPageState extends State<ExploretabPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  
 
   final List<String> tabs = [
     "Exclusive Deals",
-    "Chicken Buckets",
+    "Cooked Food",
     "Sides",
     "Chicken Meals",
     "Veg Items",
@@ -52,7 +53,7 @@ class _ExploretabPageState extends State<ExploretabPage>
       case "Exclusive Deals":
         jsonPath = 'assets/json/exclusive_deals.json';
         break;
-      case "Chicken Buckets":
+      case "Cooked Food":
         jsonPath = 'assets/json/chicken_buckets.json';
         break;
       case "Sides":
