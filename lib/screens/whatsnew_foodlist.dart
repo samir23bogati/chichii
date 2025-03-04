@@ -44,8 +44,8 @@ class WhatsnewFoodlist extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Price: NRS.${price.toStringAsFixed(2)}", // Displaying the price
-                  style: TextStyle(fontSize:22 , fontWeight: FontWeight.bold),
+                  "Price: NRS.${price.toStringAsFixed(2)}", 
+                  style: TextStyle(fontSize:20 , fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -69,7 +69,6 @@ class WhatsnewFoodlist extends StatelessWidget {
               CartItem? existingCartItem;
 
               if (state is CartUpdatedState) {
-                // Ensure correct state type
                 existingCartItem = state.cartItems.firstWhere(
                   (item) => item.id == comboName,
                   orElse: () => CartItem(
@@ -97,10 +96,10 @@ class WhatsnewFoodlist extends StatelessWidget {
 
                     if (!isAddedToCart) {
                       context.read<CartBloc>().add(AddToCartEvent(
-                          cartItem: cartItem)); // Adding to the cart
+                          cartItem: cartItem)); 
                     } else {
                       context.read<CartBloc>().add(RemoveFromCartEvent(
-                          cartItem: cartItem)); // Removing from the cart
+                          cartItem: cartItem)); 
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -117,7 +116,7 @@ class WhatsnewFoodlist extends StatelessWidget {
                             : Icons.shopping_cart,
                         color: Colors.white,
                       ),
-                      SizedBox(width: 8), // Space between icon and text
+                      SizedBox(width: 8), 
                       Text(
                         isAddedToCart ? "ADDED IN CART" : "Add to Cart",
                         style: TextStyle(color: Colors.white),
