@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:padshala/best_seller.dart';
 import 'package:padshala/beverage_promopage.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
@@ -29,10 +30,10 @@ class _HomePageState extends State<HomePage> {
     context.read<CartBloc>().add(LoadCartEvent());
   }
 
-
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
+    return SafeArea(
+      child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -42,54 +43,42 @@ class _HomePageState extends State<HomePage> {
         ),
         drawer: DrawerMenu(),
         body: Stack(
-          children: <Widget>[
-            SizedBox.expand(
-              child: ListView(
-                children: <Widget>[
-                  Carouselfirst(),
-                  WhatsNewSection (),
-                  ExplorePage(),
-                  SizedBox(height: 20),
-                  CarouselSecond(),
-                  SizedBox(height: 20),
-                  FoodPromopage1(
-                    onAddToCart: (newItem) {
-                      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    color: Colors.amber,
-                    child: Text(
-                      "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  BeveragePromoPage(
-                    onAddToCart: (newItem) {
-                      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  FoodPromopage2(
-                    onAddToCart: (newItem) {
-                      context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  BrandsWeDeal(),
-                  SizedBox(height: 20),
-                  Footer(),
-                ],
-              ),
+          children: [
+            ListView(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              children: [
+                const Carouselfirst(),
+                WhatsNewSection(),
+                ExplorePage(),
+                BestSellerPage(),
+                CarouselSecond(),
+                FoodPromopage1(
+                  onAddToCart: (newItem) {
+                    context
+                        .read<CartBloc>()
+                        .add(AddToCartEvent(cartItem: newItem));
+                  },
+                ),
+                _promoBanner(),
+                BeveragePromoPage(
+                  onAddToCart: (newItem) {
+                    context
+                        .read<CartBloc>()
+                        .add(AddToCartEvent(cartItem: newItem));
+                  },
+                ),
+                FoodPromopage2(
+                  onAddToCart: (newItem) {
+                    context
+                        .read<CartBloc>()
+                        .add(AddToCartEvent(cartItem: newItem));
+                  },
+                ),
+                BrandsWeDeal(),
+                Footer(),
+              ],
             ),
-            Positioned(
+            const Positioned(
               bottom: 12,
               right: 14,
               child: WhatsappSupportButton(),
@@ -97,7 +86,24 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         bottomNavigationBar: BottomNavBar(scaffoldKey: _scaffoldKey),
+      ),
+    );
+  }
 
-      );
+  Widget _promoBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(10),
+      color: Colors.amber,
+      child: const Text(
+        "Cravings Never Sleep, And Neither Do WE--24/7 Food Delivery At Your Service!",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 }

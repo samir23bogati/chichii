@@ -45,7 +45,6 @@ class _ExploretabPageState extends State<ExploretabPage>
     super.dispose();
   }
 
-  // Helper function to load menu items from JSON file based on category
   Future<List<Map<String, dynamic>>> _loadMenuItems(String category) async {
     String jsonPath = '';
 
@@ -93,7 +92,7 @@ class _ExploretabPageState extends State<ExploretabPage>
         children: tabs.map((category) {
           return FutureBuilder<List<Map<String, dynamic>>>(
             future: _loadMenuItems(
-                category), // Load items dynamically based on category
+                category), 
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
