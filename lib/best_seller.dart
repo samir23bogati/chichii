@@ -3,12 +3,12 @@ import 'package:padshala/best_sellerdetail.dart';
 
 class BestSellerPage extends StatelessWidget {
   final List<Map<String, String>> bestSellers = [
-    {'title': 'Item 1', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Item 2', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Item 3', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Item 4', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Item 5', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Item 6', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Buff MoMo', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Chicken Biryani', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Chicken Lollipop', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Khukuri Rum', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Mustang Aloo', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Jumbo Pork Sekuwa', 'image': 'assets/images/sdhekochick.jpg'},
   ];
 
   @override
@@ -21,24 +21,24 @@ class BestSellerPage extends StatelessWidget {
         children: [
           Text(
             "BEST SELLER",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           SizedBox(
-            height: 400, // Set an appropriate height based on your layout needs
+            height: 425, 
             child: GridView.builder(
+
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 0.6,
+                childAspectRatio: 0.55,
               ),
               itemCount: bestSellers.length,
-              physics:
-                  NeverScrollableScrollPhysics(), // Prevents nested scrolling issues
+              physics:NeverScrollableScrollPhysics(), 
               itemBuilder: (context, index) {
                 final item = bestSellers[index];
-
+            
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -64,7 +64,7 @@ class BestSellerPage extends StatelessWidget {
                                 item['image']!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
-                                height: 155,
+                                height: 150,
                               ),
                             ),
                             Padding(
@@ -73,7 +73,7 @@ class BestSellerPage extends StatelessWidget {
                                 item['title']!,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -85,7 +85,7 @@ class BestSellerPage extends StatelessWidget {
                         left: 4,
                         child: Container(
                            width: 47, 
-                          height: 61, 
+                          height: 65, 
                           padding: EdgeInsets.symmetric(
                             horizontal: 2,
                             vertical: 2,
@@ -106,13 +106,13 @@ class BestSellerPage extends StatelessWidget {
                                 style: TextStyle(
                                   color: Colors.amber,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 11, // Adjust size as needed
+                                  fontSize: 12, 
                                 ),
                               ),
                                Icon(
                                 Icons.star,
                                 color: Colors.amber,
-                                size: 29, // Size of the star icon
+                                size: 30, 
                               ),
                             ],
                           ),
