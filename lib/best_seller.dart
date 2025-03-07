@@ -3,12 +3,12 @@ import 'package:padshala/best_sellerdetail.dart';
 
 class BestSellerPage extends StatelessWidget {
   final List<Map<String, String>> bestSellers = [
-    {'title': 'Buff MoMo', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Chicken Biryani', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Chicken Lollipop', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Khukuri Rum', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Mustang Aloo', 'image': 'assets/images/sdhekochick.jpg'},
-    {'title': 'Jumbo Pork Sekuwa', 'image': 'assets/images/sdhekochick.jpg'},
+    {'title': 'Buff MoMo', 'image': 'assets/images/sdhekochick.jpg','price': ' NRS 450'},
+    {'title': 'Chicken Biryani', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 850'},
+    {'title': 'Chicken Lollipop', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 555'},
+    {'title': 'Khukuri Rum', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 850'},
+    {'title': 'Mustang Aloo', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 458'},
+    {'title': 'Jumbo Pork Sekuwa', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 598'},
   ];
 
   @override
@@ -44,7 +44,12 @@ class BestSellerPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BestSellerDetailPage(),
+                        builder: (context) => BestSellerDetailPage(
+                           title: item['title']!,
+                          image: item['image']!,
+                          price: item['price']!,
+                          bestSellers: bestSellers,
+                        ),
                       ),
                     );
                   },
@@ -64,17 +69,31 @@ class BestSellerPage extends StatelessWidget {
                                 item['image']!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
-                                height: 150,
+                                height: 140,
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                item['title']!,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                   Text(
+                                  item['title']!,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                 ),
+                             SizedBox(height: 4),
+                              Text(
+                               'NRS ${item['price']}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green[700],
+                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],

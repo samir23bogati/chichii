@@ -164,12 +164,16 @@ void initState() {
     });
     print('Sending OTP for $formattedPhoneNumber'); // Debugging line
     context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid phone number')),
-      );
-    }
+    // After OTP is sent, show the OTP input fields
+    setState(() {
+      isOtpSent = true;
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a valid phone number')),
+    );
   }
+}
 
   Widget _buildOtpInput() {
     return Column(
@@ -188,10 +192,16 @@ void initState() {
               borderRadius: BorderRadius.circular(5),
               fieldHeight: 50,
               fieldWidth: 40,
-              activeFillColor: Colors.white,
-            ),
+             activeFillColor: Colors.white,
           ),
+          onCompleted: (pin) {
+            print("Completed: $pin");
+          },
+          onChanged: (value) {
+            print(value);
+          },
         ),
+      ),
         const SizedBox(height: 12),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),

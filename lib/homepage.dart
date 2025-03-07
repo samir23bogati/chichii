@@ -14,6 +14,7 @@ import 'package:padshala/food_promopage2.dart';
 import 'package:padshala/footer.dart';
 import 'package:padshala/screens/explore_page.dart';
 import 'package:padshala/screens/whats_new.dart';
+import 'package:padshala/top_deals.dart';
 import 'package:padshala/whatsapp_support.dart';
 
 class HomePage extends StatefulWidget {
@@ -51,6 +52,7 @@ class _HomePageState extends State<HomePage> {
                 WhatsNewSection(),
                 ExplorePage(),
                 BestSellerPage(),
+                TopDeals(),
                 CarouselSecond(),
                 FoodPromopage1(
                   onAddToCart: (newItem) {
