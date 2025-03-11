@@ -20,7 +20,7 @@ class TopDeals extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "BEST SELLER",
+            "TOP DEALS",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10), 
@@ -76,12 +76,12 @@ class TopDeals extends StatelessWidget {
                               Text(
                                 deal['title']!,
                                 style: TextStyle(fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis, // In case title is too long
-                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis, 
+                                maxLines: 1,  
                               ),
                               SizedBox(height: 4), 
                               Text(
-                                "NRs: ${deal['price']}",
+                                "NRS ${deal['price']}",
                                 style: TextStyle(color: Colors.green),
                               ),
                             ],

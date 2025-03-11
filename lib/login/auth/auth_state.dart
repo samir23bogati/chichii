@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthState {}
 
+
 class AuthInitial extends AuthState {}
 
 class GoogleAuthLoading extends AuthState {} 
@@ -21,10 +22,25 @@ class AuthError extends AuthState {
 
 class OtpSentState extends AuthState {
   final String phoneNumber;
-  OtpSentState({required this.phoneNumber});
+  final int remainingTime;
+  OtpSentState({required this.phoneNumber,required this.remainingTime});
 }
 
 class OtpVerified extends AuthState {
   final User user;
   OtpVerified({required this.user});
 }
+
+class TokenRefreshLoading extends AuthState {}
+
+class TokenRefreshed extends AuthState {
+  final User user;
+  TokenRefreshed({required this.user});
+}
+
+class TokenRefreshError extends AuthState {
+  final String errorMessage;
+  TokenRefreshError({required this.errorMessage});
+}
+
+class LoggedOut extends AuthState {}

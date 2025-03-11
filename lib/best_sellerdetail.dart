@@ -148,15 +148,13 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                                 ),
                               ),
                         );
+
                       },
                     ),
                   ),
                 ],
               ),
             ),
-
-
-
 
             // Display Other Best Sellers
             ListView.builder(
@@ -185,7 +183,7 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
             ),
           ],
         ),
-       bottomNavigationBar: BottomNavBar(scaffoldKey: _scaffoldKey),
+       bottomNavigationBar:BottomNavBar(scaffoldKey: _scaffoldKey),
       ),
     );
   }

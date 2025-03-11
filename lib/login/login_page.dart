@@ -43,9 +43,7 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-    create: (context) => AuthBloc()..add(CheckAuthStatus()),  
-    child: BlocListener<AuthBloc, AuthState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
           _navigateToAddressSelectionPage();  
@@ -55,9 +53,7 @@ void initState() {
             SnackBar(content: Text(state.message)),
           );
         }else if (state is OtpSentState) {
-            setState(() {
-              isOtpSent = true;
-            });
+            setState(() => isOtpSent = true);
           }
         },
       child: Scaffold(
@@ -76,8 +72,7 @@ void initState() {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
   Widget _buildHeader() {
     return Container(
@@ -162,9 +157,8 @@ void initState() {
      setState(() {
       isLoading = true;
     });
-    print('Sending OTP for $formattedPhoneNumber'); // Debugging line
+    print('Sending OTP for $formattedPhoneNumber'); 
     context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
-    // After OTP is sent, show the OTP input fields
     setState(() {
       isOtpSent = true;
     });
@@ -237,7 +231,7 @@ void initState() {
             ),
           ),
           icon: state is GoogleAuthLoading
-              ? const CircularProgressIndicator() // Show loading indicator
+              ? const CircularProgressIndicator() 
               : const FaIcon(FontAwesomeIcons.google, color: Colors.red),
           label: const Text("Sign in with Google"),
           onPressed: state is GoogleAuthLoading

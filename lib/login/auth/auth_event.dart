@@ -1,5 +1,10 @@
 // Abstract class for Auth Events
-abstract class AuthEvent {}
+import 'package:equatable/equatable.dart';
+
+abstract class AuthEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class GoogleSignInRequested extends AuthEvent {}
 
@@ -20,5 +25,28 @@ class VerifyOtpRequested extends AuthEvent {
 
 class OtpSent extends AuthEvent {  
   final String phoneNumber;
-  OtpSent({required this.phoneNumber});
+  final int remainingTime;
+  OtpSent({required this.phoneNumber,required this.remainingTime});
+}
+class AuthSuccess extends AuthEvent {}
+
+class AuthFailure extends AuthEvent {
+  final String message;
+  
+  AuthFailure({required this.message});
+}
+class ResendOtpRequested extends AuthEvent {
+  final String phoneNumber;
+  
+  ResendOtpRequested({required this.phoneNumber});
+}
+
+class CountdownTicked extends AuthEvent {
+  final String phoneNumber;
+  final int remainingTime;
+
+  CountdownTicked({required this.phoneNumber, required this.remainingTime});
+
+  @override
+  List<Object?> get props => [phoneNumber, remainingTime];
 }

@@ -3,16 +3,44 @@ import 'package:padshala/best_sellerdetail.dart';
 
 class BestSellerPage extends StatelessWidget {
   final List<Map<String, String>> bestSellers = [
-    {'title': 'Buff MoMo', 'image': 'assets/images/sdhekochick.jpg','price': ' NRS 450'},
-    {'title': 'Chicken Biryani', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 850'},
-    {'title': 'Chicken Lollipop', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 555'},
-    {'title': 'Khukuri Rum', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 850'},
-    {'title': 'Mustang Aloo', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 458'},
-    {'title': 'Jumbo Pork Sekuwa', 'image': 'assets/images/sdhekochick.jpg','price': 'NRS 598'},
+    {
+      'title': 'Buff MoMo',
+      'image': 'assets/images/sdhekochick.jpg',
+      'price': '  450'
+    },
+    {
+      'title': 'Chicken Biryani',
+      'image': 'assets/images/sdhekochick.jpg',
+      'price': ' 850'
+    },
+    {
+      'title': 'Chicken Lollipop',
+      'image': 'assets/images/sdhekochick.jpg',
+      'price': ' 555'
+    },
+    {
+      'title': 'Khukuri Rum',
+      'image': 'assets/images/sdhekochick.jpg',
+      'price': ' 850'
+    },
+    {
+      'title': 'Mustang Aloo',
+      'image': 'assets/images/sdhekochick.jpg',
+      'price': ' 458'
+    },
+    {
+      'title': 'Jumbo Pork Sekuwa',
+      'image': 'assets/images/sdhekochick.jpg',
+      'price': ' 598'
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
+    PageController _controller = PageController(
+      viewportFraction: 0.4, 
+    );
+
     return Container(
       padding: EdgeInsets.all(16.0),
       color: Colors.white,
@@ -25,119 +53,83 @@ class BestSellerPage extends StatelessWidget {
           ),
           SizedBox(height: 10),
           SizedBox(
-            height: 425, 
-            child: GridView.builder(
-
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 0.55,
-              ),
-              itemCount: bestSellers.length,
-              physics:NeverScrollableScrollPhysics(), 
+            height: 280,
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: null, 
+              scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                final item = bestSellers[index];
-            
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BestSellerDetailPage(
-                           title: item['title']!,
-                          image: item['image']!,
-                          price: item['price']!,
-                          bestSellers: bestSellers,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                item['image']!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 140,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                   Text(
-                                  item['title']!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                             SizedBox(height: 4),
-                              Text(
-                               'NRS ${item['price']}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green[700],
-                                ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 4,
-                        left: 4,
-                        child: Container(
-                           width: 47, 
-                          height: 65, 
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 2,
-                            vertical: 2,
+                final item = bestSellers[index % bestSellers.length]; // Looping over the items
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BestSellerDetailPage(
+                            title: item['title']!,
+                            image: item['image']!,
+                            price: item['price']!,
+                            bestSellers: bestSellers,
                           ),
+                        ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
                           decoration: BoxDecoration(
-                           color: Color.fromRGBO(55, 39, 6, 1),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(3),
-                              bottomRight: Radius.circular(3),
-                            ),
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center, 
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'BEST SELLER',
-                                style: TextStyle(
-                                  color: Colors.amber,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12, 
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  item['image']!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 216,
                                 ),
                               ),
-                               Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 30, 
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item['title']!,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'NRS ${item['price']}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green[700],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: RibbonWidget(),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -146,5 +138,51 @@ class BestSellerPage extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class RibbonWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CustomPaint(
+          painter: RibbonPainter(),
+          size: Size(34, 52), // Adjust size as needed
+        ),
+        Positioned(
+          top: 10,
+          left: 6.5,
+          child: Icon(
+            Icons.star,
+            color: Colors.amber,
+            size: 24,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class RibbonPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Color(0xFF372706) // Dark brown color
+      ..style = PaintingStyle.fill;
+
+    final Path path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height - 10); // Cut edge
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }
