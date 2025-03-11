@@ -5,6 +5,7 @@ import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/homepage.dart';
 import 'package:padshala/model/cartpage_track.dart';
+import 'package:padshala/profile_screen.dart';
 import 'package:padshala/screens/exploretab_page.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -59,7 +60,12 @@ class BottomNavBar extends StatelessWidget {
           );
         }),
         SizedBox(width: 60), // Space for FloatingActionButton
-        _buildNavItem(Icons.account_circle, "Account", onTap: () {}),
+        _buildNavItem(Icons.account_circle, "Account", onTap: () {
+          Navigator.pushReplacement(
+            context,
+             MaterialPageRoute(builder: (context) => ProfileScreen()),
+          );
+        }),
         _buildNavItem(Icons.grid_view, "More", onTap: () {
           scaffoldKey.currentState!.openDrawer();
         }),

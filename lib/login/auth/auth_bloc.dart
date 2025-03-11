@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,8 +22,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CountdownTicked>(_onCountdownTicked);
   }
 
-   void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) {
-    final user = _getCurrentUser();
+   void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) async{
+    final user =await _getCurrentUser();
     if (user != null) {
       emit(Authenticated(user: user));
     } else {
@@ -30,12 +31,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  User? _getCurrentUser() {
-    return _firebaseAuth.currentUser; 
-  }
+  Future<User?> _getCurrentUser() async {
+  final user = _firebaseAuth.currentUser;
+  return user;
+}
+
 
  void startCountdown(String phoneNumber) {
-  int duration = 120; // 120 seconds timeout
+  int duration = 400; 
   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     if (duration > 0) {
       duration--;
@@ -63,18 +66,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
+      final UserCredential userCredential =await _firebaseAuth.signInWithCredential(credential);
 
-      if (userCredential.user != null) {
+      if (userCredential.user != null) {final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isAuthenticated', true);
         emit(Authenticated(user: userCredential.user!));
       } else {
         emit(AuthError(message: 'Google sign-in failed'));
@@ -84,9 +86,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+
   // ✅ Phone Authentication Handling
-  Future<void> _onPhoneAuthRequested(
-      PhoneAuthRequested event, Emitter<AuthState> emit) async {
+  Future<void> _onPhoneAuthRequested( PhoneAuthRequested event, Emitter<AuthState> emit) async {
     emit(PhoneAuthLoading());
     try {
       await _sendPhoneNumber(event.phoneNumber);
@@ -96,12 +98,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   // ✅ OTP Verification Handling
-  Future<void> _onVerifyOtpRequested(
-      VerifyOtpRequested event, Emitter<AuthState> emit) async {
+  Future<void> _onVerifyOtpRequested(VerifyOtpRequested event, Emitter<AuthState> emit) async {
     emit(PhoneAuthLoading());
     try {
       final user = await _verifyOtp(event.otp);
       if (user != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isAuthenticated', true);
         emit(OtpVerified(user: user));
       } else {
         emit(AuthError(message: 'OTP verification failed'));
@@ -127,56 +130,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
  // ✅ Send OTP Function
 Future<void> _sendPhoneNumber(String phoneNumber) async {
-  print("Phone number received for OTP: $phoneNumber");
 
   String sanitizedPhoneNumber = phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
-  print("Sanitized phone number: $sanitizedPhoneNumber");
 
   if (sanitizedPhoneNumber.isNotEmpty && sanitizedPhoneNumber.length >= 13) {
-    final formattedPhoneNumber = sanitizedPhoneNumber; // Assuming the phone number already has the country code
-    print("Formatted phone number: $formattedPhoneNumber");
+    final formattedPhoneNumber = sanitizedPhoneNumber; 
 
     try {
-      print("Sending OTP to $formattedPhoneNumber");
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: formattedPhoneNumber,
-         timeout: const Duration(seconds: 120),
+         timeout: const Duration(seconds: 110),
         verificationCompleted: (PhoneAuthCredential credential) async {
-          print("Phone authentication completed with credential: $credential");
           await FirebaseAuth.instance.signInWithCredential(credential);
         },
         verificationFailed: (FirebaseAuthException e) {
-          print("Verification failed: ${e.code} - ${e.message}");
           emit(AuthError(message: 'Phone number verification failed: ${e.message}'));
         },
         codeSent: (String verificationId, int? resendToken) {
-          print("OTP Sent Successfully. Verification ID: $verificationId");
           this.verificationId = verificationId;
           
-          // Start countdown with the correct initial duration (e.g., 120 seconds)
-          int initialDuration = 120;
           startCountdown(phoneNumber); 
-          add(OtpSent(phoneNumber: phoneNumber, remainingTime: initialDuration)); // Pass the initial duration here
+          add(OtpSent(phoneNumber: phoneNumber, remainingTime: 110)); 
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          print("Auto retrieval timeout. Verification ID: $verificationId");
           this.verificationId = verificationId;
         },
       );
     } catch (e) {
       if (e is FirebaseAuthException) {
-        print("Error sending OTP: ${e.code} - ${e.message}");
         emit(AuthError(message: 'Error sending OTP: ${e.message}'));
       } else {
-        print("Error: $e");
         emit(AuthError(message: 'An unexpected error occurred.'));
       }
     }
   } else {
-    print("Formatted phone number is invalid: $sanitizedPhoneNumber");
     emit(AuthError(message: 'Please enter a valid phone number with the country code'));
   }
 }
+
 
 Future<User?> _verifyOtp(String otp) async {
   try {
@@ -187,13 +178,12 @@ Future<User?> _verifyOtp(String otp) async {
     final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
     return userCredential.user;
   } catch (e) {
-    print("OTP verification failed: $e");
     return null;
   }
 }
  @override
   Future<void> close() {
-    _timer?.cancel(); // Cancel the timer when closing bloc
+    _timer?.cancel();
     return super.close();
   }
 }

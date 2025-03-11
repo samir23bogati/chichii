@@ -30,32 +30,36 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   @override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is Authenticated) {
-      _navigateToAddressSelectionPage();
-    }
-  });
+  void initState() {
+    super.initState();
+    _checkIfUserIsLoggedIn();
+  }
+
+  
+ void _checkIfUserIsLoggedIn() {
+  context.read<AuthBloc>().add(CheckAuthStatus());
 }
+
 
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is Authenticated) {
-          _navigateToAddressSelectionPage();  
+       if (state is Authenticated || state is OtpVerified) {
+          _navigateToAddressSelectionPage();
         } else if (state is AuthError) {
           setState(() => isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
-        }else if (state is OtpSentState) {
-            setState(() => isOtpSent = true);
-          }
-        },
+        } else if (state is OtpSentState) {
+          setState(() {
+            isOtpSent = true;
+            isLoading = false;
+          });
+        }
+      },
       child: Scaffold(
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
@@ -157,17 +161,13 @@ void initState() {
      setState(() {
       isLoading = true;
     });
-    print('Sending OTP for $formattedPhoneNumber'); 
     context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
-    setState(() {
-      isOtpSent = true;
-    });
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter a valid phone number')),
-    );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid phone number')),
+      );
+    }
   }
-}
 
   Widget _buildOtpInput() {
     return Column(
@@ -230,8 +230,12 @@ void initState() {
               side: const BorderSide(color: Colors.grey),
             ),
           ),
-          icon: state is GoogleAuthLoading
-              ? const CircularProgressIndicator() 
+         icon: state is GoogleAuthLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
               : const FaIcon(FontAwesomeIcons.google, color: Colors.red),
           label: const Text("Sign in with Google"),
           onPressed: state is GoogleAuthLoading
