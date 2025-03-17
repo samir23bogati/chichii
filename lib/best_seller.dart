@@ -38,11 +38,11 @@ class BestSellerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PageController _controller = PageController(
-      viewportFraction: 0.4, 
+      viewportFraction: 0.5, 
     );
 
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(10),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

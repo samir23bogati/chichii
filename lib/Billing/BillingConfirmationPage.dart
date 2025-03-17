@@ -1,21 +1,54 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:padshala/Billing/distance_cost.dart';
 import 'package:padshala/model/cart_item.dart';
 
-class BillingConfirmationPage extends StatelessWidget {
+class BillingConfirmationPage extends StatefulWidget {
   final String address;
+  final double userLat;
+  final double userLng;
   final List<CartItem> cartItems;
   final double totalPrice;
 
   BillingConfirmationPage({
     required this.address,
+    required this.userLat,
+    required this.userLng,
     required this.cartItems,
     required this.totalPrice,
     Key? key,
   }) : super(key: key);
 
   @override
+  State<BillingConfirmationPage> createState() => _BillingConfirmationPageState();
+}
+
+class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
+  double? deliveryCost;
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    _fetchDeliveryCost();
+  }
+
+  Future<void> _fetchDeliveryCost() async {
+    try {
+      double cost = await calculateDistance(widget.userLat, widget.userLng);
+      setState(() {
+        deliveryCost = cost;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        deliveryCost = 0;
+        isLoading = false;
+      });
+    }
+  }
+  @override
   Widget build(BuildContext context) {
+     double finalPrice = widget.totalPrice + (deliveryCost ?? 0);
     return Scaffold(
       appBar: AppBar(title: const Text("Billing Confirmation")),
       body: Padding(
@@ -25,7 +58,7 @@ class BillingConfirmationPage extends StatelessWidget {
           children: [
             // Delivery Address
             Text("Delivery Address:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(address, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+            Text(widget.address, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
             const SizedBox(height: 10),
 
             // Order Summary
@@ -35,9 +68,9 @@ class BillingConfirmationPage extends StatelessWidget {
             // List of Items
             Expanded(
               child: ListView.builder(
-                itemCount: cartItems.length,
+                itemCount: widget.cartItems.length,
                 itemBuilder: (context, index) {
-                  final item = cartItems[index];
+                  final item = widget.cartItems[index];
                   bool isLocalAsset = !item.imageUrl.startsWith('http');
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -89,26 +122,31 @@ class BillingConfirmationPage extends StatelessWidget {
               ),
             ),
 
-            // Total Price
+      Divider(),
+            Text("Subtotal: NRS ${widget.totalPrice}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+
+            isLoading
+                ? CircularProgressIndicator()
+                : Text("Delivery Cost: NRS ${deliveryCost?.toStringAsFixed(2) ?? "0"}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+
             Divider(),
-            Text("Total Price: NRS $totalPrice",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("Total Price: NRS ${finalPrice.toStringAsFixed(2)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
             const SizedBox(height: 20),
 
-            // Payment Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    _placeOrder(context, "COD");
+                  onPressed:isLoading ? null: () {
+                    _placeOrder(context, "COD", finalPrice);
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   child: const Text("Cash on Delivery"),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    _placeOrder(context, "Khalti");
+                    _placeOrder(context, "Khalti", finalPrice);
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
                   child: const Text("Pay with Khalti"),
@@ -121,34 +159,34 @@ class BillingConfirmationPage extends StatelessWidget {
     );
   }
 
-  // Function to place an order
-  void _placeOrder(BuildContext context, String paymentMethod) async {
+  void _placeOrder(BuildContext context, String paymentMethod, double finalPrice) async {
+    final orderRef = FirebaseFirestore.instance.collection('orders').doc();
+
     final orderData = {
-      "address": address,
-      "items": cartItems.map((item) => {
+      "orderId": orderRef.id,
+      "address": widget.address,
+      "items": widget.cartItems.map((item) => {
             "title": item.title,
             "quantity": item.quantity,
             "price": item.price,
             "imageUrl": item.imageUrl,
           }).toList(),
-      "totalPrice": totalPrice,
+      "totalPrice": finalPrice,
+      "deliveryCost": deliveryCost,
       "paymentMethod": paymentMethod,
       "status": "Pending",
       "timestamp": Timestamp.now(),
     };
 
-    DocumentReference orderRef = await FirebaseFirestore.instance.collection('orders').add(orderData);
-    await _sendAdminNotification(orderRef.id, orderData);
+    await orderRef.set(orderData);
+    await _sendAdminNotification(orderRef.id);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Order placed successfully!")),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order placed successfully!")));
 
     Navigator.pop(context);
   }
 
-  // Function to send admin notification
-  Future<void> _sendAdminNotification(String orderId, Map<String, dynamic> orderData) async {
+  Future<void> _sendAdminNotification(String orderId) async {
     await FirebaseFirestore.instance.collection('admin_notifications').add({
       "orderId": orderId,
       "message": "New order placed with ID: $orderId",

@@ -30,7 +30,7 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Two tabs: Details & Other Best Sellers
+      length: 2, 
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),

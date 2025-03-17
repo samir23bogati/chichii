@@ -14,7 +14,7 @@ class TopDeals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(10),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,11 +25,11 @@ class TopDeals extends StatelessWidget {
           ),
           SizedBox(height: 10), 
           SizedBox(
-            height: 180, 
+            height: 160, 
             child: PageView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: _topDeals.length,
-              controller: PageController(viewportFraction: 0.5), 
+              controller: PageController(viewportFraction: 0.72), 
               itemBuilder: (context, index) {
                 final deal = _topDeals[index % _topDeals.length]; 
                 return GestureDetector(
@@ -48,9 +48,9 @@ class TopDeals extends StatelessWidget {
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 8),
-                      width: 321.4, 
-                    height: 112.83,
-                    padding: EdgeInsets.all(8),
+                      width: 321, 
+                    height: 112,
+                    padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
                      borderRadius: BorderRadius.circular(8),
@@ -62,8 +62,8 @@ class TopDeals extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           child: Image.asset(
                             deal['image']!,
-                            height: 80,
-                            width: 60,
+                            height: 120,
+                            width: 75,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -75,21 +75,21 @@ class TopDeals extends StatelessWidget {
                             children: [
                               Text(
                                 deal['title']!,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize:14 ,fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis, 
                                 maxLines: 1,  
                               ),
-                              SizedBox(height: 4), 
+                              SizedBox(height: 6), 
                               Text(
                                 "NRS ${deal['price']}",
-                                style: TextStyle(color: Colors.green),
+                                style: TextStyle(fontSize:14 ,fontWeight: FontWeight.bold,color: Colors.green),
                               ),
                             ],
                           ),
                         ),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: Icon(Icons.arrow_forward_ios, size: 16),
+                          child: Icon(Icons.arrow_forward_ios, size: 20),
                         ),
                       ],
                     ),

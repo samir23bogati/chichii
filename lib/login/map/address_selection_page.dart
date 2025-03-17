@@ -244,13 +244,18 @@ Future<void> _onPlaceSelected(String placeId) async {
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
+                    
                     onPressed: selectedLocation != null
                         ? () {
+                          print('userLat: ${selectedLocation!.latitude}');
+                          print('userLng: ${selectedLocation!.longitude}');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BillingConfirmationPage(
                                   address: address,
+                                  userLat: selectedLocation!.latitude,
+                                  userLng: selectedLocation!.longitude,
                                   cartItems: widget.cartItems,
                                   totalPrice: widget.totalPrice,
                                 ),

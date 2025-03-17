@@ -180,6 +180,8 @@ class CartPage extends StatelessWidget {
                                   address: selectedLocation,
                                   cartItems: state.cartItems,
                                   totalPrice: state.totalPrice,
+                                  userLat: selectedLocation.latitude,
+                                  userLng: selectedLocation.longitude,
                                 ),
                               ),
                             );

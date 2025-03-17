@@ -1,52 +1,62 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:padshala/Admin/local_notification.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/login/auth/auth_bloc.dart';
 import 'package:padshala/screens/splash_screen.dart';
 
+// Background message handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling background message: ${message.messageId}");
+}
+// Initialize local notifications
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-    await Firebase.initializeApp();
-  
 
+  // Load environment variables
+  await dotenv.load();
 
+  await Firebase.initializeApp();
+
+     // Initialize Firebase Messaging
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+  // Request notification permissions
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  print('User granted permission: ${settings.authorizationStatus}');
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else {
+    print('User declined or has not accepted permission');
+  }
 
-  // Get FCM Token for this device
-  String? token = await messaging.getToken();
-  print("FCM Token: $token");
-
-  // Register background notification handler
+  // Handle background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+ // Handle foreground messages (App Open)
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("Foreground Message Received: ${message.notification?.title}");
 
-  // Initialize local notifications for displaying messages when the app is in foreground
-  var initializationSettingsAndroid =
-      const AndroidInitializationSettings('@mipmap/ic_launcher');
-  var initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    if (message.notification != null) {
+      showNotification(message.notification!);
+    }
+  });
 
   runApp(const MyApp());
 }
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -70,14 +80,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
-// Initialize local notifications
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling background message: ${message.messageId}");
 }
