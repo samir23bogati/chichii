@@ -32,20 +32,28 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     _fetchDeliveryCost();
   }
 
-  Future<void> _fetchDeliveryCost() async {
-    try {
-      double cost = await calculateDistance(widget.userLat, widget.userLng);
+Future<void> _fetchDeliveryCost() async {
+  try {
+    var result = await calculateDistance(widget.userLat, widget.userLng);
+    
+    // Ensure result is of type double
+   if (result is Map<String, dynamic>) {
+      double cost = result['cost'] as double; // Safe casting to double
       setState(() {
         deliveryCost = cost;
         isLoading = false;
       });
-    } catch (e) {
-      setState(() {
-        deliveryCost = 0;
-        isLoading = false;
-      });
+    } else {
+      throw Exception("Invalid result format.");
     }
+  } catch (e) {
+    setState(() {
+      deliveryCost = 0;
+      isLoading = false;
+    });
   }
+}
+
   @override
   Widget build(BuildContext context) {
      double finalPrice = widget.totalPrice + (deliveryCost ?? 0);

@@ -1,45 +1,40 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:padshala/best_sellerdetail.dart';
 
-class BestSellerPage extends StatelessWidget {
-  final List<Map<String, String>> bestSellers = [
-    {
-      'title': 'Buff MoMo',
-      'image': 'assets/images/sdhekochick.jpg',
-      'price': '  450'
-    },
-    {
-      'title': 'Chicken Biryani',
-      'image': 'assets/images/sdhekochick.jpg',
-      'price': ' 850'
-    },
-    {
-      'title': 'Chicken Lollipop',
-      'image': 'assets/images/sdhekochick.jpg',
-      'price': ' 555'
-    },
-    {
-      'title': 'Khukuri Rum',
-      'image': 'assets/images/sdhekochick.jpg',
-      'price': ' 850'
-    },
-    {
-      'title': 'Mustang Aloo',
-      'image': 'assets/images/sdhekochick.jpg',
-      'price': ' 458'
-    },
-    {
-      'title': 'Jumbo Pork Sekuwa',
-      'image': 'assets/images/sdhekochick.jpg',
-      'price': ' 598'
-    },
-  ];
+class BestSellerPage extends StatefulWidget {
 
+
+  @override
+  State<BestSellerPage> createState() => _BestSellerPageState();
+}
+
+class _BestSellerPageState extends State<BestSellerPage> {
+   List<Map<String, String>> bestSellers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBestSellers();
+  }
+
+  // Function to load JSON data from assets
+  Future<void> _loadBestSellers() async {
+    final String response = await rootBundle.loadString('assets/json/bestseller.json');
+    final List<dynamic> data = json.decode(response);
+    setState(() {
+      bestSellers = data.map((item) => Map<String, String>.from(item)).toList();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     PageController _controller = PageController(
       viewportFraction: 0.5, 
     );
+     if (bestSellers.isEmpty) {
+    return Center(child: CircularProgressIndicator()); 
+  }
 
     return Container(
       padding: EdgeInsets.all(10),
@@ -56,10 +51,10 @@ class BestSellerPage extends StatelessWidget {
             height: 280,
             child: PageView.builder(
               controller: _controller,
-              itemCount: null, 
+              itemCount: bestSellers.length, 
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                final item = bestSellers[index % bestSellers.length]; // Looping over the items
+                final item = bestSellers[index];
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),

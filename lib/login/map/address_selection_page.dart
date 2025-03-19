@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -11,13 +13,16 @@ class AddressSelectionPage extends StatefulWidget {
   final List<CartItem> cartItems;
   final double totalPrice;
 
-  AddressSelectionPage({required this.cartItems, required this.totalPrice, Key? key}) : super(key: key);
+  AddressSelectionPage(
+      {required this.cartItems, required this.totalPrice, Key? key})
+      : super(key: key);
 
   @override
   _AddressSelectionPageState createState() => _AddressSelectionPageState();
 }
 
 class _AddressSelectionPageState extends State<AddressSelectionPage> {
+  Timer? _debounce;
   GoogleMapController? mapController;
   LatLng? selectedLocation;
   String address = "Move the marker to select an address";
@@ -30,62 +35,124 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     _determinePosition();
   }
 
-  // Fetch autocomplete predictions from Google Places API
-  Future<void> _fetchAutocompleteSuggestions(String query) async {
-    final apiKey = 'AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0'; // Replace with your actual API key
-    final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
-    '?input=$query'
-    '&components=country:np'
-    '&location=27.7172,85.3240' // Approx. location of Kathmandu
-    '&radius=40000' // 20km to cover nearby districts
-    '&key=$apiKey';
+  Future<void> _updateAddress(LatLng newPosition) async {
+    final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+    if (apiKey == null || apiKey.isEmpty) {
+      print("Error: Missing Google Maps API Key");
+      return;
+    }
+
+    final url = 'https://maps.googleapis.com/maps/api/geocode/json'
+        '?latlng=${newPosition.latitude},${newPosition.longitude}'
+        '&key=$apiKey';
+
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      setState(() {
-        predictions = json.decode(response.body)['predictions'];
-      });
+      final result = json.decode(response.body);
+      if (result['status'] == 'OK' && result['results'].isNotEmpty) {
+        final formattedAddress = result['results'][0]['formatted_address'];
+
+        setState(() {
+          searchController.text = formattedAddress; // Update search box
+          selectedLocation = newPosition; // Update marker position
+        });
+      } else {
+        print("Geocode API Error: ${result['status']}");
+      }
     } else {
-      throw Exception('Failed to fetch autocomplete predictions');
+      print('Failed to fetch address from lat/lng: ${response.statusCode}');
+    }
+  }
+
+  // Fetch autocomplete predictions from Google Places API
+  Future<void> _fetchAutocompleteSuggestions(String query) async {
+    try {
+      final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+      if (apiKey == null || apiKey.isEmpty) {
+        print("Error: Missing Google Maps API Key");
+        return;
+      }
+      final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+          '?input=$query'
+          '&components=country:np'
+          '&location=27.67816,85.27256'
+          '&radius=40000' // 20km to cover nearby districts
+          '&key=$apiKey';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        if (result['status'] == 'OK') {
+          setState(() {
+            predictions = result['predictions'];
+          });
+        } else {
+          print("Google API Error: ${result['status']}");
+        }
+      } else {
+        print('Failed to fetch autocomplete: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching autocomplete suggestions: $e');
     }
   }
 
   // Handle the selection of a place from the suggestions
-Future<void> _onPlaceSelected(String placeId) async {
-  print("Fetching details for place ID: $placeId");
-  final apiKey = 'AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0'; // Replace with your actual API key
-  final url = Uri.https('maps.googleapis.com', '/maps/api/place/details/json', {
-    'place_id': placeId,
-    'key': apiKey,
-  });
-  final response = await http.get(url);
+  Future<void> _onPlaceSelected(String placeId) async {
+    final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+    final url =
+        Uri.https('maps.googleapis.com', '/maps/api/place/details/json', {
+      'place_id': placeId,
+      'key': apiKey,
+    });
+    final response = await http.get(url);
 
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    if (data['status'] == 'OK' && data['result'] != null) {
-      final location = data['result']['geometry']['location'];
-      final formattedAddress = data['result']['formatted_address'] ?? "Selected Location";
-      final newLocation = LatLng(location['lat'], location['lng']);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK' && data['result'] != null) {
+        final location = data['result']['geometry']['location'];
+        final newLocation = LatLng(location['lat'], location['lng']);
+        print('Selected Place LatLng: ${newLocation.latitude}, ${newLocation.longitude}');
+      print('Selected Address: ${data['result']['formatted_address']}');
 
-      setState(() {
+      _getAddressFromLatLng(newLocation);
+         setState(() {
         selectedLocation = newLocation;
-        address = formattedAddress;
-        predictions.clear(); // Clear suggestions after selection
-        searchController.text = formattedAddress; // Update search bar with selected address
+        predictions.clear();
+        searchController.text = data['result']['formatted_address']; // Update search bar with selected address
       });
-       print("New Location: $selectedLocation, Address: $address");
-      FocusScope.of(context).unfocus(); // Close the dropdown menu
-
-      if (mapController != null) {
-        mapController!.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 15));
-      }
+       mapController
+          ?.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
     } else {
-     print('Failed to retrieve valid location data: ${data['status']}');
+      print('Failed to retrieve valid location data: ${data['status']}');
     }
   } else {
-     print('Failed to fetch place details: ${response.statusCode}');
+    print('Failed to fetch place details: ${response.statusCode}');
   }
 }
+
+  Future<void> _getAddressFromLatLng(LatLng location) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(location.latitude, location.longitude);
+      if (placemarks.isNotEmpty) {
+        setState(() {
+          address =
+              "${placemarks[0].name}, ${placemarks[0].locality}, ${placemarks[0].country}";
+        });
+      } else {
+        setState(() {
+          address = "No address found";
+        });
+      }
+    } catch (e) {
+      print("Error fetching address: $e");
+      setState(() {
+        address = "Error retrieving address";
+      });
+    }
+  }
 
   Future<void> _determinePosition() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -95,12 +162,14 @@ Future<void> _onPlaceSelected(String placeId) async {
     }
 
     try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
       setState(() {
         selectedLocation = LatLng(position.latitude, position.longitude);
       });
       if (mapController != null) {
-        mapController!.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+        mapController!
+            .animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
       }
       _getAddressFromLatLng(selectedLocation!);
     } catch (e) {
@@ -108,17 +177,44 @@ Future<void> _onPlaceSelected(String placeId) async {
     }
   }
 
-  Future<void> _getAddressFromLatLng(LatLng location) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(location.latitude, location.longitude);
-      if (placemarks.isNotEmpty) {
-        setState(() {
-          address = "${placemarks[0].name}, ${placemarks[0].locality}, ${placemarks[0].country}";
-        });
-      }
-    } catch (e) {
-      print("Error fetching address: $e");
+  Future<void> _fetchLatLngFromPlaceId(String placeId) async {
+    final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+    if (apiKey == null || apiKey.isEmpty) {
+      print("Error: Missing Google Maps API Key");
+      return;
     }
+
+    final url = 'https://maps.googleapis.com/maps/api/place/details/json'
+        '?place_id=$placeId'
+        '&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final result = json.decode(response.body);
+      if (result['status'] == 'OK') {
+        final location = result['result']['geometry']['location'];
+        final LatLng newLatLng = LatLng(location['lat'], location['lng']);
+
+        setState(() {
+          selectedLocation = newLatLng;
+          searchController.text = result['result']['formatted_address'];
+        });
+
+        mapController?.animateCamera(CameraUpdate.newLatLng(newLatLng));
+      } else {
+        print("Place Details API Error: ${result['status']}");
+      }
+    } else {
+      print('Failed to fetch lat/lng from place ID: ${response.statusCode}');
+    }
+  }
+
+  onChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _fetchAutocompleteSuggestions(query);
+    });
   }
 
   @override
@@ -126,7 +222,7 @@ Future<void> _onPlaceSelected(String placeId) async {
     return Scaffold(
       appBar: AppBar(title: const Text("Select Address")),
       body: GestureDetector(
-        onTap: (){
+        onTap: () {
           setState(() {
             predictions.clear();
           });
@@ -140,23 +236,25 @@ Future<void> _onPlaceSelected(String placeId) async {
                     onMapCreated: (controller) {
                       mapController = controller;
                       if (selectedLocation != null) {
-                        mapController!.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+                        mapController!.animateCamera(
+                            CameraUpdate.newLatLngZoom(selectedLocation!, 15));
                       }
                     },
-                    initialCameraPosition: CameraPosition(target: selectedLocation!, zoom: 15),
+                    initialCameraPosition:
+                        CameraPosition(target: selectedLocation!, zoom: 15),
                     markers: {
                       if (selectedLocation != null)
-                      Marker(
-                        markerId: const MarkerId("selected"),
-                        position: selectedLocation!,
-                        draggable: true,
-                        onDragEnd: (newPosition) {
-                          setState(() {
-                            selectedLocation = newPosition;
-                          });
-                          _getAddressFromLatLng(newPosition);
-                        },
-                      ),
+                        Marker(
+                          markerId: const MarkerId("selected"),
+                          position: selectedLocation!,
+                          draggable: true,
+                          onDragEnd: (newPosition) {
+                            setState(() {
+                              selectedLocation = newPosition;
+                            });
+                            _updateAddress(newPosition);
+                          },
+                        ),
                     },
                   ),
             Positioned(
@@ -165,31 +263,45 @@ Future<void> _onPlaceSelected(String placeId) async {
               right: 10,
               child: GestureDetector(
                 onTap: () {
-                  _fetchAutocompleteSuggestions(searchController.text); // Trigger autocomplete fetch on tap
+                  _fetchAutocompleteSuggestions(searchController
+                      .text); // Trigger autocomplete fetch on tap
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+                    boxShadow: [
+                      BoxShadow(color: Colors.black26, blurRadius: 5)
+                    ],
                   ),
                   child: Row(
                     children: [
                       Icon(Icons.search, color: Colors.grey[600]),
                       SizedBox(width: 10),
-                      Expanded(
-                        child: TextField(
-                          controller: searchController,
-                          decoration: const InputDecoration(
-                            hintText: 'Search for a place',
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (query) {
-                            _fetchAutocompleteSuggestions(query); // Update suggestions on text change
-                          },
-                        ),
-                      ),
+                     Expanded(
+  child: TextField(
+    controller: searchController,
+    decoration: InputDecoration(
+      hintText: 'Search for a place',
+      border: InputBorder.none,
+      suffixIcon: IconButton(
+        icon: Icon(Icons.clear, color: Colors.grey),
+        onPressed: () {
+          setState(() {
+            searchController.clear(); // Clear the text
+            predictions.clear(); // Optionally clear predictions
+          });
+        },
+      ),
+    ),
+    onChanged: (query) {
+      _fetchAutocompleteSuggestions(query);
+    },
+  ),
+)
+
                     ],
                   ),
                 ),
@@ -209,8 +321,13 @@ Future<void> _onPlaceSelected(String placeId) async {
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(predictions[index]['description']),
-                        onTap: () {
-                          _onPlaceSelected(predictions[index]['place_id']);
+                        onTap: () async {
+                          String placeId = predictions[index]['place_id'];
+                          await _onPlaceSelected(placeId);
+                          setState(() {
+                            predictions.clear();
+                          });
+                          FocusScope.of(context).unfocus();
                         },
                       );
                     },
@@ -235,25 +352,35 @@ Future<void> _onPlaceSelected(String placeId) async {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
+                     constraints: BoxConstraints(
+          minHeight: 50,  
+          maxHeight: 100, 
+        ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+                      boxShadow: [
+                        BoxShadow(color: Colors.black26, blurRadius: 5)
+                      ],
                     ),
-                    child: Text(address, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        searchController.text.isNotEmpty ? searchController.text : address,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16)),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    
                     onPressed: selectedLocation != null
                         ? () {
-                          print('userLat: ${selectedLocation!.latitude}');
-                          print('userLng: ${selectedLocation!.longitude}');
+                            print('userLat: ${selectedLocation!.latitude}');
+                            print('userLng: ${selectedLocation!.longitude}');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BillingConfirmationPage(
-                                  address: address,
+                                  address: searchController.text.isNotEmpty ? searchController.text : address, 
                                   userLat: selectedLocation!.latitude,
                                   userLng: selectedLocation!.longitude,
                                   cartItems: widget.cartItems,

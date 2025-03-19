@@ -59,7 +59,7 @@ class BottomNavBar extends StatelessWidget {
             MaterialPageRoute(builder: (context) => ExploretabPage(initialIndex: 0)),
           );
         }),
-        SizedBox(width: 60), // Space for FloatingActionButton
+        SizedBox(width: 60), 
         _buildNavItem(Icons.account_circle, "Account", onTap: () {
           Navigator.pushReplacement(
             context,
@@ -73,7 +73,7 @@ class BottomNavBar extends StatelessWidget {
     ),
         ),
     
-        // Floating Action Button (Positioned in the Transparent Gap)
+        // Floating Action Button 
         Positioned(
     top: -35, // Adjust based on gap depth
       child: BlocBuilder<CartBloc, CartState>(

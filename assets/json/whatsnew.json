@@ -1,0 +1,33 @@
+[
+    {
+      "image": "assets/images/delicious78.jpeg",
+      "title": "COMBO ONE",
+      "price": 1500.0,
+      "foodItems": [
+        {"name": "Burger", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Fries", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Coke", "image": "assets/images/goldenoak180.jpg"}
+      ]
+    },
+    {
+      "image": "assets/images/delicious55.jpg",
+      "title": "COMBO TWO",
+      "price": 1800.0,
+      "foodItems": [
+        {"name": "Burger", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Fries", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Coke", "image": "assets/images/goldenoak180.jpg"}
+      ]
+    },
+    {
+      "image": "assets/images/delicious44.jpeg",
+      "title": "COMBO THREE",
+      "price": 2080.0,
+      "foodItems": [
+        {"name": "Burger", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Fries", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Coke", "image": "assets/images/goldenoak180.jpg"}
+      ]
+    }
+  ]
+  

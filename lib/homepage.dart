@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:padshala/best_seller.dart';
-import 'package:padshala/beverage_promopage.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
-import 'package:padshala/brands.dart';
-import 'package:padshala/carousel_second.dart';
-import 'package:padshala/carouselfirst.dart';
 import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/drawer_menu.dart';
-import 'package:padshala/food_promopage1.dart';
-import 'package:padshala/food_promopage2.dart';
 import 'package:padshala/footer.dart';
 import 'package:padshala/screens/explore_page.dart';
 import 'package:padshala/screens/whats_new.dart';
@@ -48,19 +42,13 @@ class _HomePageState extends State<HomePage> {
             ListView(
               padding: const EdgeInsets.symmetric(vertical: 10),
               children: [
-                const Carouselfirst(),
+               // Carouselfirst(),
                 WhatsNewSection(),
                 ExplorePage(),
                 BestSellerPage(),
                 TopDeals(),
-                CarouselSecond(),
-                FoodPromopage1(
-                  onAddToCart: (newItem) {
-                    context
-                        .read<CartBloc>()
-                        .add(AddToCartEvent(cartItem: newItem));
-                  },
-                ),
+              /*CarouselSecond(),
+              FoodPromopage1(onAddToCart: (newItem) { context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));  }, ),
                 _promoBanner(),
                 BeveragePromoPage(
                   onAddToCart: (newItem) {
@@ -77,8 +65,9 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 BrandsWeDeal(),
-                Footer(),
-              ],
+                */
+                 Footer(),
+             ],
             ),
             const Positioned(
               bottom: 12,

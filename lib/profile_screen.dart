@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:padshala/homepage.dart';
+import 'package:padshala/whatsapp_support.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -198,7 +199,7 @@ void _showConfirmDialog(String action) {
                 profileOption("My Favorite", Icons.favorite),
                 profileOption("My Address", Icons.location_on),
                 profileOption("My Orders", Icons.list_alt),
-                profileOption("Support", Icons.support),
+              profileOption("Support", Icons.support, onTap: WhatsappSupportButton.launchWhatsApp),
                 profileOption("Delete Account", Icons.delete, color: Colors.red, onTap: () => _showConfirmDialog("delete account")),
                 profileOption("Logout", Icons.exit_to_app, color: Colors.red, onTap: () => _showConfirmDialog("logout")),
             ],

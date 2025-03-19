@@ -25,11 +25,11 @@ class _ExploretabPageState extends State<ExploretabPage>
   
 
   final List<String> tabs = [
-    "Exclusive Deals",
+    "Chinese Food",
     "Cooked Food",
-    "Sides",
-    "Chicken Meals",
-    "Veg Items",
+    "Snacks",
+    "Fast Food",
+    "Indian Food",
     "Beverages"
   ];
   @override
@@ -49,20 +49,20 @@ class _ExploretabPageState extends State<ExploretabPage>
     String jsonPath = '';
 
     switch (category) {
-      case "Exclusive Deals":
-        jsonPath = 'assets/json/exclusive_deals.json';
+      case "Chinese Food":
+        jsonPath = 'assets/json/Chinesefood.json';
         break;
       case "Cooked Food":
-        jsonPath = 'assets/json/chicken_buckets.json';
+        jsonPath = 'assets/json/Cookedfood.json';
         break;
-      case "Sides":
-        jsonPath = 'assets/json/sides.json';
+      case "Snacks":
+        jsonPath = 'assets/json/Snacks.json';
         break;
-      case "Chicken Meals":
-        jsonPath = 'assets/json/chicken_meals.json';
+      case "Fast Food":
+        jsonPath = 'assets/json/Fastfood.json';
         break;
-      case "Veg Items":
-        jsonPath = 'assets/json/burgers_twisters.json';
+      case "Indian Food":
+        jsonPath = 'assets/json/Indianfood.json';
         break;
       case "Beverages":
         jsonPath = 'assets/json/beverages.json';

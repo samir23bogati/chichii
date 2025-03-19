@@ -9,7 +9,7 @@ import 'package:padshala/common/bottom_navbar.dart';
 class WhatsnewFoodlist extends StatelessWidget {
   final String comboName;
   final double price;
-  final List<Map<String, String>> foodItems;
+  final List<Map<String, dynamic>> foodItems;
   final List<String> imageUrl;
 
   WhatsnewFoodlist({
@@ -59,7 +59,7 @@ class WhatsnewFoodlist extends StatelessWidget {
           ),
           ...foodItems.map((item) => ListTile(
                 title: Text(item["name"] ?? "Unnamed"),
-                leading: item["image"] != null
+                leading: item["image"] != null && item["image"] != ""
                     ? Image.asset(item["image"]!, width: 40, height: 40)
                     : Icon(Icons.fastfood),
               )),
