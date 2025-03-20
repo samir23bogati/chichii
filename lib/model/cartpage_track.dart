@@ -25,12 +25,13 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadCartEvent());
+      context.read<CartBloc>().add(LoadCartEvent());  
     });
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Cart"),
+        backgroundColor: Colors.amber,
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {

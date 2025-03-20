@@ -74,11 +74,24 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
 }
 
 double calculateDeliveryCost(double distance) {
-  double baseCost = 100.0; // Base delivery cost for up to 4 km
+  // Get the current time in Nepali Time (Nepal is UTC+5:45)
+  DateTime now = DateTime.now().toUtc().add(Duration(hours: 5, minutes: 45));
+
+  // Debug print for current Nepali time
+  print("Nepali Time Now: $now");
+
+  // Default base cost
+  double baseCost = 100.0;
+
+  // Check if time is between 12:00 AM and 8:30 AM
+  if (now.hour == 0 && now.minute >= 0 || (now.hour >= 1 && now.hour < 8) || (now.hour == 8 && now.minute <= 30)) {
+    baseCost = 200.0;
+  }
+
   double additionalCostPerKm = 12.0; // Additional cost per km
 
   if (distance <= 3) {
-    return baseCost; 
+    return baseCost;
   } else {
     double extraDistance = distance - 3;
     double extraCost = extraDistance * additionalCostPerKm;
