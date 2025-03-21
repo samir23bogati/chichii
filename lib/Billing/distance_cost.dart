@@ -83,10 +83,9 @@ double calculateDeliveryCost(double distance) {
   // Default base cost
   double baseCost = 100.0;
 
-  // Check if time is between 12:00 AM and 8:30 AM
-  if (now.hour == 0 && now.minute >= 0 || (now.hour >= 1 && now.hour < 8) || (now.hour == 8 && now.minute <= 30)) {
-    baseCost = 200.0;
-  }
+ if ((now.hour == 23 && now.minute >= 5) || (now.hour < 4)) {
+  baseCost = 200.0;
+}
 
   double additionalCostPerKm = 12.0; // Additional cost per km
 
