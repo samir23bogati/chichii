@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_event.dart';
@@ -21,6 +23,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CheckAuthStatus>(_onCheckAuthStatus);
     on<CountdownTicked>(_onCountdownTicked);
   }
+
+  Future<void> saveAdminFCMToken() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  String? token = await FirebaseMessaging.instance.getToken();
+  if (token != null) {
+    await FirebaseFirestore.instance.collection('admin_tokens').doc(user.uid).set({
+      'token': token,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
+}
 
    void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) async{
     final user =await _getCurrentUser();
@@ -77,6 +92,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (userCredential.user != null) {final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isAuthenticated', true);
+
+        await saveAdminFCMToken();  
+
         emit(Authenticated(user: userCredential.user!));
       } else {
         emit(AuthError(message: 'Google sign-in failed'));
@@ -105,6 +123,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isAuthenticated', true);
+
+        await saveAdminFCMToken();  
+
         emit(OtpVerified(user: user));
       } else {
         emit(AuthError(message: 'OTP verification failed'));
@@ -120,6 +141,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
    void _onResendOtpRequested(ResendOtpRequested event, Emitter<AuthState> emit) async {
     emit(PhoneAuthLoading());
+     _timer?.cancel();
     try {
       await _sendPhoneNumber(event.phoneNumber);
     } catch (e) {
@@ -170,6 +192,10 @@ Future<void> _sendPhoneNumber(String phoneNumber) async {
 
 
 Future<User?> _verifyOtp(String otp) async {
+   if (verificationId == null) {
+    emit(AuthError(message: "Verification ID is missing. Try again."));
+    return null;
+  }
   try {
     final PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationId!,
@@ -178,6 +204,7 @@ Future<User?> _verifyOtp(String otp) async {
     final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
     return userCredential.user;
   } catch (e) {
+     emit(AuthError(message: "Invalid OTP. Please try again."));
     return null;
   }
 }

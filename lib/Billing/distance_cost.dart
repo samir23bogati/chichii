@@ -3,9 +3,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) async {
-  const double fixedLat = 27.7211462; // Chichii Online's latitude (Kathmandu)
-  const double fixedLng = 85.3085712; // Chichii Online's longitude (Kathmandu)
-
+  const double fixedLat = 27.7210704; // Chichii Online's latitude (Kathmandu)
+  const double fixedLng = 85.30847450000002; // Chichii Online's longitude (Kathmandu)
+    
   // Load API key from environment variables
   final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
   if (apiKey == null || apiKey.isEmpty) {
@@ -37,15 +37,11 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
        if (elementStatus == 'OK') {
           final distanceInMeters = data['rows'][0]['elements'][0]['distance']['value'];
           final durationInSeconds = data['rows'][0]['elements'][0]['duration']['value'];
-          print('Distance in meters: $distanceInMeters'); 
-          print('Duration in seconds: $durationInSeconds');
 
           if (distanceInMeters > 0) {
             final distanceInKm = distanceInMeters / 1000.0; // Convert meters to km
             final double deliveryCost = calculateDeliveryCost(distanceInKm);
 
-            print('Total distance: $distanceInKm km');
-            print('Delivery cost: $deliveryCost NRS');
 
             return {
               'distance': distanceInKm,
@@ -74,11 +70,7 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
 }
 
 double calculateDeliveryCost(double distance) {
-  // Get the current time in Nepali Time (Nepal is UTC+5:45)
   DateTime now = DateTime.now().toUtc().add(Duration(hours: 5, minutes: 45));
-
-  // Debug print for current Nepali time
-  print("Nepali Time Now: $now");
 
   // Default base cost
   double baseCost = 100.0;
@@ -87,7 +79,7 @@ double calculateDeliveryCost(double distance) {
   baseCost = 200.0;
 }
 
-  double additionalCostPerKm = 12.0; // Additional cost per km
+  double additionalCostPerKm = 12.0; 
 
   if (distance <= 3) {
     return baseCost;

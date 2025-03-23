@@ -14,10 +14,10 @@ class BestSellerDetailPage extends StatefulWidget {
 
   const BestSellerDetailPage({
     Key? key,
-    required this.title, 
-    required this.image, 
+    required this.title,
+    required this.image,
     required this.price,
-    required this.bestSellers, 
+    required this.bestSellers,
   }) : super(key: key);
 
   @override
@@ -25,12 +25,12 @@ class BestSellerDetailPage extends StatefulWidget {
 }
 
 class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
-   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
- @override
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, 
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -50,12 +50,25 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(widget.image, height: 250, width: double.infinity, fit: BoxFit.cover),
+                  Image.asset(widget.image,
+                      height: 250, width: double.infinity, fit: BoxFit.cover),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
                       widget.title,
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Text(
+                      "\NRS ${widget.price}", // Display price
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.redAccent),
                     ),
                   ),
                   Padding(
@@ -65,7 +78,7 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                   ),
-                  SizedBox(height: 10), 
+                  SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: BlocBuilder<CartBloc, CartState>(
@@ -84,8 +97,8 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                               quantity: 1,
                             ),
                           );
-                          isAddedToCart =
-                              state.cartItems.any((item) => item.id == widget.title);
+                          isAddedToCart = state.cartItems
+                              .any((item) => item.id == widget.title);
                         }
 
                         return AnimatedSwitcher(
@@ -93,62 +106,67 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                           transitionBuilder: (child, animation) =>
                               FadeTransition(opacity: animation, child: child),
                           child: isAddedToCart
-                           ? Container(
-                                key: ValueKey("added_${widget.title}"),
-                                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade100,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.green),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      "Added to Cart",
-                                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ElevatedButton(
-                                onPressed: () {
-                                  final cartItem = CartItem(
-                                    id: widget.title,
-                                    title: widget.title,
-                                    price: double.tryParse(widget.price) ?? 0.0,
-                                    imageUrl: widget.image,
-                                    quantity: 1,
-                                  );
+                              ? Container(
+                                  key: ValueKey("added_${widget.title}"),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade100,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.green),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "Added to Cart",
+                                        style: TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    final cartItem = CartItem(
+                                      id: widget.title,
+                                      title: widget.title,
+                                      price:
+                                          double.tryParse(widget.price) ?? 0.0,
+                                      imageUrl: widget.image,
+                                      quantity: 1,
+                                    );
 
-                                  // Add to cart
-                                  context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.shopping_cart,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      "Add to Cart",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
+                                    // Add to cart
+                                    context.read<CartBloc>().add(
+                                        AddToCartEvent(cartItem: cartItem));
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.shopping_cart,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "Add to Cart",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                  ),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context).primaryColor,
-                                ),
-                              ),
                         );
-
                       },
                     ),
                   ),
@@ -162,7 +180,8 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
               itemBuilder: (context, index) {
                 final item = widget.bestSellers[index];
                 return ListTile(
-                  leading: Image.asset(item['image']!, width: 50, height: 50, fit: BoxFit.cover),
+                  leading: Image.asset(item['image']!,
+                      width: 50, height: 50, fit: BoxFit.cover),
                   title: Text(item['title']!),
                   trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
@@ -183,8 +202,9 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
             ),
           ],
         ),
-       bottomNavigationBar:BottomNavBar(scaffoldKey: _scaffoldKey),
+        bottomNavigationBar: BottomNavBar(scaffoldKey: _scaffoldKey),
       ),
+      
     );
   }
 }

@@ -1,4 +1,4 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -20,18 +20,29 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
+void checkFirestoreData() async {
+  var firestore = FirebaseFirestore.instance;
+  var snapshot = await firestore.collection("orders").get();
+
+  if (snapshot.docs.isEmpty) {
+    print("No documents found in 'orders' collection.");
+  } else {
+    for (var doc in snapshot.docs) {
+      print("Document ID: ${doc.id} - Data: ${doc.data()}");
+    }
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
   await dotenv.load();
-
   await Firebase.initializeApp();
 
-     // Initialize Firebase Messaging
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  checkFirestoreData();
 
-  // Request notification permissions
+  
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
     badge: true,
@@ -44,9 +55,8 @@ Future<void> main() async {
     print('User declined or has not accepted permission');
   }
 
-  // Handle background messages
+  
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
- // Handle foreground messages (App Open)
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("Foreground Message Received: ${message.notification?.title}");
 

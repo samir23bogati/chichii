@@ -149,7 +149,7 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     } catch (e) {
       print("Error fetching address: $e");
       setState(() {
-        address = "Error retrieving address";
+        address = "Internet Error: Error Retrieving Address ";
       });
     }
   }
