@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
@@ -26,6 +27,7 @@ class BestSellerDetailPage extends StatefulWidget {
 
 class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final logger = Logger();
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +144,8 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                                       imageUrl: widget.image,
                                       quantity: 1,
                                     );
+
+                                    logger.i('Adding item to cart: ${cartItem.title}');
 
                                     // Add to cart
                                     context.read<CartBloc>().add(

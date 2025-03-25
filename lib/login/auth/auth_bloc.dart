@@ -27,13 +27,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> saveAdminFCMToken() async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user == null) return;
+ // Fetch user role from Firestore
+  DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
-  String? token = await FirebaseMessaging.instance.getToken();
-  if (token != null) {
-    await FirebaseFirestore.instance.collection('admin_tokens').doc(user.uid).set({
-      'token': token,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+  if (userDoc.exists && userDoc['role'] == 'admin') {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      await FirebaseFirestore.instance.collection('admin_tokens').doc(user.uid).set({
+        'token': token,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
   }
 }
 
@@ -90,23 +94,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       final UserCredential userCredential =await _firebaseAuth.signInWithCredential(credential);
 
-      if (userCredential.user != null) {final prefs = await SharedPreferences.getInstance();
+      if (userCredential.user != null) {
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isAuthenticated', true);
 
-        await saveAdminFCMToken();  
+        // Check if the user exists in Firestore and verify role
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
 
-        emit(Authenticated(user: userCredential.user!));
+
+       if (userDoc.exists) {
+        // User exists, check if they are an admin
+        final data = userDoc.data() as Map<String, dynamic>;
+        if (data['role'] == 'admin') {
+          await saveAdminFCMToken();  // Save FCM token for admins
+        }
       } else {
-        emit(AuthError(message: 'Google sign-in failed'));
+        // If user does not exist, store their role as admin
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          'role': 'admin',  // Set role as admin
+          'email': userCredential.user!.email,
+        });
+        await saveAdminFCMToken(); // Save FCM token for new admin
       }
-    } catch (e) {
-      emit(AuthError(message: e.toString()));
+
+      emit(Authenticated(user: userCredential.user!));
+    } else {
+      emit(AuthError(message: 'Google sign-in failed'));
     }
+  } catch (e) {
+    emit(AuthError(message: e.toString()));
+  }
   }
 
 
   // ✅ Phone Authentication Handling
-  Future<void> _onPhoneAuthRequested( PhoneAuthRequested event, Emitter<AuthState> emit) async {
+  void _onPhoneAuthRequested( PhoneAuthRequested event, Emitter<AuthState> emit) async {
     emit(PhoneAuthLoading());
     try {
       await _sendPhoneNumber(event.phoneNumber);

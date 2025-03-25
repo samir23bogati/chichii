@@ -33,7 +33,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     super.initState();
     _fetchDeliveryCost();
 
-    // Get user phone number in initState
+    // Get user phone number in initStateR
     User? user = FirebaseAuth.instance.currentUser;
     setState(() {
       userPhoneNumber = user?.phoneNumber ?? "Not Available";
@@ -45,27 +45,26 @@ Future<void> _fetchDeliveryCost() async {
   try {
     var result = await calculateDistance(widget.userLat, widget.userLng);
     
-    // Ensure result is of type double
-   if (result is Map<String, dynamic>) {
-      double cost = result['cost'] as double; // Safe casting to double
+    if (result is Map<String, dynamic> && result.containsKey('cost')) {
+        setState(() {
+          deliveryCost = result['cost'] as double;
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Invalid result format.");
+      }
+    } catch (e) {
       setState(() {
-        deliveryCost = cost;
+        deliveryCost = 0;
         isLoading = false;
       });
-    } else {
-      throw Exception("Invalid result format.");
     }
-  } catch (e) {
-    setState(() {
-      deliveryCost = 0;
-      isLoading = false;
-    });
   }
-}
+
 
   @override
   Widget build(BuildContext context) {
-     double finalPrice = widget.totalPrice + (deliveryCost ?? 0);
+   double finalPrice = widget.totalPrice + (deliveryCost ?? 0);
     return Scaffold(
       appBar: AppBar(title: const Text("Billing Confirmation")),
       body: Padding(
@@ -156,6 +155,7 @@ Future<void> _fetchDeliveryCost() async {
               children: [
                 ElevatedButton(
                   onPressed:isLoading ? null: () {
+              print("Cash on Delivery button pressed!");
                     _placeOrder(context, "COD", finalPrice);
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -176,56 +176,105 @@ Future<void> _fetchDeliveryCost() async {
     );
   }
 
- void _placeOrder(BuildContext context, String paymentMethod, double finalPrice) async {
-  print("Placing order with payment method: $paymentMethod");
-  try {
-    final orderRef = FirebaseFirestore.instance.collection('orders').doc();
-     print("Order ID: ${orderRef.id}");
-    final orderData = {
-      "orderId": orderRef.id,
-      "address": widget.address,
-      "phoneNumber": userPhoneNumber,
-      "items": widget.cartItems.map((item) => {
-            "title": item.title,
-            "quantity": item.quantity,
-            "price": item.price,
-            "imageUrl": item.imageUrl,
-          }).toList(),
-      "totalPrice": finalPrice,
-      "deliveryCost": deliveryCost,
-      "paymentMethod": paymentMethod,
-      "status": "Pending",
-      "timestamp": Timestamp.now(),
-    };
+  void _placeOrder(BuildContext context, String paymentMethod, double finalPrice) async {
+    if (isLoading) return;
 
-    await orderRef.set(orderData);
-     print("Order placed successfully!");
-    await _sendAdminNotification(orderRef.id,orderData);
-      print("Admin notification sent!");
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order placed successfully!")));
+    try {
+      print("Placing order with payment method: $paymentMethod");
+      final orderRef = FirebaseFirestore.instance.collection('orders').doc();
 
-    Navigator.pop(context);
+      Map<String, dynamic> orderData = {
+        "orderId": orderRef.id,
+        "address": widget.address,
+        "phoneNumber": userPhoneNumber,
+        "items": widget.cartItems.map((item) => {
+              "title": item.title,
+              "quantity": item.quantity,
+              "price": item.price,
+              "imageUrl": item.imageUrl,
+            }).toList(),
+        "totalPrice": finalPrice,
+        "deliveryCost": deliveryCost,
+        "paymentMethod": paymentMethod,
+        "status": "Pending",
+        "timestamp": Timestamp.now(),
+      };
+
+      await saveOrder(orderRef.id, orderData);
+      await _sendAdminNotification(orderRef.id, orderData);
+
+       showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog( 
+          shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Rounded corners
+      ),
+      title: Column(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green, size: 60), // Success Icon
+          SizedBox(height: 10),
+          Text(
+            "Order Placed!",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+        ],
+      ),
+      content: Text(
+        "Your order has been successfully sent to Chichionline.",
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 16),
+      ),
+      actions: [
+        Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber, // Custom button color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // Rounded button
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+            ),
+            onPressed: () {
+              Navigator.popUntil(context, (route) => route.isFirst); // Navigate back to home
+            },
+           child: Text(
+                  "OK",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    ); 
   } catch (e) {
-    print("Failed to place order: $e");
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to place order: $e")));
+    print("Error placing order: $e");
   }
 }
-
-Future<void> _sendAdminNotification(String orderId, Map<String, dynamic> orderData) async {
-  try {
-    await FirebaseFirestore.instance.collection('admin_notifications').add({
-      "orderId": orderId,
-      "message": "New order placed with ID: $orderId",
-      "address": orderData["address"],
-      "phoneNumber": orderData["phoneNumber"],  // Including phone number
-      "cartItems": orderData["items"],  // Full cart details
-      "totalPrice": orderData["totalPrice"],
-      "deliveryCost": orderData["deliveryCost"],
-      "paymentMethod": orderData["paymentMethod"],
-      "timestamp": Timestamp.now(),
-    });
-  } catch (e) {
-    print("Failed to send notification: $e");
+  Future<void> saveOrder(String orderId, Map<String, dynamic> orderData) async {
+    try {
+      await FirebaseFirestore.instance.collection('orders').doc(orderId).set(orderData);
+    } catch (e) {
+      print("Error saving order: $e");
+    }
   }
-}
+
+  Future<void> _sendAdminNotification(String orderId, Map<String, dynamic> orderData) async {
+    try {
+      await FirebaseFirestore.instance.collection('admin_notifications').add({
+        "orderId": orderId,
+        "message": "New order placed with ID: $orderId",
+        "address": orderData["address"],
+        "phoneNumber": orderData["phoneNumber"],
+        "cartItems": orderData["items"],
+        "totalPrice": orderData["totalPrice"],
+        "deliveryCost": orderData["deliveryCost"],
+        "paymentMethod": orderData["paymentMethod"],
+        "timestamp": Timestamp.now(),
+      });
+    } catch (e) {
+      print("Failed to send notification: $e");
+    }
+  }
 }

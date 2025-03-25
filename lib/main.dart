@@ -11,35 +11,65 @@ import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/login/auth/auth_bloc.dart';
 import 'package:padshala/screens/splash_screen.dart';
-
-// Background message handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling background message: ${message.messageId}");
-}
 // Initialize local notifications
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-void checkFirestoreData() async {
-  var firestore = FirebaseFirestore.instance;
-  var snapshot = await firestore.collection("orders").get();
+// Background message handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling background message: ${message.messageId}");
+ 
+   if (message.notification != null) {
+    showNotification(message.notification!); 
+  }
+}
+// Function to show notifications
+Future<void> showNotification(RemoteNotification notification) async {
+  const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    'your_channel_id',
+    'your_channel_name',
+    channelDescription: 'your_channel_description',
+    importance: Importance.high,
+    priority: Priority.high,
+  );
 
-  if (snapshot.docs.isEmpty) {
-    print("No documents found in 'orders' collection.");
-  } else {
-    for (var doc in snapshot.docs) {
-      print("Document ID: ${doc.id} - Data: ${doc.data()}");
+  const NotificationDetails notificationDetails = NotificationDetails(
+    android: androidDetails,
+  );
+
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    notification.title,
+    notification.body,
+    notificationDetails,
+  );
+}
+
+Future <void> checkFirestoreData() async {
+  var firestore = FirebaseFirestore.instance;
+  try {
+    var snapshot = await firestore.collection("orders").get();
+
+    if (snapshot.size == 0) {
+      print("No documents found in 'orders' collection.");
+    } else {
+      snapshot.docs.forEach((doc) {
+        print("Document ID: ${doc.id} - Data: ${doc.data()}");
+      });
     }
+  } catch (e) {
+    print("Error accessing Firestore: $e");
   }
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await dotenv.load();
   await Firebase.initializeApp();
 
-  checkFirestoreData();
+  await checkFirestoreData();
 
   
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -56,7 +86,6 @@ Future<void> main() async {
   }
 
   
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("Foreground Message Received: ${message.notification?.title}");
 
@@ -74,8 +103,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AuthBloc>( create: (context) => AuthBloc()),
-       
+        BlocProvider<AuthBloc>( create: (context) => AuthBloc()),  
         BlocProvider<CartBloc>(create: (context) => CartBloc()..add(LoadCartEvent()),
         ),
       ],

@@ -15,8 +15,8 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
   // Construct the API URL
   final String url =
       'https://maps.googleapis.com/maps/api/distancematrix/json?'
-      'origins=$userLat,$userLng'
-      '&destinations=$fixedLat,$fixedLng'
+      'origins=$fixedLat,$fixedLng'
+      '&destinations=$userLat,$userLng'
       '&mode=driving' 
       '&key=$apiKey';
 

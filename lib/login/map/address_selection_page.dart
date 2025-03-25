@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:padshala/Billing/BillingConfirmationPage.dart';
 import 'package:padshala/model/cart_item.dart';
 
@@ -28,6 +29,7 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
   String address = "Move the marker to select an address";
   TextEditingController searchController = TextEditingController();
   List<dynamic> predictions = [];
+  final Logger logger = Logger();
 
   @override
   void initState() {
@@ -38,14 +40,14 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
   Future<void> _updateAddress(LatLng newPosition) async {
     final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
     if (apiKey == null || apiKey.isEmpty) {
-      print("Error: Missing Google Maps API Key");
+      logger.e("Error: Missing Google Maps API Key");
       return;
     }
 
     final url = 'https://maps.googleapis.com/maps/api/geocode/json'
         '?latlng=${newPosition.latitude},${newPosition.longitude}'
         '&key=$apiKey';
-
+try {
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -58,10 +60,13 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
           selectedLocation = newPosition; // Update marker position
         });
       } else {
-        print("Geocode API Error: ${result['status']}");
+       logger.w("Geocode API Error: ${result['status']}");
       }
     } else {
-      print('Failed to fetch address from lat/lng: ${response.statusCode}');
+      logger.e('Failed to fetch address from lat/lng: ${response.statusCode}');
+    }
+  } catch (e) {
+      logger.e("Error updating address: $e");
     }
   }
 
@@ -70,7 +75,7 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     try {
       final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
       if (apiKey == null || apiKey.isEmpty) {
-        print("Error: Missing Google Maps API Key");
+       logger.e("Error: Missing Google Maps API Key");
         return;
       }
       final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
@@ -88,13 +93,13 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
             predictions = result['predictions'];
           });
         } else {
-          print("Google API Error: ${result['status']}");
+          logger.w("Google API Error: ${result['status']}");
         }
       } else {
-        print('Failed to fetch autocomplete: ${response.statusCode}');
+        logger.e('Failed to fetch autocomplete: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching autocomplete suggestions: $e');
+      logger.e('Error fetching autocomplete suggestions: $e');
     }
   }
 
@@ -113,8 +118,8 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
       if (data['status'] == 'OK' && data['result'] != null) {
         final location = data['result']['geometry']['location'];
         final newLocation = LatLng(location['lat'], location['lng']);
-        print('Selected Place LatLng: ${newLocation.latitude}, ${newLocation.longitude}');
-      print('Selected Address: ${data['result']['formatted_address']}');
+        logger.i('Selected Place LatLng: ${newLocation.latitude}, ${newLocation.longitude}');
+      logger.i('Selected Address: ${data['result']['formatted_address']}');
 
       _getAddressFromLatLng(newLocation);
          setState(() {
@@ -125,10 +130,10 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
        mapController
           ?.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
     } else {
-      print('Failed to retrieve valid location data: ${data['status']}');
+     logger.e('Failed to retrieve valid location data: ${data['status']}');
     }
   } else {
-    print('Failed to fetch place details: ${response.statusCode}');
+    logger.e('Failed to fetch place details: ${response.statusCode}');
   }
 }
 
@@ -147,7 +152,7 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
         });
       }
     } catch (e) {
-      print("Error fetching address: $e");
+      logger.e("Error fetching address: $e");
       setState(() {
         address = "Internet Error: Error Retrieving Address ";
       });
@@ -173,7 +178,7 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
       }
       _getAddressFromLatLng(selectedLocation!);
     } catch (e) {
-      print("Failed to get location: $e");
+      logger.e("Failed to get location: $e");
     }
   }
 
@@ -203,10 +208,10 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
 
         mapController?.animateCamera(CameraUpdate.newLatLng(newLatLng));
       } else {
-        print("Place Details API Error: ${result['status']}");
+        logger.w("Place Details API Error: ${result['status']}");
       }
     } else {
-      print('Failed to fetch lat/lng from place ID: ${response.statusCode}');
+      logger.w('Failed to fetch lat/lng from place ID: ${response.statusCode}');
     }
   }
 
@@ -374,8 +379,8 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
                   ElevatedButton(
                     onPressed: selectedLocation != null
                         ? () {
-                            print('userLat: ${selectedLocation!.latitude}');
-                            print('userLng: ${selectedLocation!.longitude}');
+                          logger.w('userLat: ${selectedLocation!.latitude}');
+                          logger.w('userLng: ${selectedLocation!.longitude}');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
