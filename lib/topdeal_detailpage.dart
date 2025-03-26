@@ -60,7 +60,7 @@ class _TopDealDetailPageState extends State<TopDealDetailPage> {
                     padding: EdgeInsets.all(16.0),
                     child: Text(
                       "Price: NRS ${double.tryParse(widget.price)?.toStringAsFixed(2) ?? '0.00'}",
-                      style: TextStyle(fontSize: 16, color: Colors.black),
+                      style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color: Colors.green[700]),
                     ),
                   ),
 

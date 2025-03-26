@@ -158,7 +158,7 @@ class _MenuListState extends State<MenuList> {
                                 fontWeight: FontWeight.bold, fontSize: 16)),
                         SizedBox(height: 4),
                         Text("Rs.${item["price"]}",
-                            style: TextStyle(color: Colors.red, fontSize: 14)),
+                            style: TextStyle(color: Colors.green[700], fontSize: 14,fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -210,7 +210,7 @@ class _MenuListState extends State<MenuList> {
                 SizedBox(height: 12),
                 Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                 SizedBox(height: 4),
-                Text("Rs.${item["price"]}", style: TextStyle(color: Colors.red, fontSize: 16)),
+                Text("Rs.${item["price"]}", style: TextStyle(color: Colors.green[700],fontWeight: FontWeight.bold, fontSize: 14)),
                 SizedBox(height: 12),
                 AnimatedSwitcher(
                   duration: Duration(milliseconds: 300),

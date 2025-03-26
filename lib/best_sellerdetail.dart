@@ -70,7 +70,7 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.redAccent),
+                          color: Colors.green[700]),
                     ),
                   ),
                   Padding(

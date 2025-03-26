@@ -35,10 +35,11 @@ class WhatsNewSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(16),
                 child: Text(
-                  "WHAT'S NEW",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  "WHAT'S NEW 🍟",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  
                 ),
               ),
               CarouselSlider(

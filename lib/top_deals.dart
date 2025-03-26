@@ -14,14 +14,14 @@ class TopDeals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(16),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "TOP DEALS",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            "TOP DEALS ",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10), 
           SizedBox(

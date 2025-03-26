@@ -45,67 +45,87 @@ class CartPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 12),
-                        child: ListTile(
-                          leading: Image.asset(item.imageUrl),
-                          title: Text(item.title),
-                          subtitle: Text(
-                              'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}'),
-                          trailing: Row(
+                        elevation: 2.5,
+                        shape:RoundedRectangleBorder(
+                          borderRadius:BorderRadius.circular(12),
+                        ),
+                        margin: const EdgeInsets.symmetric( vertical: 8, horizontal: 12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            leading:SizedBox(
+                                            width: 60, 
+                                            height: 90, 
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(10), 
+                                              child: Image.asset(
+                                                item.imageUrl,
+                                                fit: BoxFit.cover, 
+                                          ),
+                                           ),
+                                      ),
+                            title: Text(item.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            subtitle: Text(
+                                'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}',
+                                style: const TextStyle(fontSize: 14, color:Colors.black38),
+                                ),
+                            trailing:Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove),
-                                onPressed: () {
-                                  if (item.quantity > 1) {
-                                    // Decrease quantity by 1
-
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (item.quantity > 1) {
+                                      // Decrease quantity by 1
+                          
+                                      context.read<CartBloc>().add(
+                                            UpdateQuantityEvent(
+                                              cartItem: item.copyWith(
+                                                  quantity: item.quantity - 1),
+                                              isIncrement: false,
+                                              quantity:
+                                                  item.quantity - 1, // Decrement
+                                            ),
+                                          );
+                                    } else {
+                                      context.read<CartBloc>().add(
+                                            RemoveFromCartEvent(
+                                                cartItem:
+                                                    item), // Remove if quantity is 1
+                                          );
+                                    }
+                                  },
+                                ),
+                                Text('${item.quantity}',
+                                    style: const TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    // Increase quantity by 1
                                     context.read<CartBloc>().add(
                                           UpdateQuantityEvent(
                                             cartItem: item.copyWith(
-                                                quantity: item.quantity - 1),
-                                            isIncrement: false,
+                                                quantity: item.quantity + 1),
+                                            isIncrement: true,
                                             quantity:
-                                                item.quantity - 1, // Decrement
+                                                item.quantity + 1, // Increment
                                           ),
                                         );
-                                  } else {
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
                                     context.read<CartBloc>().add(
                                           RemoveFromCartEvent(
-                                              cartItem:
-                                                  item), // Remove if quantity is 1
+                                              cartItem: item), // Delete the item
                                         );
-                                  }
-                                },
-                              ),
-                              Text('${item.quantity}',
-                                  style: const TextStyle(fontSize: 16)),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: () {
-                                  // Increase quantity by 1
-                                  context.read<CartBloc>().add(
-                                        UpdateQuantityEvent(
-                                          cartItem: item.copyWith(
-                                              quantity: item.quantity + 1),
-                                          isIncrement: true,
-                                          quantity:
-                                              item.quantity + 1, // Increment
-                                        ),
-                                      );
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  context.read<CartBloc>().add(
-                                        RemoveFromCartEvent(
-                                            cartItem: item), // Delete the item
-                                      );
-                                },
-                              ),
-                            ],
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -121,7 +141,7 @@ class CartPage extends StatelessWidget {
             return Center(
               child: Text(
                 state.errorMessage,
-                style: const TextStyle(fontSize: 18, color: Colors.red),
+                style: const TextStyle(fontSize: 18),
               ),
             );
           }

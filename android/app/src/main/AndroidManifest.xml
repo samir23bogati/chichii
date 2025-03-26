@@ -59,11 +59,11 @@
         <meta-data
             
             android:name="com.google.android.places.API_KEY"
-            android:value="AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0" />
+            android:value="${GOOGLE_MAPS_API_KEY}" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-             android:value="AIzaSyCvWC56L0KevuHNhmcmMxNBF7U5jaKPZu0" />
+             android:value="${GOOGLE_MAPS_API_KEY}" />
 
             
     </application>

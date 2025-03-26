@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:padshala/screens/exploretab_page.dart';
@@ -39,9 +38,9 @@ class _ExplorePageState extends State<ExplorePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("EXPLORE MENU",
+                Text("EXPLORE MENU 🍗",
                     style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -50,9 +49,9 @@ class _ExplorePageState extends State<ExplorePage> {
                             builder: (context) =>
                                 ExploretabPage(initialIndex: 0)));
                   },
-                  child: Text("View All",
+                  child: Text("View All ➡️",
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
