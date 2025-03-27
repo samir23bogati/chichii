@@ -43,18 +43,34 @@ class WhatsnewFoodlist extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Price: NRS.${price.toStringAsFixed(2)}", 
-                  style: TextStyle(fontSize:20 , fontWeight: FontWeight.bold),
-                ),
+                RichText(
+  text: TextSpan(
+    children: [
+      TextSpan(
+        text: "Price: NRS  ",
+        style: TextStyle(
+          color: Colors.black,   fontSize: 16,  fontWeight: FontWeight.bold, ),
+      ),
+      TextSpan(
+        text: "${price.toStringAsFixed(2)}",
+        style: TextStyle(
+          color: Colors.green[700], 
+          fontSize: 15, 
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ],
+  ),
+)
+
               ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Text(
-              "Included in $comboName:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "INCLUDED IN  $comboName:",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           ...foodItems.map((item) => ListTile(

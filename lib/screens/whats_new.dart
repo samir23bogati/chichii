@@ -35,7 +35,7 @@ class WhatsNewSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(10),
                 child: Text(
                   "WHAT'S NEW 🍟",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -44,7 +44,7 @@ class WhatsNewSection extends StatelessWidget {
               ),
               CarouselSlider(
                 options: CarouselOptions(
-                  height: 170,
+                  height: 157,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   enableInfiniteScroll: true,

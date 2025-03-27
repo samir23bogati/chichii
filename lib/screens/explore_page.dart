@@ -29,7 +29,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(6.0),
       color: Colors.white,
       child: SingleChildScrollView(
         child: Column(
@@ -57,15 +57,15 @@ class _ExplorePageState extends State<ExplorePage> {
             ),
             SizedBox(height: 10),
             SizedBox(
-              height: (categories.length / 3).ceil() * 175,
+              height: (categories.length / 3).ceil() * 165,
               child: GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: categories.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  mainAxisExtent: 170,
+                  crossAxisSpacing: 3,
+                  mainAxisSpacing: 35,
+                  mainAxisExtent: 138,
                 ),
                 itemBuilder: (context, index) {
                   return GestureDetector(
@@ -89,7 +89,7 @@ class _ExplorePageState extends State<ExplorePage> {
                         ),
                          child: Image.asset(
                           categories[index]['image']!,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                          ),
                       ),
                     ),
