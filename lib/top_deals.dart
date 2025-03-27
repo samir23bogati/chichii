@@ -20,7 +20,7 @@ class TopDeals extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "TOP DEALS ",
+            "TOP DEALS 💰",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10), 
