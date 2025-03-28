@@ -66,7 +66,7 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Text(
-                      "\NRS ${widget.price}", // Display price
+                      "\NRS ${widget.price}", 
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

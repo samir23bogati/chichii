@@ -4,14 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:padshala/best_sellerdetail.dart';
 
 class BestSellerPage extends StatefulWidget {
-
-
   @override
   State<BestSellerPage> createState() => _BestSellerPageState();
 }
 
 class _BestSellerPageState extends State<BestSellerPage> {
-   List<Map<String, String>> bestSellers = [];
+  List<Map<String, String>> bestSellers = [];
 
   @override
   void initState() {
@@ -21,20 +19,22 @@ class _BestSellerPageState extends State<BestSellerPage> {
 
   // Function to load JSON data from assets
   Future<void> _loadBestSellers() async {
-    final String response = await rootBundle.loadString('assets/json/bestseller.json');
+    final String response =
+        await rootBundle.loadString('assets/json/bestseller.json');
     final List<dynamic> data = json.decode(response);
     setState(() {
       bestSellers = data.map((item) => Map<String, String>.from(item)).toList();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     PageController _controller = PageController(
-      viewportFraction: 0.5, 
+      viewportFraction: 0.44,
     );
-     if (bestSellers.isEmpty) {
-    return Center(child: CircularProgressIndicator()); 
-  }
+    if (bestSellers.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
 
     return Container(
       padding: EdgeInsets.all(16),
@@ -48,10 +48,10 @@ class _BestSellerPageState extends State<BestSellerPage> {
           ),
           SizedBox(height: 10),
           SizedBox(
-            height: 280,
+            height: 258,
             child: PageView.builder(
               controller: _controller,
-              itemCount: bestSellers.length, 
+              itemCount: bestSellers.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 final item = bestSellers[index];
@@ -77,51 +77,75 @@ class _BestSellerPageState extends State<BestSellerPage> {
                         Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  item['image']!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 216,
+                            child: Stack(
+                              children: [
+                                // Full height image
+                                Positioned.fill(
+                                  child: Image.asset(
+                                    item['image']!,
+                                    fit: BoxFit.cover, // Cover full box
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item['title']!,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
+                                // Title overlapping the image
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    color: Colors.black.withOpacity(0.001),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            item['title']!,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13, 
+                                              color: Colors.white,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          "→",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30, 
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      'NRS ${item['price']}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green[700],
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ],
+
+                                // SizedBox(height: 4),
+                                // Text(
+                                //   'NRS ${item['price']}',
+                                //   style: TextStyle(
+                                //     fontSize: 12,
+                                //     fontWeight: FontWeight.bold,
+                                //     color: Colors.green[700],
+                                //   ),
+                                // ),
+
+                                Positioned(
+                                  top: 0,
+                                  left: 7,
+                                  child: RibbonWidget(),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: RibbonWidget(),
                         ),
                       ],
                     ),
