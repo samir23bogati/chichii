@@ -7,6 +7,7 @@ import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/footer.dart';
 import 'package:padshala/screens/explore_page.dart';
+import 'package:padshala/screens/topcircle.dart';
 import 'package:padshala/screens/whats_new.dart';
 import 'package:padshala/top_deals.dart';
 import 'package:padshala/whatsapp_support.dart';
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               children: [
                // Carouselfirst(),
+               Topcircle(),
                 WhatsNewSection(),
                 ExplorePage(),
                 BestSellerPage(),
