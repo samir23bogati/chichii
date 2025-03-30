@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:padshala/screens/mapselectionscreen.dart';
 
 class Topcircle extends StatefulWidget {
   @override
@@ -7,11 +9,18 @@ class Topcircle extends StatefulWidget {
 
 class _TopcircleState extends State<Topcircle> {
   int selectedIndex = 1; // Default selection: "SELF-PICKUP"
+  LatLng? selectedAddress;
 
   final List<Map<String, dynamic>> orderTypes = [
     {"label": "DELIVERY", "icon": Icons.delivery_dining},
     {"label": "SELF-PICKUP", "icon": Icons.shopping_bag},
   ];
+
+   void _onLocationSelected(LatLng location) {
+    setState(() {
+      selectedAddress = location;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +39,17 @@ class _TopcircleState extends State<Topcircle> {
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
+                   if (index == 0) {
+                        // Open map screen when "DELIVERY" is selected
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapSelectionScreen(
+                              onLocationSelected: _onLocationSelected,
+                            ),
+                          ),
+                        );
+                      }
                     });
                   },
                   child: Padding(
