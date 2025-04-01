@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:logger/logger.dart';
+import 'package:padshala/login/map/address_selection_page.dart';
 
 class MapSelectionScreen extends StatefulWidget {
    final Function(LatLng) onLocationSelected;
@@ -39,6 +40,8 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
       setState(() {
          _currentPosition = position;
         selectedLocation = LatLng(position.latitude, position.longitude);
+          _searchController.clear(); 
+      autocompleteSuggestions.clear();
       });
       _updateAddress(selectedLocation!);
       _mapController.animateCamera(
@@ -156,17 +159,18 @@ Future<String?> _getPlaceId(String place) async {
   }
 
   void _confirmLocation() {
-    if (selectedLocation != null) {
-      Navigator.pop(context, {
-        'location': selectedLocation,
-        'address': selectedAddress,
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select a location first!")),
-      );
-    }
+  if (selectedLocation != null && selectedAddress != null) {
+    Navigator.pop(context, {
+      'location': selectedLocation,
+      'address': selectedAddress,
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Please select a location first!")),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +182,7 @@ Future<String?> _getPlaceId(String place) async {
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
               target: selectedLocation ?? LatLng(27.7172, 85.3240),
-              zoom: 200.0,
+              zoom: 14.0,
             ),
             markers: selectedLocation != null
                 ? {
@@ -235,33 +239,79 @@ Future<String?> _getPlaceId(String place) async {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(autocompleteSuggestions[index]),
-                          onTap: () => _onPlaceSelected(autocompleteSuggestions[index]),
-                        );
-                      },
-                    ),
+                      onTap: () => _onPlaceSelected(autocompleteSuggestions[index]),
+                      );
+                    },
                   ),
-              ],
+                ),
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: 10, // Adjusted to make space for address box
+          left: 10,
+          right: 10,
+          child: Container(
+          padding: EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 4,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            selectedAddress != null ? "📍 $selectedAddress" : "Select  Delivery Location.",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+            
+          ),
+        ),
+        TextButton(
+          onPressed: _confirmLocation,
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.amber,
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
             ),
           ),
-          Positioned(
-            bottom: 105,
-            right: 16,
-            child: FloatingActionButton(
-              backgroundColor: Colors.green,
-              onPressed: _getCurrentLocation,
-              child: Icon(Icons.gps_fixed, color: Colors.white),
-            ),
+          child: Text(
+            "Confirm ",
+            style: TextStyle(
+              color: Colors.white,
+             fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-     child: FloatingActionButton.extended(
-        onPressed: _confirmLocation,
-        label: Text("Confirm Location"),
-        icon: Icon(Icons.check),
+      
+      // Add a floating action button for GPS button
+      Positioned(
+        bottom: 100,  // Adjust positioning to avoid overlap
+        right: 10,
+        child: FloatingActionButton(
+          onPressed: _getCurrentLocation,
+          backgroundColor: Colors.green,
+          child: Icon(Icons.gps_fixed, color: Colors.white),
+        ),
       ),
-      ),
-    );
+    ],
+  ),
+  ); 
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:padshala/screens/mapselectionscreen.dart';
+import 'package:padshala/screens/selfpickupscreen.dart';
 
 class Topcircle extends StatefulWidget {
   @override
@@ -47,6 +48,14 @@ class _TopcircleState extends State<Topcircle> {
                             builder: (context) => MapSelectionScreen(
                               onLocationSelected: _onLocationSelected,
                             ),
+                          ),
+                        );
+                      } else if (index == 1) {
+                        // Navigate to "SELF-PICKUP" screen when "SELF-PICKUP" is selected
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SelfPickupScreen(), // Navigate to SelfPickupScreen
                           ),
                         );
                       }
