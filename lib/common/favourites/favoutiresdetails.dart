@@ -18,9 +18,8 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
   }
   Future<void> loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> storedItems = prefs.getStringList('favorites') ?? [];
-
-   if (mounted) {
+    final List<String>? storedItems = prefs.getStringList('favorites');
+    if (storedItems != null && mounted) {
     setState(() {
       favoriteItems = storedItems
           .map((item) => Map<String, String>.from(jsonDecode(item)))
@@ -45,9 +44,13 @@ void didChangeDependencies() {
               itemBuilder: (context, index) {
                 final item = favoriteItems[index];
                 return ListTile(
-                  leading: Image.asset(item['image']!, width: 50, height: 50),
-                  title: Text(item['title']!),
-                  subtitle: Text("NRS ${item['price']}"),
+                  leading: Image.asset(
+                    item['image'] ?? 'assets/images/rum.jpg',
+                    width: 50, height: 50,
+                    fit: BoxFit.cover,
+                    ),
+                   title: Text(item['title'] ?? 'Unknown'),
+                  subtitle: Text("NRS ${item['price'] ?? '0.00'}"),
                 );
               },
             ),
