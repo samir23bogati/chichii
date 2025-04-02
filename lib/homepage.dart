@@ -4,6 +4,7 @@ import 'package:padshala/best_seller.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/common/bottom_navbar.dart';
+import 'package:padshala/common/favourites/favoutireslayout.dart';
 import 'package:padshala/drawer_menu.dart';
 import 'package:padshala/footer.dart';
 import 'package:padshala/screens/explore_page.dart';
@@ -49,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                 ExplorePage(),
                 BestSellerPage(),
                 TopDeals(),
+                Favoutireslayout(),
               /*CarouselSecond(),
               FoodPromopage1(onAddToCart: (newItem) { context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));  }, ),
                 _promoBanner(),

@@ -7,6 +7,8 @@ class SelfPickupScreen extends StatefulWidget {
 }
 
 class _SelfPickupScreenState extends State<SelfPickupScreen> {
+   String? selectedCity = "Kathmandu"; // Default city
+  String? selectedStore;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,21 +19,113 @@ class _SelfPickupScreenState extends State<SelfPickupScreen> {
           children: [
             // Display Image
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 8),
               child: Image.asset(
                 'assets/images/selfpick.jpg', 
-                height: 200, 
+                height: 150, 
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
-            
+           Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("WHICH OUTLET YOU WOULD LIKE TO PICKUP FROM:", 
+                      style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+
+                  SizedBox(height: 10),
+
+                  // City Dropdown
+                  Container(
+                    padding: EdgeInsets.only(bottom: 5),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Kathmandu",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Row(
+                          children: [
+                            Text(" 🇳🇵", style: TextStyle(fontSize: 22)), // Nepali flag
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_drop_down, color: Colors.black),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  // Store Dropdown
+                  Container(
+                    padding: EdgeInsets.only(bottom: 5),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        hint: Text("Store", style: TextStyle(color: Colors.grey)),
+                        value: selectedStore,
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                        isExpanded: true,
+                        items: [
+                          "ChiChii Online - 24/7 Night Food & Drinks Delivery"
+                        ].map((store) {
+                          return DropdownMenuItem(
+                            value: store,
+                            child: Text(store),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStore = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  // SELF PICKUP Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Nothing happens for now
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(
+                        "SELF PICKUP",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 4),
+
             Container(
-              height: 300, // Adjust height as needed
+              height: 265, // Adjust height as needed
               width: double.infinity,
               child: Embedmap(),  
             ),
-            SizedBox(height: 20),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'blocs/foodpromo1/cart_bloc.dart';
 
 class BestSellerDetailPage extends StatefulWidget {
@@ -28,7 +30,49 @@ class BestSellerDetailPage extends StatefulWidget {
 class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final logger = Logger();
+   bool isFavorite = false;
 
+
+ @override
+void initState() {
+  super.initState();
+  loadFavoriteStatus();  
+}
+
+  Future<void> loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = prefs.getBool(widget.title) ?? false;
+    });
+  }
+
+  // Toggle favorite status
+ Future<void> toggleFavorite() async {
+  final prefs = await SharedPreferences.getInstance();
+  final List<String> favoriteItems = prefs.getStringList('favorites') ?? [];
+
+  setState(() {
+    isFavorite = !isFavorite;
+  });
+
+  if (isFavorite) {
+    final String itemData = jsonEncode({
+      "title": widget.title,
+      "image": widget.image,
+      "price": widget.price
+     });
+     if (!favoriteItems.contains(itemData)) {
+      favoriteItems.add(itemData);
+    }
+  } else {
+    favoriteItems.removeWhere((item) {
+      final decodedItem = jsonDecode(item);
+      return decodedItem["title"] == widget.title;
+    });
+  }
+
+  await prefs.setStringList('favorites', favoriteItems);
+}
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -54,12 +98,24 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                 children: [
                   Image.asset(widget.image,
                       height: 250, width: double.infinity, fit: BoxFit.cover),
-                  Padding(
+                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      widget.title,
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: toggleFavorite,
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -86,23 +142,11 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
                     child: BlocBuilder<CartBloc, CartState>(
                       builder: (context, state) {
                         bool isAddedToCart = false;
-                        CartItem? existingCartItem;
 
                         if (state is CartUpdatedState) {
-                          existingCartItem = state.cartItems.firstWhere(
-                            (item) => item.id == widget.title,
-                            orElse: () => CartItem(
-                              id: widget.title,
-                              title: widget.title,
-                              price: double.tryParse(widget.price) ?? 0.0,
-                              imageUrl: widget.image,
-                              quantity: 1,
-                            ),
-                          );
                           isAddedToCart = state.cartItems
                               .any((item) => item.id == widget.title);
                         }
-
                         return AnimatedSwitcher(
                           duration: Duration(milliseconds: 300),
                           transitionBuilder: (child, animation) =>
@@ -208,7 +252,6 @@ class _BestSellerDetailPageState extends State<BestSellerDetailPage> {
         ),
         bottomNavigationBar: BottomNavBar(scaffoldKey: _scaffoldKey),
       ),
-      
     );
   }
 }

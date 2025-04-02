@@ -9,6 +9,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:padshala/Admin/local_notification.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
+import 'package:padshala/common/favourites/fav_bloc.dart';
 import 'package:padshala/login/auth/auth_bloc.dart';
 import 'package:padshala/screens/splash_screen.dart';
 // Initialize local notifications
@@ -104,8 +105,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>( create: (context) => AuthBloc()),  
-        BlocProvider<CartBloc>(create: (context) => CartBloc()..add(LoadCartEvent()),
-        ),
+        BlocProvider<CartBloc>(create: (context) => CartBloc()..add(LoadCartEvent())),
+        BlocProvider<FavoritesBloc>(create: (context) => FavoritesBloc()),
+        
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
