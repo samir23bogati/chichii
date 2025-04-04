@@ -57,15 +57,15 @@ class _ExplorePageState extends State<ExplorePage> {
             ),
             SizedBox(height: 10),
             SizedBox(
-              height: (categories.length / 3).ceil() * 165,
+              height: (categories.length / 3).ceil() * 164,
               child: GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: categories.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 3,
-                  mainAxisSpacing: 35,
-                  mainAxisExtent: 138,
+                  mainAxisSpacing: 28,
+                  mainAxisExtent: 150,
                 ),
                 itemBuilder: (context, index) {
                   return GestureDetector(

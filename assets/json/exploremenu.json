@@ -2,7 +2,7 @@
     { "title": "Chinese Food", "image": "assets/images/Chinesefood.jpg" },
     { "title": "Cooked Food", "image": "assets/images/Cookedfood.jpg" },
     { "title": "Snacks", "image": "assets/images/Snacks.jpg" },
-    { "title": "Fast Food", "image": "assets/images/fstfood.jpg" },
+    { "title": "Fast Food", "image": "assets/images/Fastfood.jpg" },
     { "title": "Indian Food", "image": "assets/images/Indianfood.jpg" },
     { "title": "Beverages", "image": "assets/images/Beverage.jpg" }
   ]

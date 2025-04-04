@@ -61,9 +61,10 @@ void initState() {
       "image": widget.image,
       "price": widget.price
      });
-     if (!favoriteItems.contains(itemData)) {
-      favoriteItems.add(itemData);
-    }
+     if (!favoriteItems.any((item) => jsonDecode(item)['title'] == widget.title)) {
+  favoriteItems.add(itemData);
+}
+
   } else {
     favoriteItems.removeWhere((item) {
       final decodedItem = jsonDecode(item);

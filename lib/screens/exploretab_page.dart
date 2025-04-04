@@ -7,6 +7,7 @@ import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExploretabPage extends StatefulWidget {
   final int initialIndex;
@@ -123,6 +124,26 @@ class MenuList extends StatefulWidget {
 }
 
 class _MenuListState extends State<MenuList> {
+  List<String> favoriteItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoriteItems();
+  }
+
+  Future<void> _loadFavoriteItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      favoriteItems = prefs.getStringList('favoriteItems') ?? [];
+    });
+  }
+
+  Future<void> _saveFavoriteItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('favoriteItems', favoriteItems);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +157,8 @@ class _MenuListState extends State<MenuList> {
       itemBuilder: (context, index) {
         final item = widget.menuItems[index];
         final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]); 
+        final isFavorite = favoriteItems.contains(item["title"]);
+
         return GestureDetector(
           onTap: (){
             _showItemDialog(context,item);
@@ -153,43 +176,66 @@ class _MenuListState extends State<MenuList> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(item["title"],
+                        Text(
+                          item["title"],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16)),
                         SizedBox(height: 4),
                         Text("Rs.${item["price"]}",
-                            style: TextStyle(color: Colors.green[700], fontSize: 14,fontWeight: FontWeight.bold)),
+                            style: TextStyle(color: Colors.green[700], fontSize: 14,fontWeight: FontWeight.bold),
+                            ),
                       ],
                     ),
                   ),
-                   AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-                    child: isAdded
-                        ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
-                        :ElevatedButton(
-                    onPressed: () {
-                      final cartItem = CartItem(
-                        id: item["title"],
-                        title: item["title"],
-                        price: double.tryParse(item["price"]) ?? 0.0,
-                        imageUrl: item["image"],
-                      );
-                      context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
-                    },
-                    child: Text("Add to Cart"),
-                      ),
-                      ),
-                    ],
+                           SizedBox(width: 8), 
+                           IconButton(
+                                icon: Icon(
+                                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : null,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (isFavorite) {
+                                      favoriteItems.remove(item["title"]);
+                                    } else {
+                                      favoriteItems.add(item["title"]);
+                                    }
+                                  });
+                                  _saveFavoriteItems(); // Save the updated favorites list
+                                },
+                              ),
+                           SizedBox(width: 8), 
+                            AnimatedSwitcher(
+                                duration: Duration(milliseconds: 300),
+                                transitionBuilder: (child, animation) => 
+                                FadeTransition(opacity: animation, child: child),
+                                child: isAdded
+                                    ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
+                                    : ElevatedButton(
+                                        onPressed: () {
+                                          final cartItem = CartItem(
+                                            id: item["title"],
+                                            title: item["title"],
+                                            price: double.tryParse(item["price"]) ?? 0.0,
+                                            imageUrl: item["image"],
+                                          );
+                                          context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
+                                        },
+                                        child: Text("Add to Cart"),
+                                      ),
+                              ),
+                ],
+                        ),
+               ),
+              
                   ),
-                ),
-              ),
-            );
-          },
-        );
+                );
       },
-    );
+      );
+      },
+          );
   }
+
 
   void _showItemDialog(BuildContext context, Map<String, dynamic> item) {
     showDialog(

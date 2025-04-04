@@ -30,6 +30,7 @@ class TopDeals extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: _topDeals.length,
               controller: PageController(viewportFraction: 0.72), 
+              padEnds: false,
               itemBuilder: (context, index) {
                 final deal = _topDeals[index % _topDeals.length]; 
                 return GestureDetector(

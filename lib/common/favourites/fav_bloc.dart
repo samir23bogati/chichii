@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,58 +10,73 @@ abstract class FavoritesEvent extends Equatable {
 }
 
 class ToggleFavorite extends FavoritesEvent {
-  final String itemId;
-  ToggleFavorite(this.itemId);
+  final Map<String, String> item;
+  ToggleFavorite(this.item);
 
   @override
-  List<Object> get props => [itemId];
+  List<Object> get props => [item];
 }
 
-class LoadFavorites extends FavoritesEvent {} // Event to load favorites
+class LoadFavorites extends FavoritesEvent {}
 
 // State
-class FavoritesState extends Equatable {
-  final Set<String> favorites;
-
-  const FavoritesState(this.favorites);
+abstract class FavoritesState extends Equatable {
+  const FavoritesState();
 
   @override
-  List<Object> get props => [favorites];
+  List<Object?> get props => [];
 }
+
+class FavoritesInitialState extends FavoritesState {}
+
+class FavoritesUpdatedState extends FavoritesState {
+  final List<Map<String, String>> favorites;
+
+  const FavoritesUpdatedState({required this.favorites});
+
+  @override
+  List<Object?> get props => [favorites];
+}
+
 
 // Bloc
 class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
-  FavoritesBloc() : super(const FavoritesState({})) {
-    _loadFavorites(); // Load favorites when Bloc is created
+  FavoritesBloc() : super(FavoritesInitialState());
+   @override
+ Stream<FavoritesState> mapEventToState(FavoritesEvent event) async* {
+    if (event is LoadFavorites) {
+      final favorites = await _loadFavorites();
+      yield FavoritesUpdatedState(favorites: favorites);
+    } else if (event is ToggleFavorite) {
+      final currentState = state;
+      if (currentState is FavoritesUpdatedState) {
+        final updatedFavorites = List<Map<String, String>>.from(currentState.favorites);
+        final existingIndex = updatedFavorites.indexWhere((i) => i['id'] == event.item['id']);
+        if (existingIndex != -1) {
+          updatedFavorites.removeAt(existingIndex); // Remove if already a favorite
+        } else {
+          updatedFavorites.add(event.item); // Add if not a favorite
+        }
+        await _saveFavorites(updatedFavorites);
+        yield FavoritesUpdatedState(favorites: updatedFavorites);
+      }
+    }
   }
 
   // Load favorites from SharedPreferences
-  Future<void> _loadFavorites() async {
+  Future<List<Map<String, String>>> _loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
-    final favList = prefs.getStringList('favorites') ?? [];
-    add(LoadFavorites()); // Dispatch event to update UI
-    emit(FavoritesState(favList.toSet())); // Convert List to Set
+    final List<String>? storedItems = prefs.getStringList('favorites');
+    if (storedItems != null) {
+      return storedItems.map((item) => Map<String, String>.from(jsonDecode(item))).toList();
+    }
+    return [];
   }
 
   // Save favorites to SharedPreferences
-  Future<void> _saveFavorites(Set<String> favorites) async {
+  Future<void> _saveFavorites(List<Map<String, String>> favorites) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('favorites', favorites.toList());
-  }
-
-  @override
-  Stream<FavoritesState> mapEventToState(FavoritesEvent event) async* {
-    if (event is LoadFavorites) {
-      yield state; // Just re-emit the loaded favorites
-    } else if (event is ToggleFavorite) {
-      final updatedFavorites = Set<String>.from(state.favorites);
-      if (updatedFavorites.contains(event.itemId)) {
-        updatedFavorites.remove(event.itemId);
-      } else {
-        updatedFavorites.add(event.itemId);
-      }
-      await _saveFavorites(updatedFavorites); // Save to SharedPreferences
-      yield FavoritesState(updatedFavorites);
-    }
+    final encodedFavorites = favorites.map((item) => jsonEncode(item)).toList();
+    await prefs.setStringList('favorites', encodedFavorites);
   }
 }
