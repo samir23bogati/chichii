@@ -1,4 +1,4 @@
-package com.example.padshala
+package com.chichii.online
 
 
 import io.flutter.embedding.android.FlutterActivity

@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:padshala/Admin/admin_dashboardpage.dart';
 import 'package:padshala/best_seller.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
@@ -26,16 +29,55 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     context.read<CartBloc>().add(LoadCartEvent());
   }
+ // Function to check if the current user is an admin
+  Future<bool> _isAdmin() async {
+    User? user = FirebaseAuth.instance.currentUser;
 
+    if (user != null) {
+      print('Current User UID: ${user.uid}');
+      // Check the Firestore document for this user
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists && userDoc.data() != null) {
+        var userData = userDoc.data() as Map<String, dynamic>;
+         print("User Data: $userData"); 
+        bool isAdmin = userData['isAdmin'] ?? false; // Return whether the user is an admin
+        print('User isAdmin: $isAdmin'); 
+        return isAdmin;
+       }
+    }
+
+    return false;
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(
+       appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Center(
-            child: Image.asset('assets/images/logo.webp'),
+          title: GestureDetector(
+            onTap: () async {
+              bool isAdmin = await _isAdmin();
+              if (isAdmin) {
+                // Navigate to the Admin Dashboard if the user is an admin
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
+                );
+              } else {
+                // Show an error message or redirect if not an admin
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Access Denied. Admins Only!')),
+                );
+              }
+            },
+            child: Center(
+              child: Image.asset('assets/images/logo.webp'),
+            ),
           ),
         ),
         drawer: DrawerMenu(),

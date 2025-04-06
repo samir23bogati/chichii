@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:padshala/Admin/local_notification.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
@@ -45,6 +45,22 @@ Future<void> showNotification(RemoteNotification notification) async {
     notificationDetails,
   );
 }
+Future<void> saveFcmTokenToFirestore() async {
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user != null && fcmToken != null) {
+    await FirebaseFirestore.instance
+        .collection("admin_tokens")
+        .doc(user.uid) // or user.phoneNumber
+        .set({
+          "token": fcmToken,
+        });
+    print("FCM token saved for admin: ${user.uid}");
+  } else {
+    print("User is null or token not found.");
+  }
+}
 
 Future <void> checkFirestoreData() async {
   var firestore = FirebaseFirestore.instance;
@@ -82,13 +98,26 @@ Future<void> main() async {
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
+    await saveFcmTokenToFirestore();
+
+    // 🔄 Auto-update token if it refreshes
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection("admin_tokens")
+            .doc(user.uid)
+            .set({"token": newToken});
+        print("🔄 FCM token refreshed and updated in Firestore.");
+      }
+    });
   } else {
-    print('User declined or has not accepted permission');
+    print('❌ User declined or has not accepted notification permission');
   }
 
-  
+  // 🔊 Handle foreground messages
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("Foreground Message Received: ${message.notification?.title}");
+    print("📲 Foreground Message Received: ${message.notification?.title}");
 
     if (message.notification != null) {
       showNotification(message.notification!);
@@ -97,6 +126,7 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

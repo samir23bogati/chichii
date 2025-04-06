@@ -46,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+         print('Current State: $state');
        if (state is Authenticated || state is OtpVerified) {
           _navigateToAddressSelectionPage();
         } else if (state is AuthError) {
@@ -249,6 +250,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _navigateToAddressSelectionPage() {
+   print("Navigating to AddressSelectionPage");
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

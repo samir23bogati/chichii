@@ -7,12 +7,49 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:581466934152:android:e09c933f0871c8234c083d",
+        "android_client_info": {
+          "package_name": "com.chichii.online"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPT7UYSMljC7EQCVYaa-0T9Fax4dr4D3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:581466934152:android:6080c032d8511ac44c083d",
         "android_client_info": {
           "package_name": "com.example.padshala"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "581466934152-8t36crbroqaq38ffj7pqpcdq6qnrp5d9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.padshala",
+            "certificate_hash": "49041e1677780212cb5672c3e4165ee7a9de2c33"
+          }
+        },
         {
           "client_id": "581466934152-pst0botokbv0m58sbdcqi3bh094ctpio.apps.googleusercontent.com",
           "client_type": 1,
