@@ -23,6 +23,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int _tapCount = 0;
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
       print('Current User UID: ${user.uid}');
       // Check the Firestore document for this user
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
+          .collection('admins')
           .doc(user.uid)
           .get();
 
@@ -52,6 +53,28 @@ class _HomePageState extends State<HomePage> {
 
     return false;
   }
+  void _onLogoTap() async {
+    _tapCount++;
+    
+    if (_tapCount == 3) {
+      _tapCount = 0;
+      
+      bool isAdmin = await _isAdmin();
+       print('Is current user admin?  $isAdmin');
+      if (isAdmin) {
+         print('Navigating to AdminDashboardScreen...');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
+        );
+      } else {
+         print('Access denied. Not an admin.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Access Denied. Admins Only!')),
+        );
+      }
+    } 
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -59,22 +82,8 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
        appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: GestureDetector(
-            onTap: () async {
-              bool isAdmin = await _isAdmin();
-              if (isAdmin) {
-                // Navigate to the Admin Dashboard if the user is an admin
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
-                );
-              } else {
-                // Show an error message or redirect if not an admin
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Access Denied. Admins Only!')),
-                );
-              }
-            },
+           title: GestureDetector(
+            onTap: _onLogoTap,
             child: Center(
               child: Image.asset('assets/images/logo.webp'),
             ),

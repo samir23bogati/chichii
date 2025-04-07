@@ -63,6 +63,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
   }
 Future<bool> checkIfUserIsAdmin() async {
   final user = FirebaseAuth.instance.currentUser;
+  debugPrint("🔥 Current User UID: ${user?.uid}");
   if (user == null) return false;
 
   // Option 1: Using UID
@@ -76,6 +77,7 @@ Future<bool> checkIfUserIsAdmin() async {
 Future<void> saveAdminFcmToken() async {
   final fcmToken = await FirebaseMessaging.instance.getToken();
   final user = FirebaseAuth.instance.currentUser;
+  debugPrint("🔥 Current User UID: ${user?.uid}");
 
   if (user != null && fcmToken != null) {
     await FirebaseFirestore.instance

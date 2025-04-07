@@ -48,6 +48,7 @@ Future<void> showNotification(RemoteNotification notification) async {
 Future<void> saveFcmTokenToFirestore() async {
   final fcmToken = await FirebaseMessaging.instance.getToken();
   final user = FirebaseAuth.instance.currentUser;
+  debugPrint("🔥 Current User UID: ${user?.uid}");
 
   if (user != null && fcmToken != null) {
     await FirebaseFirestore.instance
@@ -103,6 +104,7 @@ Future<void> main() async {
     // 🔄 Auto-update token if it refreshes
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
       final user = FirebaseAuth.instance.currentUser;
+      debugPrint("🔥 Current User UID: ${user?.uid}");
       if (user != null) {
         await FirebaseFirestore.instance
             .collection("admin_tokens")
