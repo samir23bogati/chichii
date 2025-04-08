@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:padshala/screens/splash_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,7 +13,6 @@ import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
 import 'package:padshala/login/auth/auth_bloc.dart';
-import 'package:padshala/screens/splash_screen.dart';
 // Initialize local notifications
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -83,6 +84,15 @@ Future <void> checkFirestoreData() async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+   final connectivityResult = await Connectivity().checkConnectivity();
+   debugPrint('Connectivity Result: $connectivityResult');
+  final hasInternet = connectivityResult != ConnectivityResult.none;
+
+  if (!hasInternet) {
+    runApp(NoInternetScreen());
+    return;
+  }
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await dotenv.load();
   await Firebase.initializeApp();
@@ -96,6 +106,7 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
+  debugPrint('Notification Permission: ${settings.authorizationStatus}');
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
@@ -149,6 +160,68 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.amber,
         ),
         home: SplashScreen(),
+      ),
+    );
+  }
+}
+class NoInternetScreen extends StatefulWidget {
+  @override
+  _NoInternetScreenState createState() => _NoInternetScreenState();
+}
+
+class _NoInternetScreenState extends State<NoInternetScreen> {
+  late ConnectivityResult _connectionStatus;
+  final Connectivity _connectivity = Connectivity();
+  bool _isOnline = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+  }
+Future<void> _checkConnectivity() async {
+  // Listen for connectivity changes. Since the error suggests that the API expects a List, we need to update accordingly.
+  _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
+    // Assuming you only need the first result from the list.
+    if (results.isNotEmpty) {
+      _updateConnectionStatus(results.first); // Handle the first result
+    }
+  });
+
+ // Get the initial connectivity status (checkConnectivity now returns a list).
+  List<ConnectivityResult> connectivityResults = await _connectivity.checkConnectivity();
+  
+  // Handle the first result from the list.
+  if (connectivityResults.isNotEmpty) {
+    _updateConnectionStatus(connectivityResults.first);
+  }
+}
+
+ void _updateConnectionStatus(ConnectivityResult result) {
+    setState(() {
+      if (result == ConnectivityResult.none) {
+        _isOnline = false;
+      } else {
+        _isOnline = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Connectivity Example")),
+      body: Center(
+        child: _isOnline
+            ? Text("You are connected to the internet!", style: TextStyle(fontSize: 20))
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.signal_wifi_off, size: 50, color: Colors.red),
+                  SizedBox(height: 20),
+                  Text("No internet connection", style: TextStyle(fontSize: 20, color: Colors.red)),
+                ],
+              ),
       ),
     );
   }

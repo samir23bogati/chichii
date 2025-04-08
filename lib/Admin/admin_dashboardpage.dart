@@ -25,8 +25,6 @@ class AdminDashboardScreen extends StatelessWidget {
 
         final user = snapshot.data!;
         final isAdmin = adminUIDs.contains(user.uid);
-        debugPrint("🛡 Admin UIDs: $adminUIDs");
-        debugPrint("🔍 isAdmin: $isAdmin");
 
         if (!isAdmin) {
           return const Scaffold(
@@ -63,33 +61,54 @@ class AdminDashboardScreen extends StatelessWidget {
                 itemCount: orders.length,
                 itemBuilder: (context, index) {
                   final order = orders[index];
+                  final timestamp = (order['timestamp'] as Timestamp).toDate();
                   return ListTile(
-                    title: Text("Order #${order['orderId']}"),
-                    subtitle: Text(
-                      "NRS ${order['totalPrice']} - ${order['phoneNumber']}",
-                    ),
+                    title: Text("New Order Received From :${order['phoneNumber']} ,Order ID:${order['orderId']}"),
+                    subtitle: Text( "Order Time: ${timestamp.toString()}"   ),
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
+                           final cartItems = List<Map<String, dynamic>>.from(order['items']);
+                           final timestamp = (order['timestamp'] as Timestamp).toDate();
+                        
                           return AlertDialog(
                             title: const Text("Order Details"),
                             content: SingleChildScrollView(
-                              child: ListBody(
-                                children: [
-                                  Text("Order ID: ${order['orderId']}"),
-                                  Text("Total Price: NRS ${order['totalPrice']}"),
-                                  Text("Customer Phone: ${order['phoneNumber']}"),
-                                ],
-                              ),
-                            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("🕒 Ordered on: ${timestamp.toString()}"),
+              Text("🆔 Order ID: ${order['orderId']}"),
+              Text("📞 Phone: ${order['phoneNumber']}"),
+              Text("🏠 Delivery Address: ${order['address']}"),
+              Text("💳 Payment: ${order['paymentMethod']}"),
+              Text("🚚 Delivery Cost: NRS ${order['deliveryCost']}"),
+              Text("🧾 Total Price: NRS ${order['totalPrice']}"),
+              const SizedBox(height: 10),
+              const Text("🛒 Cart Items:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              ...cartItems.map((item) {
+                return ListTile(
+                  leading: Image.network(item['imageUrl'], width: 40, height: 40, fit: BoxFit.cover,
+                  errorBuilder: (context,error,stackTrace){
+                    return Icon(Icons.broken_image,size:40,color: Colors.grey);
+                  },
+                  ),
+                  title: Text(item['title']),
+                  subtitle: Text("Price: NRS ${item['price']} × ${item['quantity']}"),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(context).pop(),
                                 child: const Text("Close"),
                               ),
                             ],
-                          );
+                            );
                         },
                       );
                     },

@@ -61,31 +61,37 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
       });
     }
   }
-Future<bool> checkIfUserIsAdmin() async {
-  final user = FirebaseAuth.instance.currentUser;
-  debugPrint("🔥 Current User UID: ${user?.uid}");
-  if (user == null) return false;
 
-  // Option 1: Using UID
-  final doc = await FirebaseFirestore.instance.collection('admins').doc(user.uid).get();
+  Future<bool> checkIfUserIsAdmin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    debugPrint("🔥 Current User UID: ${user?.uid}");
+    if (user == null) return false;
 
-  // Option 2: Using phone number
- // final doc = await FirebaseFirestore.instance.collection('admins').doc(user.phoneNumber).get();
+    // Option 1: Using UID
+    final doc = await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(user.uid)
+        .get();
 
-  return doc.exists && doc.data()?['isAdmin'] == true;
-}
-Future<void> saveAdminFcmToken() async {
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  final user = FirebaseAuth.instance.currentUser;
-  debugPrint("🔥 Current User UID: ${user?.uid}");
+    // Option 2: Using phone number
+    // final doc = await FirebaseFirestore.instance.collection('admins').doc(user.phoneNumber).get();
 
-  if (user != null && fcmToken != null) {
-    await FirebaseFirestore.instance
-        .collection("admin_tokens")
-        .doc(user.uid) // or user.phoneNumber
-        .set({"token": fcmToken});
+    return doc.exists && doc.data()?['isAdmin'] == true;
   }
-}
+
+  Future<void> saveAdminFcmToken() async {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    final user = FirebaseAuth.instance.currentUser;
+    debugPrint("🔥 Current User UID: ${user?.uid}");
+
+    if (user != null && fcmToken != null) {
+      await FirebaseFirestore.instance
+          .collection("admin_tokens")
+          .doc(user.uid) // or user.phoneNumber
+          .set({"token": fcmToken});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double finalPrice = widget.totalPrice + (deliveryCost ?? 0);
@@ -112,7 +118,8 @@ Future<void> saveAdminFcmToken() async {
             const SizedBox(height: 10),
 
             //Order Summary
-             Text("Order Summary:", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+            Text("Order Summary:",
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
 
             // List of Items
@@ -235,9 +242,16 @@ Future<void> saveAdminFcmToken() async {
     try {
       print("Placing order with payment method: $paymentMethod");
       final orderRef = FirebaseFirestore.instance.collection('orders').doc();
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        print("❌ No user is logged in. Cannot place order.");
+        return;
+      }
 
       Map<String, dynamic> orderData = {
         "orderId": orderRef.id,
+        "userId": user!.uid,
         "address": widget.address,
         "phoneNumber": userPhoneNumber,
         "items": widget.cartItems
@@ -312,10 +326,12 @@ Future<void> saveAdminFcmToken() async {
 
   Future<void> saveOrder(String orderId, Map<String, dynamic> orderData) async {
     try {
+      print("🔥 Saving order to Firestore...");
       await FirebaseFirestore.instance
           .collection('orders')
           .doc(orderId)
           .set(orderData);
+      print("✅ Order saved to Firestore!");
     } catch (e) {
       print("Error saving order: $e");
     }
