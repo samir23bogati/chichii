@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +25,35 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _tapCount = 0;
+  int unreadNotifications = 0;
+  AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    context.read<CartBloc>().add(LoadCartEvent());
+  
+
+  FirebaseFirestore.instance.collection('orders').snapshots().listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        // Increment unread notifications count
+        setState(() {
+          unreadNotifications++;
+        });
+
+        // Play sound when a new order is placed
+        _playNotificationSound();
+      }
+    });
+     context.read<CartBloc>().add(LoadCartEvent());
   }
- // Function to check if the current user is an admin
+
+  // Function to play notification sound
+  void _playNotificationSound() async {
+    await audioPlayer.play(AssetSource('assets/sounds/order_alert.mp3'));
+  }
+
+
+  // Function to check if the current user is an admin
   Future<bool> _isAdmin() async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -44,50 +67,75 @@ class _HomePageState extends State<HomePage> {
 
       if (userDoc.exists && userDoc.data() != null) {
         var userData = userDoc.data() as Map<String, dynamic>;
-         print("User Data: $userData"); 
-        bool isAdmin = userData['isAdmin'] ?? false; // Return whether the user is an admin
-        print('User isAdmin: $isAdmin'); 
+        print("User Data: $userData");
+        bool isAdmin =
+            userData['isAdmin'] ?? false; // Return whether the user is an admin
+        print('User isAdmin: $isAdmin');
         return isAdmin;
-       }
+      }
     }
 
     return false;
   }
+
   void _onLogoTap() async {
     _tapCount++;
-    
+
     if (_tapCount == 3) {
       _tapCount = 0;
-      
+
       bool isAdmin = await _isAdmin();
-       print('Is current user admin?  $isAdmin');
+      print('Is current user admin?  $isAdmin');
       if (isAdmin) {
-         print('Navigating to AdminDashboardScreen...');
+        print('Navigating to AdminDashboardScreen...');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
         );
       } else {
-         print('Access denied. Not an admin.');
+        print('Access denied. Not an admin.');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Access Denied. Admins Only!')),
         );
       }
-    } 
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-       appBar: AppBar(
+        appBar: AppBar(
           automaticallyImplyLeading: false,
-           title: GestureDetector(
-            onTap: _onLogoTap,
-            child: Center(
-              child: Image.asset('assets/images/logo.webp'),
+           leading: const SizedBox(),
+          title: GestureDetector(
+                onTap: _onLogoTap,
+                  child: Image.asset('assets/images/logo.webp'),
+                ),
+              
+              centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications),
+              onPressed: () async {
+                bool isAdmin = await _isAdmin();
+                if (isAdmin) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AdminDashboardScreen()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Access Denied. Admins Only!')),
+                  );
+                }
+              },
             ),
-          ),
+            const SizedBox(width: 8),
+          ],
         ),
         drawer: DrawerMenu(),
         body: Stack(
@@ -95,14 +143,14 @@ class _HomePageState extends State<HomePage> {
             ListView(
               padding: const EdgeInsets.symmetric(vertical: 10),
               children: [
-               // Carouselfirst(),
-               Topcircle(),
+                // Carouselfirst(),
+                Topcircle(),
                 WhatsNewSection(),
                 ExplorePage(),
                 BestSellerPage(),
                 TopDeals(),
                 Favoutireslayout(),
-              /*CarouselSecond(),
+                /*CarouselSecond(),
               FoodPromopage1(onAddToCart: (newItem) { context.read<CartBloc>().add(AddToCartEvent(cartItem: newItem));  }, ),
                 _promoBanner(),
                 BeveragePromoPage(
@@ -121,8 +169,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 BrandsWeDeal(),
                 */
-                 Footer(),
-             ],
+                Footer(),
+              ],
             ),
             const Positioned(
               bottom: 12,
@@ -136,7 +184,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _promoBanner() {
+
+  /*Widget _promoBanner() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(10),
@@ -152,4 +201,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+*/
+
 }
