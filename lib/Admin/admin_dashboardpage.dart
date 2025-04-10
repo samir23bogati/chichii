@@ -2,10 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AdminDashboardScreen extends StatelessWidget {
+class AdminDashboardScreen extends StatefulWidget {
+  @override
+  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+}
+
+class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   final List<String> adminUIDs = [
     '8UkfWjkg9rN4XwmjbMKpRYtcBHx2',// User UID from Firestore firebase for 9813629126
   ];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<User?>(
