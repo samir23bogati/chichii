@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _tapCount = 0;
   int unreadNotifications = 0;
+  int _previousOrderCount = 0;
   AudioPlayer audioPlayer = AudioPlayer();
 
   @override
@@ -33,23 +34,30 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   
 
-  FirebaseFirestore.instance.collection('orders').snapshots().listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        // Increment unread notifications count
-        setState(() {
-          unreadNotifications++;
-        });
-
-        // Play sound when a new order is placed
-        _playNotificationSound();
-      }
-    });
      context.read<CartBloc>().add(LoadCartEvent());
+  FirebaseFirestore.instance.collection('orders').snapshots().listen((snapshot) {
+      final currentOrderCount = snapshot.docs.length;
+
+   if (_previousOrderCount == 0) {
+    // First time fetching order count, just initialize it
+    _previousOrderCount = currentOrderCount;
+    return; // Do not play sound
+  }
+
+  if (currentOrderCount > _previousOrderCount) {
+    setState(() {
+      unreadNotifications++;
+    });
+    _playNotificationSound();
+  }
+
+  _previousOrderCount = currentOrderCount;
+});
   }
 
   // Function to play notification sound
   void _playNotificationSound() async {
-    await audioPlayer.play(AssetSource('assets/sounds/order_alert.mp3'));
+    await audioPlayer.play(AssetSource('sounds/order_alert.mp3'));
   }
 
 
@@ -93,7 +101,6 @@ class _HomePageState extends State<HomePage> {
           MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
         );
       } else {
-        print('Access denied. Not an admin.');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Access Denied. Admins Only!')),
         );
@@ -115,27 +122,57 @@ class _HomePageState extends State<HomePage> {
                 ),
               
               centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications),
-              onPressed: () async {
-                bool isAdmin = await _isAdmin();
-                if (isAdmin) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AdminDashboardScreen()),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Access Denied. Admins Only!')),
-                  );
-                }
-              },
+         actions: [
+  Stack(
+    children: [
+      IconButton(
+        icon: const Icon(Icons.notifications),
+        onPressed: () async {
+          bool isAdmin = await _isAdmin();
+          if (isAdmin) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
+            );
+            setState(() {
+              unreadNotifications = 0; // Reset badge on open
+            });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Access Denied. Admins Only!')),
+            );
+          }
+        },
+      ),
+      if (unreadNotifications > 0)
+        Positioned(
+          right: 11,
+          top: 11,
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(10),
             ),
-            const SizedBox(width: 8),
-          ],
+            constraints: const BoxConstraints(
+              minWidth: 16,
+              minHeight: 16,
+            ),
+            child: Text(
+              '$unreadNotifications',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+    ],
+  ),
+  const SizedBox(width: 8),
+],
+
         ),
         drawer: DrawerMenu(),
         body: Stack(
