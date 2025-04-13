@@ -48,7 +48,9 @@ class _LoginPageState extends State<LoginPage> {
       listener: (context, state) {
          print('Current State: $state');
        if (state is Authenticated || state is OtpVerified) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
           _navigateToAddressSelectionPage();
+        });
         } else if (state is AuthError) {
           setState(() => isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
