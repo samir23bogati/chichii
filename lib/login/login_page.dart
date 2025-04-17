@@ -45,24 +45,28 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-       if (state is Authenticated || state is OtpVerified) {
-        print("User authenticated or OTP verified.");
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-          _navigateToAddressSelectionPage();
-        });
-        } else if (state is AuthError) {
-          setState(() => isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${state.message}')),
-  );
-  print("AuthError: ${state.message}"); // Log the error
-} else if (state is OtpSentState) {
-          setState(() {
-            isOtpSent = true;
-            isLoading = false;
-          });
-        }
-      },
+        if (state is OtpSentState) {
+      setState(() {
+        isOtpSent = true;
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('OTP has been sent to your phone')),
+      );
+    } else if (state is OtpVerified || state is Authenticated) {
+      setState(() => isLoading = false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _navigateToAddressSelectionPage();
+      });
+    } else if (state is AuthError) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${state.message}')),
+      );
+    } else if (state is GoogleAuthLoading) {
+      setState(() => isLoading = true);
+    }
+  },
       child: Scaffold(
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
@@ -122,9 +126,8 @@ class _LoginPageState extends State<LoginPage> {
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
                 onPressed: isLoading? null: _sendPhoneNumber,
-                child: isLoading
-      ? const CircularProgressIndicator()
-      : const Text("OTP via SMS", style: TextStyle(color: Colors.white)),
+               child: const Text("OTP via SMS", style: TextStyle(color: Colors.white)),
+
 )
       ],
     );
@@ -173,6 +176,13 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
+  @override
+void dispose() {
+  _phoneController.dispose();
+  _otpController.dispose();
+  super.dispose();
+}
+
 
   Widget _buildOtpInput() {
     return Column(
@@ -204,9 +214,18 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 12),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
-          onPressed: _verifyOtp,
-          child: const Text("Verify OTP", style: TextStyle(color: Colors.white)),
-        ),
+          onPressed: isLoading ? null : _verifyOtp,
+          child: isLoading
+      ? const SizedBox(
+          height: 20,
+          width: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Colors.white,
+          ),
+        )
+      : const Text("Verify OTP", style: TextStyle(color: Colors.white)),
+),
       ],
     );
   }
@@ -250,6 +269,7 @@ class _LoginPageState extends State<LoginPage> {
               ? null
               : () {
                   context.read<AuthBloc>().add(GoogleSignInRequested());
+                  
                 },
         );
       },
@@ -258,6 +278,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _navigateToAddressSelectionPage() {
    print("Navigating to AddressSelectionPage");
+   ScaffoldMessenger.of(context).clearSnackBars();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

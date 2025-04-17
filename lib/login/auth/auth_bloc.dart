@@ -8,6 +8,7 @@ import 'auth_event.dart';
 import 'auth_state.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String? verificationId;
@@ -55,18 +56,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 }
 
 
- void startCountdown(String phoneNumber) {
-  int duration = 400; 
+void startCountdown(String phoneNumber, {int duration = 190}) { 
+  _timer?.cancel();
+  int remaining = duration;
   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    if (duration > 0) {
-      duration--;
-      add(CountdownTicked(phoneNumber: phoneNumber, remainingTime: duration));
+    if (remaining > 0) {
+      remaining--;
+      add(CountdownTicked(phoneNumber: phoneNumber, remainingTime: remaining));
     } else {
       timer.cancel();
       add(AuthFailure(message: "OTP expired! Please request a new one."));
     }
   });
 }
+
 
  void _onCountdownTicked(CountdownTicked event, Emitter<AuthState> emit) {
     emit(OtpSentState(phoneNumber: event.phoneNumber, remainingTime: event.remainingTime));
@@ -144,17 +147,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isAuthenticated', true);
-
-        await saveAdminFCMToken();  
-
-        emit(OtpVerified(user: user));
-      } else {
-        emit(AuthError(message: 'OTP verification failed'));
-      }
-    } catch (e) {
-      emit(AuthError(message: 'Error verifying OTP: ${e.toString()}'));
+         emit(OtpVerified(user: user));
+    } else {
+      emit(AuthError(message: 'OTP verification failed'));
     }
+  } catch (e) {
+    emit(AuthError(message: 'Error verifying OTP: ${e.toString()}'));
   }
+}
 
   // ✅ OTP Sent Handling
   void _onOtpSent(OtpSent event, Emitter<AuthState> emit) {
@@ -185,7 +185,10 @@ Future<void> _sendPhoneNumber(String phoneNumber) async {
          timeout: const Duration(seconds: 110),
         verificationCompleted: (PhoneAuthCredential credential) async {
            final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-           add(VerifyOtpRequested(otp: 'AUTO',));
+        if (userCredential.user != null) {
+            // If auto-verification works, proceed directly to OTP verification
+            add(VerifyOtpRequested(otp: 'AUTO',));  // Trigger OTP verification with the auto-filled OTP
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           emit(AuthError(message: 'Phone number verification failed: ${e.message}'));
