@@ -30,17 +30,19 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
   double? deliveryCost;
   bool isLoading = true;
   String userPhoneNumber = "Not Available";
+  String userEmail = "Not Available";
   @override
   void initState() {
     super.initState();
     _fetchDeliveryCost();
 
-    // Get user phone number in initStateR
+   // Get user phone number or email
     User? user = FirebaseAuth.instance.currentUser;
     setState(() {
-      userPhoneNumber = user?.phoneNumber ?? "Not Available";
-    });
-  }
+    userPhoneNumber = user?.phoneNumber ?? "Not Available";
+    userEmail = user?.email ?? "Not Available";
+  });
+}
 
   Future<void> _fetchDeliveryCost() async {
     try {
@@ -64,30 +66,29 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
   Future<bool> checkIfUserIsAdmin() async {
     final user = FirebaseAuth.instance.currentUser;
-    debugPrint("🔥 Current User UID: ${user?.uid}");
+    debugPrint("🔥 Current User PhoneNumber: ${user?.phoneNumber}");
     if (user == null) return false;
 
-    // Option 1: Using UID
+    
     final doc = await FirebaseFirestore.instance
         .collection('admins')
-        .doc(user.uid)
+        .doc(user.phoneNumber)
         .get();
 
-    // Option 2: Using phone number
-    // final doc = await FirebaseFirestore.instance.collection('admins').doc(user.phoneNumber).get();
+        print('Admin Doc Data: ${doc.data()}'); 
 
+    
     return doc.exists && doc.data()?['isAdmin'] == true;
   }
 
   Future<void> saveAdminFcmToken() async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     final user = FirebaseAuth.instance.currentUser;
-    debugPrint("🔥 Current User UID: ${user?.uid}");
 
     if (user != null && fcmToken != null) {
       await FirebaseFirestore.instance
           .collection("admin_tokens")
-          .doc(user.uid) // or user.phoneNumber
+          .doc(user.phoneNumber) // or user.uid
           .set({"token": fcmToken});
     }
   }
@@ -107,8 +108,8 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Row(
               children: [
-                Icon(Icons.location_on, color: Colors.green), // Home icon
-                SizedBox(width: 8), // Adds space between the icon and the text
+                Icon(Icons.location_on, color: Colors.green), 
+                SizedBox(width: 8), 
                 Expanded(
                   child: Text(widget.address,
                       style: TextStyle(fontSize: 15, color: Colors.grey[700])),
@@ -146,8 +147,6 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                             child: isLocalAsset
                                 ? Image.asset(
                                     item.imageUrl,
-                                    width: 60,
-                                    height: 60,
                                     fit: BoxFit.cover,
                                   )
                                 : Image.network(
@@ -156,7 +155,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                                     height: 60,
                                     fit: BoxFit.cover,
                                     errorBuilder:
-                                        (context, error, StackTrace) => Icon(
+                                        (context, error, _) => Icon(
                                             Icons.broken_image,
                                             size: 50,
                                             color: Colors.grey),
@@ -240,7 +239,6 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     if (isLoading) return;
 
     try {
-      print("Placing order with payment method: $paymentMethod");
       final orderRef = FirebaseFirestore.instance.collection('orders').doc();
       final user = FirebaseAuth.instance.currentUser;
 
@@ -251,8 +249,9 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
       Map<String, dynamic> orderData = {
         "orderId": orderRef.id,
-        "userId": user!.uid,
+        "userId": user.uid,
         "address": widget.address,
+        "email": userEmail,
         "phoneNumber": userPhoneNumber,
         "items": widget.cartItems
             .map((item) => {
@@ -326,12 +325,10 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
   Future<void> saveOrder(String orderId, Map<String, dynamic> orderData) async {
     try {
-      print("🔥 Saving order to Firestore...");
       await FirebaseFirestore.instance
           .collection('orders')
           .doc(orderId)
           .set(orderData);
-      print("✅ Order saved to Firestore!");
     } catch (e) {
       print("Error saving order: $e");
     }

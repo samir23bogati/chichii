@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   int unreadNotifications = 0;
   int _previousOrderCount = 0;
   AudioPlayer audioPlayer = AudioPlayer();
+  StreamSubscription? _orderSubscription;
 
   @override
   void initState() {
@@ -39,7 +41,6 @@ class _HomePageState extends State<HomePage> {
       final currentOrderCount = snapshot.docs.length;
 
    if (_previousOrderCount == 0) {
-    // First time fetching order count, just initialize it
     _previousOrderCount = currentOrderCount;
     return; // Do not play sound
   }
@@ -54,6 +55,12 @@ class _HomePageState extends State<HomePage> {
   _previousOrderCount = currentOrderCount;
 });
   }
+  @override
+void dispose() {
+  _orderSubscription?.cancel();
+  audioPlayer.dispose(); 
+  super.dispose();
+}
 
   // Function to play notification sound
   void _playNotificationSound() async {
@@ -66,25 +73,29 @@ class _HomePageState extends State<HomePage> {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      print('Current User UID: ${user.uid}');
+      print('Current User phoneNumber ${user.phoneNumber}');
       // Check the Firestore document for this user
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('admins')
-          .doc(user.uid)
+          .doc(user.phoneNumber)
           .get();
+          
 
       if (userDoc.exists && userDoc.data() != null) {
         var userData = userDoc.data() as Map<String, dynamic>;
         print("User Data: $userData");
-        bool isAdmin =
-            userData['isAdmin'] ?? false; // Return whether the user is an admin
+        bool isAdmin = userData['isAdmin'] ?? false; // Return whether the user is an admin
         print('User isAdmin: $isAdmin');
         return isAdmin;
-      }
+     } else {
+      print('No admin record found in Firestore.');
     }
-
-    return false;
+  } else {
+    print('User not authenticated.');
   }
+
+  return false;
+}
 
   void _onLogoTap() async {
     _tapCount++;

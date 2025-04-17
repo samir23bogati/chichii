@@ -12,6 +12,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:padshala/login/auth/auth_bloc.dart';
 // Initialize local notifications
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -47,20 +48,24 @@ Future<void> showNotification(RemoteNotification notification) async {
   );
 }
 Future<void> saveFcmTokenToFirestore() async {
+  try{
   final fcmToken = await FirebaseMessaging.instance.getToken();
   final user = FirebaseAuth.instance.currentUser;
-  debugPrint("🔥 Current User UID: ${user?.uid}");
+  debugPrint("🔥 Current User phonenumber: ${user?.phoneNumber}");
 
   if (user != null && fcmToken != null) {
     await FirebaseFirestore.instance
         .collection("admin_tokens")
-        .doc(user.uid) // or user.phoneNumber
+        .doc(user.phoneNumber) // or user.uid
         .set({
           "token": fcmToken,
         });
-    print("FCM token saved for admin: ${user.uid}");
+    print("FCM token saved for admin: ${user.phoneNumber}");
   } else {
     print("User is null or token not found.");
+  }
+} catch (e) {
+    print("❌ Error saving FCM token: $e");
   }
 }
 
@@ -80,7 +85,6 @@ Future <void> checkFirestoreData() async {
     print("Error accessing Firestore: $e");
   }
 }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -96,6 +100,9 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await dotenv.load();
   await Firebase.initializeApp();
+  await FirebaseAppCheck.instance.activate(
+  androidProvider: AndroidProvider.playIntegrity, 
+);
 
   await checkFirestoreData();
 
@@ -115,11 +122,10 @@ Future<void> main() async {
     // 🔄 Auto-update token if it refreshes
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
       final user = FirebaseAuth.instance.currentUser;
-      debugPrint("🔥 Current User UID: ${user?.uid}");
       if (user != null) {
         await FirebaseFirestore.instance
             .collection("admin_tokens")
-            .doc(user.uid)
+            .doc(user.phoneNumber)
             .set({"token": newToken});
         print("🔄 FCM token refreshed and updated in Firestore.");
       }

@@ -8,8 +8,8 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  final List<String> adminUIDs = [
-    '8UkfWjkg9rN4XwmjbMKpRYtcBHx2',// User UID from Firestore firebase for 9813629126
+  final List<String> adminPhoneNumbers = [
+    '+9779813629126'
   ];
 
   @override
@@ -30,7 +30,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         }
 
         final user = snapshot.data!;
-        final isAdmin = adminUIDs.contains(user.uid);
+        final isAdmin = adminPhoneNumbers.contains(user.phoneNumber);
 
         if (!isAdmin) {
           return const Scaffold(

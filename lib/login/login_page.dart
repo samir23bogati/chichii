@@ -41,22 +41,22 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-         print('Current State: $state');
        if (state is Authenticated || state is OtpVerified) {
+        print("User authenticated or OTP verified.");
           WidgetsBinding.instance.addPostFrameCallback((_) {
           _navigateToAddressSelectionPage();
         });
         } else if (state is AuthError) {
           setState(() => isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        } else if (state is OtpSentState) {
+            SnackBar(content: Text('Error: ${state.message}')),
+  );
+  print("AuthError: ${state.message}"); // Log the error
+} else if (state is OtpSentState) {
           setState(() {
             isOtpSent = true;
             isLoading = false;
@@ -121,9 +121,11 @@ class _LoginPageState extends State<LoginPage> {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
-                onPressed: _sendPhoneNumber,
-                child: const Text("OTP via SMS", style: TextStyle(color: Colors.white)),
-              ),
+                onPressed: isLoading? null: _sendPhoneNumber,
+                child: isLoading
+      ? const CircularProgressIndicator()
+      : const Text("OTP via SMS", style: TextStyle(color: Colors.white)),
+)
       ],
     );
   }
@@ -164,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
      setState(() {
       isLoading = true;
     });
-    context.read<AuthBloc>().add(PhoneAuthRequested(formattedPhoneNumber));
+    context.read<AuthBloc>().add(PhoneAuthRequested(phoneNumber: formattedPhoneNumber));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a valid phone number')),
@@ -212,7 +214,10 @@ class _LoginPageState extends State<LoginPage> {
   void _verifyOtp() {
     final otp = _otpController.text.trim();
     if (otp.isNotEmpty) {
-      context.read<AuthBloc>().add(VerifyOtpRequested(otp));
+      setState(() {
+      isLoading = true;
+    });
+      context.read<AuthBloc>().add(VerifyOtpRequested(otp: otp));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter the OTP')),

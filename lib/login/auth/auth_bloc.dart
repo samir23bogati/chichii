@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'package:bloc/src/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -28,12 +27,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   User? user = FirebaseAuth.instance.currentUser;
   if (user == null) return;
  // Fetch user role from Firestore
-  DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+  DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.phoneNumber).get();
 
   if (userDoc.exists && userDoc['role'] == 'admin') {
     String? token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
-      await FirebaseFirestore.instance.collection('admin_tokens').doc(user.uid).set({
+      await FirebaseFirestore.instance.collection('admin_tokens').doc(user.phoneNumber).set({
         'token': token,
         'timestamp': FieldValue.serverTimestamp(),
       });
@@ -185,7 +184,8 @@ Future<void> _sendPhoneNumber(String phoneNumber) async {
         phoneNumber: formattedPhoneNumber,
          timeout: const Duration(seconds: 110),
         verificationCompleted: (PhoneAuthCredential credential) async {
-          await FirebaseAuth.instance.signInWithCredential(credential);
+           final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+           add(VerifyOtpRequested(otp: 'AUTO',));
         },
         verificationFailed: (FirebaseAuthException e) {
           emit(AuthError(message: 'Phone number verification failed: ${e.message}'));
