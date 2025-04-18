@@ -218,7 +218,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                       ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   child: const Text("Cash on Delivery"),
                 ),
-                ElevatedButton(
+                ElevatedButton( 
                   onPressed: () {
                     _placeOrder(context, "Khalti", finalPrice);
                   },
@@ -252,7 +252,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
         "userId": user.uid,
         "address": widget.address,
         "email": userEmail,
-        "contact": userPhoneNumber != "Not Available" ? userPhoneNumber : userEmail,
+        "phoneNumber": userPhoneNumber,
         "items": widget.cartItems
             .map((item) => {
                   "title": item.title,
@@ -337,13 +337,11 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
   Future<void> _sendAdminNotification(
       String orderId, Map<String, dynamic> orderData) async {
     try {
-      final contact = orderData["contact"] ;
       await FirebaseFirestore.instance.collection('admin_notifications').add({
         "orderId": orderId,
         "message": "New order placed with ID: $orderId",
         "address": orderData["address"],
         "phoneNumber": orderData["phoneNumber"],
-        "contact": contact,
         "cartItems": orderData["items"],
         "totalPrice": orderData["totalPrice"],
         "deliveryCost": orderData["deliveryCost"],

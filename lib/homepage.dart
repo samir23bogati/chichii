@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   
 
      context.read<CartBloc>().add(LoadCartEvent());
-  FirebaseFirestore.instance.collection('orders').snapshots().listen((snapshot) {
+  _orderSubscription = FirebaseFirestore.instance.collection('orders').snapshots().listen((snapshot) {
       final currentOrderCount = snapshot.docs.length;
 
    if (_previousOrderCount == 0) {
