@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:padshala/Billing/BillingConfirmationPage.dart';
+import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
+import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/model/cart_item.dart';
 
 class AddressSelectionPage extends StatefulWidget {
@@ -47,25 +50,26 @@ class _AddressSelectionPageState extends State<AddressSelectionPage> {
     final url = 'https://maps.googleapis.com/maps/api/geocode/json'
         '?latlng=${newPosition.latitude},${newPosition.longitude}'
         '&key=$apiKey';
-try {
-    final response = await http.get(Uri.parse(url));
+    try {
+      final response = await http.get(Uri.parse(url));
 
-    if (response.statusCode == 200) {
-      final result = json.decode(response.body);
-      if (result['status'] == 'OK' && result['results'].isNotEmpty) {
-        final formattedAddress = result['results'][0]['formatted_address'];
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        if (result['status'] == 'OK' && result['results'].isNotEmpty) {
+          final formattedAddress = result['results'][0]['formatted_address'];
 
-        setState(() {
-          searchController.text = formattedAddress; // Update search box
-          selectedLocation = newPosition; // Update marker position
-        });
+          setState(() {
+            searchController.text = formattedAddress; // Update search box
+            selectedLocation = newPosition; // Update marker position
+          });
+        } else {
+          logger.w("Geocode API Error: ${result['status']}");
+        }
       } else {
-       logger.w("Geocode API Error: ${result['status']}");
+        logger
+            .e('Failed to fetch address from lat/lng: ${response.statusCode}');
       }
-    } else {
-      logger.e('Failed to fetch address from lat/lng: ${response.statusCode}');
-    }
-  } catch (e) {
+    } catch (e) {
       logger.e("Error updating address: $e");
     }
   }
@@ -75,7 +79,7 @@ try {
     try {
       final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
       if (apiKey == null || apiKey.isEmpty) {
-       logger.e("Error: Missing Google Maps API Key");
+        logger.e("Error: Missing Google Maps API Key");
         return;
       }
       final url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
@@ -118,24 +122,26 @@ try {
       if (data['status'] == 'OK' && data['result'] != null) {
         final location = data['result']['geometry']['location'];
         final newLocation = LatLng(location['lat'], location['lng']);
-        logger.i('Selected Place LatLng: ${newLocation.latitude}, ${newLocation.longitude}');
-      logger.i('Selected Address: ${data['result']['formatted_address']}');
+        logger.i(
+            'Selected Place LatLng: ${newLocation.latitude}, ${newLocation.longitude}');
+        logger.i('Selected Address: ${data['result']['formatted_address']}');
 
-      _getAddressFromLatLng(newLocation);
-         setState(() {
-        selectedLocation = newLocation;
-        predictions.clear();
-        searchController.text = data['result']['formatted_address']; // Update search bar with selected address
-      });
-       mapController
-          ?.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+        _getAddressFromLatLng(newLocation);
+        setState(() {
+          selectedLocation = newLocation;
+          predictions.clear();
+          searchController.text = data['result']
+              ['formatted_address']; // Update search bar with selected address
+        });
+        mapController
+            ?.animateCamera(CameraUpdate.newLatLngZoom(selectedLocation!, 15));
+      } else {
+        logger.e('Failed to retrieve valid location data: ${data['status']}');
+      }
     } else {
-     logger.e('Failed to retrieve valid location data: ${data['status']}');
+      logger.e('Failed to fetch place details: ${response.statusCode}');
     }
-  } else {
-    logger.e('Failed to fetch place details: ${response.statusCode}');
   }
-}
 
   Future<void> _getAddressFromLatLng(LatLng location) async {
     try {
@@ -285,27 +291,28 @@ try {
                     children: [
                       Icon(Icons.search, color: Colors.grey[600]),
                       SizedBox(width: 10),
-                     Expanded(
-  child: TextField(
-    controller: searchController,
-    decoration: InputDecoration(
-      hintText: 'Search for a place',
-      border: InputBorder.none,
-      suffixIcon: IconButton(
-        icon: Icon(Icons.clear, color: Colors.grey),
-        onPressed: () {
-          setState(() {
-            searchController.clear(); // Clear the text
-            predictions.clear(); // Optionally clear predictions
-          });
-        },
-      ),
-    ),
-    onChanged: (query) {
-      _fetchAutocompleteSuggestions(query);
-    },
-  ),
-)
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Search for a place',
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.clear, color: Colors.grey),
+                              onPressed: () {
+                                setState(() {
+                                  searchController.clear(); // Clear the text
+                                  predictions
+                                      .clear(); // Optionally clear predictions
+                                });
+                              },
+                            ),
+                          ),
+                          onChanged: (query) {
+                            _fetchAutocompleteSuggestions(query);
+                          },
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -356,10 +363,10 @@ try {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
-                     constraints: BoxConstraints(
-          minHeight: 50,  
-          maxHeight: 100, 
-        ),
+                    constraints: BoxConstraints(
+                      minHeight: 50,
+                      maxHeight: 100,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -369,7 +376,9 @@ try {
                     ),
                     child: SingleChildScrollView(
                       child: Text(
-                        searchController.text.isNotEmpty ? searchController.text : address,
+                          searchController.text.isNotEmpty
+                              ? searchController.text
+                              : address,
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16)),
                     ),
@@ -378,17 +387,22 @@ try {
                   ElevatedButton(
                     onPressed: selectedLocation != null
                         ? () {
-                          logger.w('userLat: ${selectedLocation!.latitude}');
-                          logger.w('userLng: ${selectedLocation!.longitude}');
+                            logger.w('userLat: ${selectedLocation!.latitude}');
+                            logger.w('userLng: ${selectedLocation!.longitude}');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BillingConfirmationPage(
-                                  address: searchController.text.isNotEmpty ? searchController.text : address, 
+                                  address: searchController.text.isNotEmpty
+                                      ? searchController.text
+                                      : address,
                                   userLat: selectedLocation!.latitude,
                                   userLng: selectedLocation!.longitude,
                                   cartItems: widget.cartItems,
                                   totalPrice: widget.totalPrice,
+                                  onClearCart: () {
+                                    context.read<CartBloc>().add(ClearCart());
+                                  },
                                 ),
                               ),
                             );

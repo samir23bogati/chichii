@@ -1,9 +1,8 @@
-import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FavouritesDetails extends StatefulWidget {
   @override
@@ -12,6 +11,11 @@ class FavouritesDetails extends StatefulWidget {
 
 class _FavouritesDetailsState extends State<FavouritesDetails> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+   @override
+  void initState() {
+    super.initState();
+    context.read<FavoritesBloc>().add(LoadFavorites());
+  }
  
  @override
   Widget build(BuildContext context) {
@@ -19,7 +23,6 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
       appBar: AppBar(title: Text('Favorites')),
       body: BlocBuilder<FavoritesBloc, FavoritesState>(
         builder: (context, state) {
-          // Cast state to FavoritesUpdatedState to access favorites
           if (state is FavoritesUpdatedState) {
             if (state.favorites.isEmpty) {
               return Center(child: Text("No favorites yet"));
@@ -39,14 +42,16 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
                   trailing: IconButton(
                     icon: Icon(Icons.favorite, color: Colors.red),
                     onPressed: () {
-                      BlocProvider.of<FavoritesBloc>(context).add(ToggleFavorite(item));
+                      context.read<FavoritesBloc>().add(ToggleFavorite(item));
                     },
                   ),
                 );
               },
             );
-          } else {
+         } else if (state is FavoritesInitialState) {
             return Center(child: CircularProgressIndicator());
+          } else {
+            return Center(child: Text("Something went wrong"));
           }
         },
       ),

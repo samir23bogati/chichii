@@ -11,9 +11,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UpdateQuantityEvent>(_onUpdateQuantity);  
     on<RemoveFromCartEvent>(_onRemoveFromCart);
     on<LoadCartEvent>(_onLoadCart); 
+     on<ClearCart>(_onClearCart);
   }
+void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('cart_items'); // ✅ remove saved cart from local storage
 
- 
+  emit(CartUpdatedState(cartItems: [])); // ✅ clear in-memory cart too
+}
+
+
  void _onAddToCart(AddToCartEvent event, Emitter<CartState> emit) async {
   List<CartItem> updatedCartItems = (state is CartUpdatedState)
       ? List<CartItem>.from((state as CartUpdatedState).cartItems)

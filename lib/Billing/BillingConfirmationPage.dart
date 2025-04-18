@@ -11,6 +11,7 @@ class BillingConfirmationPage extends StatefulWidget {
   final double userLng;
   final List<CartItem> cartItems;
   final double totalPrice;
+  final VoidCallback onClearCart;
 
   BillingConfirmationPage({
     required this.address,
@@ -18,6 +19,7 @@ class BillingConfirmationPage extends StatefulWidget {
     required this.userLng,
     required this.cartItems,
     required this.totalPrice,
+     required this.onClearCart,
     Key? key,
   }) : super(key: key);
 
@@ -30,7 +32,6 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
   double? deliveryCost;
   bool isLoading = true;
   String userPhoneNumber = "Not Available";
-  String userEmail = "Not Available";
   @override
   void initState() {
     super.initState();
@@ -40,7 +41,6 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     User? user = FirebaseAuth.instance.currentUser;
     setState(() {
     userPhoneNumber = user?.phoneNumber ?? "Not Available";
-    userEmail = user?.email ?? "Not Available";
   });
 }
 
@@ -251,7 +251,6 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
         "orderId": orderRef.id,
         "userId": user.uid,
         "address": widget.address,
-        "email": userEmail,
         "phoneNumber": userPhoneNumber,
         "items": widget.cartItems
             .map((item) => {
@@ -270,7 +269,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
       await saveOrder(orderRef.id, orderData);
       await _sendAdminNotification(orderRef.id, orderData);
-
+      widget.onClearCart();
       showDialog(
         context: context,
         builder: (context) {
@@ -305,8 +304,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   ),
                   onPressed: () {
-                    Navigator.popUntil(context,
-                        (route) => route.isFirst); // Navigate back to home
+                    Navigator.popUntil(context, (route) => route.isFirst); // Navigate back to home
                   },
                   child: Text(
                     "OK",

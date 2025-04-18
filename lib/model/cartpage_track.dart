@@ -203,6 +203,7 @@ class CartPage extends StatelessWidget {
                                   totalPrice: state.totalPrice,
                                   userLat: selectedLocation.latitude,
                                   userLng: selectedLocation.longitude,
+                                   onClearCart: () {},
                                 ),
                               ),
                             );
