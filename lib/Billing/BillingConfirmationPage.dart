@@ -269,8 +269,9 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
       await saveOrder(orderRef.id, orderData);
       await _sendAdminNotification(orderRef.id, orderData);
-      widget.onClearCart();
-      showDialog(
+      
+       if (!mounted) return;
+       await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -304,7 +305,10 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   ),
                   onPressed: () {
-                    Navigator.popUntil(context, (route) => route.isFirst); // Navigate back to home
+                    Navigator.pop(context); // Close the dialog
+  Future.delayed(Duration(milliseconds: 200), () {
+    Navigator.popUntil(context, (route) => route.isFirst);
+  });
                   },
                   child: Text(
                     "OK",
@@ -316,6 +320,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
           );
         },
       );
+      widget.onClearCart();
     } catch (e) {
       print("Error placing order: $e");
     }
