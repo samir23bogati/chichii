@@ -33,7 +33,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
         if (!isAdmin) {
           return const Scaffold(
-            body: Center(child: Text("Access Denied. Admins Only!")),
+            body: Center(child: Text("No updates at the moment.")),
           );
         }
 

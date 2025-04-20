@@ -113,7 +113,7 @@ void dispose() {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Access Denied. Admins Only!')),
+          const SnackBar(content: Text('No updates at the moment.')),
         );
       }
     }
@@ -150,7 +150,7 @@ void dispose() {
             });
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Access Denied. Admins Only!')),
+              const SnackBar(content: Text('No updates at the moment.')),
             );
           }
         },

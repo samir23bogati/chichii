@@ -19,7 +19,7 @@ class BillingConfirmationPage extends StatefulWidget {
     required this.userLng,
     required this.cartItems,
     required this.totalPrice,
-     required this.onClearCart,
+    required this.onClearCart,
     Key? key,
   }) : super(key: key);
 
@@ -37,12 +37,12 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     super.initState();
     _fetchDeliveryCost();
 
-   // Get user phone number or email
+    // Get user phone number or email
     User? user = FirebaseAuth.instance.currentUser;
     setState(() {
-    userPhoneNumber = user?.phoneNumber ?? "Not Available";
-  });
-}
+      userPhoneNumber = user?.phoneNumber ?? "Not Available";
+    });
+  }
 
   Future<void> _fetchDeliveryCost() async {
     try {
@@ -69,15 +69,13 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     debugPrint("🔥 Current User PhoneNumber: ${user?.phoneNumber}");
     if (user == null) return false;
 
-    
     final doc = await FirebaseFirestore.instance
         .collection('admins')
         .doc(user.phoneNumber)
         .get();
 
-        print('Admin Doc Data: ${doc.data()}'); 
+    print('Admin Doc Data: ${doc.data()}');
 
-    
     return doc.exists && doc.data()?['isAdmin'] == true;
   }
 
@@ -108,8 +106,8 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Row(
               children: [
-                Icon(Icons.location_on, color: Colors.green), 
-                SizedBox(width: 8), 
+                Icon(Icons.location_on, color: Colors.green),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(widget.address,
                       style: TextStyle(fontSize: 15, color: Colors.grey[700])),
@@ -154,11 +152,10 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                                     width: 60,
                                     height: 60,
                                     fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, _) => Icon(
-                                            Icons.broken_image,
-                                            size: 50,
-                                            color: Colors.grey),
+                                    errorBuilder: (context, error, _) => Icon(
+                                        Icons.broken_image,
+                                        size: 50,
+                                        color: Colors.grey),
                                   ),
                           ),
                         ),
@@ -218,7 +215,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                       ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   child: const Text("Cash on Delivery"),
                 ),
-                ElevatedButton( 
+                ElevatedButton(
                   onPressed: () {
                     _placeOrder(context, "Khalti", finalPrice);
                   },
@@ -269,9 +266,9 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
       await saveOrder(orderRef.id, orderData);
       await _sendAdminNotification(orderRef.id, orderData);
-      
-       if (!mounted) return;
-       await showDialog(
+
+      if (!mounted) return;
+      await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -290,7 +287,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
               ],
             ),
             content: Text(
-              "Your order has been successfully sent to Chichionline.",
+              "Your order has been successfully sent to ChichiiOnline.",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
@@ -305,10 +302,10 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   ),
                   onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-  Future.delayed(Duration(milliseconds: 200), () {
-    Navigator.popUntil(context, (route) => route.isFirst);
-  });
+                     
+                      Navigator.of(context).popUntil((route) => route.isFirst); 
+                      widget.onClearCart(); 
+                    
                   },
                   child: Text(
                     "OK",
@@ -320,7 +317,6 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
           );
         },
       );
-      widget.onClearCart();
     } catch (e) {
       print("Error placing order: $e");
     }
