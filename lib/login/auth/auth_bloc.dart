@@ -1,48 +1,28 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  String? verificationId;
-  Timer? _timer;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? _verificationId;
+  Timer? _countdownTimer;
 
   AuthBloc() : super(AuthInitial()) {
+   on<CheckAuthStatus>(_onCheckAuthStatus);
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
     on<PhoneAuthRequested>(_onPhoneAuthRequested);
     on<VerifyOtpRequested>(_onVerifyOtpRequested);
-    on<OtpSent>(_onOtpSent);
     on<ResendOtpRequested>(_onResendOtpRequested);
-    on<CheckAuthStatus>(_onCheckAuthStatus);
     on<CountdownTicked>(_onCountdownTicked);
   }
 
-  Future<void> saveAdminFCMToken() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user == null) return;
- // Fetch user role from Firestore
-  DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.phoneNumber).get();
-
-  if (userDoc.exists && userDoc['role'] == 'admin') {
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      await FirebaseFirestore.instance.collection('admin_tokens').doc(user.phoneNumber).set({
-        'token': token,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-    }
-  }
-}
-
-   void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) async{
-    final user =await _getCurrentUser();
+ Future<void> _onCheckAuthStatus(
+      CheckAuthStatus event, Emitter<AuthState> emit) async {
+    final user = _auth.currentUser;
     if (user != null) {
       emit(Authenticated(user: user));
     } else {
@@ -50,192 +30,111 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<User?> _getCurrentUser() async {
-  final user = _firebaseAuth.currentUser;
-  return user;
-}
-
-
-void startCountdown(String phoneNumber, {int duration = 190}) { 
-  _timer?.cancel();
-  int remaining = duration;
-  _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    if (remaining > 0) {
-      remaining--;
-      add(CountdownTicked(phoneNumber: phoneNumber, remainingTime: remaining));
-    } else {
-      timer.cancel();
-      add(AuthFailure(message: "OTP expired! Please request a new one."));
-    }
-  });
-}
-
-
- void _onCountdownTicked(CountdownTicked event, Emitter<AuthState> emit) {
-    emit(OtpSentState(phoneNumber: event.phoneNumber, remainingTime: event.remainingTime));
-  }
-  
-  // ✅ Google Sign-In Handling
   Future<void> _onGoogleSignInRequested(
       GoogleSignInRequested event, Emitter<AuthState> emit) async {
     emit(GoogleAuthLoading());
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        emit(AuthError(message: 'Google sign-in aborted'));
+        emit(Unauthenticated());
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
+      final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential =await _firebaseAuth.signInWithCredential(credential);
-
-      if (userCredential.user != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isAuthenticated', true);
-
-        // Check if the user exists in Firestore and verify role
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
-
-
-       if (userDoc.exists) {
-        // User exists, check if they are an admin
-        final data = userDoc.data() as Map<String, dynamic>;
-        if (data['role'] == 'admin') {
-          await saveAdminFCMToken();  // Save FCM token for admins
-        }
-      } else {
-        // If user does not exist, store their role as admin
-        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-          'role': 'admin',  // Set role as admin
-          'email': userCredential.user!.email,
-        });
-        await saveAdminFCMToken(); // Save FCM token for new admin
-      }
-
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       emit(Authenticated(user: userCredential.user!));
-    } else {
-      emit(AuthError(message: 'Google sign-in failed'));
-    }
-  } catch (e) {
-    emit(AuthError(message: e.toString()));
-  }
-  }
-
-
-  // ✅ Phone Authentication Handling
-  void _onPhoneAuthRequested( PhoneAuthRequested event, Emitter<AuthState> emit) async {
-    emit(PhoneAuthLoading());
-    try {
-      await _sendPhoneNumber(event.phoneNumber);
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      emit(AuthError(message: 'Google sign-in failed: $e'));
     }
   }
 
-  // ✅ OTP Verification Handling
-  Future<void> _onVerifyOtpRequested(VerifyOtpRequested event, Emitter<AuthState> emit) async {
+  Future<void> _onPhoneAuthRequested(
+      PhoneAuthRequested event, Emitter<AuthState> emit) async {
     emit(PhoneAuthLoading());
-    try {
-      final user = await _verifyOtp(event.otp);
-      if (user != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isAuthenticated', true);
-         emit(OtpVerified(user: user));
-    } else {
-      emit(AuthError(message: 'OTP verification failed'));
-    }
-  } catch (e) {
-    emit(AuthError(message: 'Error verifying OTP: ${e.toString()}'));
-  }
-}
-
-  // ✅ OTP Sent Handling
-  void _onOtpSent(OtpSent event, Emitter<AuthState> emit) {
-    emit(OtpSentState(phoneNumber: event.phoneNumber, remainingTime: event.remainingTime));
-  }
-   void _onResendOtpRequested(ResendOtpRequested event, Emitter<AuthState> emit) async {
-    emit(PhoneAuthLoading());
-     _timer?.cancel();
-    try {
-      await _sendPhoneNumber(event.phoneNumber);
-    } catch (e) {
-      emit(AuthError(message: e.toString()));
-    }
-  }
-
-
- // ✅ Send OTP Function
-Future<void> _sendPhoneNumber(String phoneNumber) async {
-
-  String sanitizedPhoneNumber = phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
-
-  if (sanitizedPhoneNumber.isNotEmpty && sanitizedPhoneNumber.length >= 13) {
-    final formattedPhoneNumber = sanitizedPhoneNumber; 
 
     try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: formattedPhoneNumber,
-         timeout: const Duration(seconds: 110),
+      await _auth.verifyPhoneNumber(
+        phoneNumber: event.phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
-           final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-        if (userCredential.user != null) {
-            // If auto-verification works, proceed directly to OTP verification
-            add(VerifyOtpRequested(otp: 'AUTO',));  // Trigger OTP verification with the auto-filled OTP
-          }
+          UserCredential userCredential =
+              await _auth.signInWithCredential(credential);
+          emit(Authenticated(user: userCredential.user!));
         },
         verificationFailed: (FirebaseAuthException e) {
-          emit(AuthError(message: 'Phone number verification failed: ${e.message}'));
+          emit(AuthError(message: e.message ?? "Verification failed."));
         },
         codeSent: (String verificationId, int? resendToken) {
-          this.verificationId = verificationId;
-          
-          startCountdown(phoneNumber); 
-          add(OtpSent(phoneNumber: phoneNumber, remainingTime: 110)); 
+          _verificationId = verificationId;
+          _startCountdown(event.phoneNumber, emit);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          this.verificationId = verificationId;
+          _verificationId = verificationId;
         },
+        timeout: const Duration(seconds: 60),
       );
     } catch (e) {
-      if (e is FirebaseAuthException) {
-        emit(AuthError(message: 'Error sending OTP: ${e.message}'));
-      } else {
-        emit(AuthError(message: 'An unexpected error occurred.'));
-      }
+      emit(AuthError(message: 'Phone auth error: $e'));
     }
-  } else {
-    emit(AuthError(message: 'Please enter a valid phone number with the country code'));
   }
-}
 
+  Future<void> _onVerifyOtpRequested(
+      VerifyOtpRequested event, Emitter<AuthState> emit) async {
+    emit(PhoneAuthLoading());
 
-Future<User?> _verifyOtp(String otp) async {
-   if (verificationId == null) {
-    emit(AuthError(message: "Verification ID is missing. Try again."));
-    return null;
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId!,
+        smsCode: event.otp,
+      );
+
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      emit(OtpVerified(user: userCredential.user!));
+    } catch (e) {
+      emit(AuthError(message: 'Invalid OTP: $e'));
+    }
   }
-  try {
-    final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: verificationId!,
-      smsCode: otp,
-    );
-    final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
-    return userCredential.user;
-  } catch (e) {
-     emit(AuthError(message: "Invalid OTP. Please try again."));
-    return null;
+
+  Future<void> _onResendOtpRequested(
+      ResendOtpRequested event, Emitter<AuthState> emit) async {
+    add(PhoneAuthRequested(phoneNumber: event.phoneNumber));
   }
-}
- @override
+
+  void _onCountdownTicked(
+      CountdownTicked event, Emitter<AuthState> emit) {
+    if (event.remainingTime > 0) {
+      emit(OtpSentState(
+          phoneNumber: event.phoneNumber, remainingTime: event.remainingTime));
+    } else {
+      _countdownTimer?.cancel();
+    }
+  }
+
+  void _startCountdown(String phoneNumber, Emitter<AuthState> emit) {
+    int remainingTime = 60;
+    emit(OtpSentState(phoneNumber: phoneNumber, remainingTime: remainingTime));
+
+    _countdownTimer?.cancel();
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      remainingTime--;
+      add(CountdownTicked(phoneNumber: phoneNumber, remainingTime: remainingTime));
+      if (remainingTime <= 0) {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
   Future<void> close() {
-    _timer?.cancel();
+    _countdownTimer?.cancel();
     return super.close();
   }
 }

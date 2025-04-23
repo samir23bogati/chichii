@@ -34,11 +34,30 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _checkIfUserIsLoggedIn();
   }
-
+ @override
+  void dispose() {
+    _phoneController.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
   
  void _checkIfUserIsLoggedIn() {
   context.read<AuthBloc>().add(CheckAuthStatus());
 }
+  void _sendPhoneNumber() {
+    final phoneNumber = _phoneController.text.trim();
+    if (phoneNumber.isNotEmpty && phoneNumber.length == 10) {
+      final formattedPhoneNumber = '+977$phoneNumber';
+     setState(() {
+      isLoading = true;
+    });
+    context.read<AuthBloc>().add(PhoneAuthRequested(phoneNumber: formattedPhoneNumber));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid phone number')),
+      );
+    }
+  }
 
 
   @override
@@ -88,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40),
+      padding: const EdgeInsets.symmetric(vertical: 46, horizontal: 10),
       color: const Color.fromRGBO(55, 39, 6, 1),
       child: Column(
         children: [
@@ -106,9 +125,9 @@ class _LoginPageState extends State<LoginPage> {
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text("Finger Licking Good", style: TextStyle(color: Colors.white, fontSize: 13)),
-              Text("Great Deals & Offers", style: TextStyle(color: Colors.white, fontSize: 13)),
-              Text("Easy Ordering", style: TextStyle(color: Colors.white, fontSize: 13)),
+              Text("Finger Licking Good", style: TextStyle(color: Colors.white, fontSize: 13.2)),
+              Text("Great Deals & Offers", style: TextStyle(color: Colors.white, fontSize: 13.2)),
+              Text("Easy Ordering", style: TextStyle(color: Colors.white, fontSize: 13.2)),
             ],
           ),
         ],
@@ -133,18 +152,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildPhoneNumberField() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey),
-      ),
+ Widget _buildPhoneNumberField() {
+  return Card(
+    margin: const EdgeInsets.symmetric(horizontal: 24),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    elevation: 3,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Image.asset('assets/images/nepal_flag.png', height: 36),
           const SizedBox(width: 12),
-          const Text("+977"),
+          const Text("+977", style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(width: 12),
           Expanded(
             child: TextField(
@@ -159,39 +178,27 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-    );
-  }
-
-  void _sendPhoneNumber() {
-    final phoneNumber = _phoneController.text.trim();
-    if (phoneNumber.isNotEmpty && phoneNumber.length == 10) {
-      final formattedPhoneNumber = '+977$phoneNumber';
-     setState(() {
-      isLoading = true;
-    });
-    context.read<AuthBloc>().add(PhoneAuthRequested(phoneNumber: formattedPhoneNumber));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid phone number')),
-      );
-    }
-  }
-  @override
-void dispose() {
-  _phoneController.dispose();
-  _otpController.dispose();
-  super.dispose();
+    ),
+  );
 }
-
-
-  Widget _buildOtpInput() {
-    return Column(
-      children: [
-        const Text("Verify Your OTP sent via SMS"),
-        const SizedBox(height: 13),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50),
-          child: PinCodeTextField(
+Widget _buildOtpInput() {
+  return Card(
+    margin: const EdgeInsets.symmetric(horizontal: 24),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    elevation: 3,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Center(
+            child: Text(
+              "Verify Your OTP sent via SMS",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(height: 13),
+          PinCodeTextField(
             appContext: context,
             length: 6,
             controller: _otpController,
@@ -201,34 +208,41 @@ void dispose() {
               borderRadius: BorderRadius.circular(5),
               fieldHeight: 50,
               fieldWidth: 40,
-             activeFillColor: Colors.white,
+              activeFillColor: Colors.white,
+            ),
+            onCompleted: (pin) {
+              print("Completed: $pin");
+            },
+            onChanged: (value) {
+              print(value);
+            },
           ),
-          onCompleted: (pin) {
-            print("Completed: $pin");
-          },
-          onChanged: (value) {
-            print(value);
-          },
-        ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(55, 39, 6, 1),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              onPressed: isLoading ? null : _verifyOtp,
+              child: isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text("Verify OTP", style: TextStyle(color: Colors.white)),
+            ),
+          ),
+        ],
       ),
-        const SizedBox(height: 12),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(55, 39, 6, 1)),
-          onPressed: isLoading ? null : _verifyOtp,
-          child: isLoading
-      ? const SizedBox(
-          height: 20,
-          width: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: Colors.white,
-          ),
-        )
-      : const Text("Verify OTP", style: TextStyle(color: Colors.white)),
-),
-      ],
-    );
-  }
+    ),
+  );
+}
 
   void _verifyOtp() {
     final otp = _otpController.text.trim();

@@ -14,19 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "581466934152-73hr4sv6jp69fl2tpfc8je532e38id18.apps.googleusercontent.com",
+          "client_id": "581466934152-7c9icm3k1si2kue4tv1n26e4akheceob.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.chichii.online",
-            "certificate_hash": "49041e1677780212cb5672c3e4165ee7a9de2c33"
-          }
-        },
-        {
-          "client_id": "581466934152-8rm9gsbrqu6k0svvjj6m8pv9752fe2jp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chichii.online",
-            "certificate_hash": "2a464ae29c95ab39b4c35b37c4f2ae3865b67ca4"
+            "certificate_hash": "3e34d9c5884e788b0a7afb92dacd843fe7494048"
           }
         },
         {
@@ -35,6 +27,22 @@
           "android_info": {
             "package_name": "com.chichii.online",
             "certificate_hash": "0616061481fe7b5601f6e21bd5a263672436055b"
+          }
+        },
+        {
+          "client_id": "581466934152-cl8k25po8ja9fhbsga1ao5urvutbdt5g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chichii.online",
+            "certificate_hash": "ed713768e78abe75cd1c1afb3244dfc8bae80817"
+          }
+        },
+        {
+          "client_id": "581466934152-edkf8dcrp82bu72la539d65rr1oi15rm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chichii.online",
+            "certificate_hash": "9cab285dfcb447bdd095828126968adc521a0dc0"
           }
         },
         {

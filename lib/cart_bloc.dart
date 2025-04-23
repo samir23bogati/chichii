@@ -15,8 +15,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.remove('cart_items'); // ✅ remove saved cart from local storage
-
+  await prefs.remove('cart_items'); 
   emit(CartUpdatedState(cartItems: [])); // ✅ clear in-memory cart too
 }
 
@@ -40,8 +39,6 @@ void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
   }
 
   emit(CartUpdatedState(cartItems: updatedCartItems));
-
-  // Save to SharedPreferences
   SharedPreferences prefs = await SharedPreferences.getInstance();
   List<String> cartJson = updatedCartItems.map((item) => jsonEncode(item.toJson())).toList();
   await prefs.setStringList('cart_items', cartJson);
@@ -49,18 +46,13 @@ void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
 
   
   void _onUpdateQuantity(UpdateQuantityEvent event, Emitter<CartState> emit) {
-    List<CartItem> updatedCartItems = [];
-
-    if (state is CartUpdatedState) {
-      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
-    }
-
+    List<CartItem> updatedCartItems = (state is CartUpdatedState)
+        ? List<CartItem>.from((state as CartUpdatedState).cartItems)
+        : [];
     final existingItemIndex = updatedCartItems.indexWhere((item) => item.title == event.cartItem.title);
 
     if (existingItemIndex != -1) {
-     
       if (event.quantity <= 0) {
-       
         updatedCartItems.removeAt(existingItemIndex);
       } else {
         updatedCartItems[existingItemIndex].quantity = event.quantity;
@@ -72,11 +64,9 @@ void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
 
  
   void _onRemoveFromCart(RemoveFromCartEvent event, Emitter<CartState> emit) {
-    List<CartItem> updatedCartItems = [];
-
-    if (state is CartUpdatedState) {
-      updatedCartItems = List<CartItem>.from((state as CartUpdatedState).cartItems);
-    }
+    List<CartItem> updatedCartItems = (state is CartUpdatedState)
+        ? List<CartItem>.from((state as CartUpdatedState).cartItems)
+        : [];
 
     updatedCartItems.removeWhere((item) => item.title == event.cartItem.title);
 
