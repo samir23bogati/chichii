@@ -198,7 +198,7 @@ class BottomNavBarClipper extends CustomClipper<Path> {
     path.quadraticBezierTo(centerX, curveDepth * 1.8, centerX + curveWidth / 2, 0);
 
     path.lineTo(width, 0);
-    path.lineTo(width, height);
+    path.lineTo(width, height); 
     path.lineTo(0, height);
     path.close();
 

@@ -1,32 +1,64 @@
 [
+   
     {
-      "image": "assets/images/delicious78.jpeg",
+      "image": "assets/images/comboone.jpeg",
       "title": "COMBO ONE",
-      "price": 1500.0,
+      "price": 1490.00,
       "foodItems": [
-        {"name": "Burger", "image": "assets/images/goldenoak180.jpg"},
-        {"name": "Fries", "image": "assets/images/goldenoak180.jpg"},
-        {"name": "Coke", "image": "assets/images/goldenoak180.jpg"}
+        {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Gorkha Strong Beer", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Any Veg Snacks", "image": "assets/images/goldenoak180.jpg"}
       ]
     },
     {
-      "image": "assets/images/delicious55.jpg",
+      "image": "assets/images/combotwo.jpeg",
       "title": "COMBO TWO",
-      "price": 1800.0,
+      "price": 1490.00,
       "foodItems": [
-        {"name": "Burger", "image": "assets/images/goldenoak180.jpg"},
-        {"name": "Fries", "image": "assets/images/goldenoak180.jpg"},
-        {"name": "Coke", "image": "assets/images/goldenoak180.jpg"}
+        {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Gorkha Strong Beer", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Any Veg Snacks", "image": "assets/images/goldenoak180.jpg"}
       ]
     },
     {
-      "image": "assets/images/delicious44.jpeg",
+      "image": "assets/images/combothree.jpeg",
       "title": "COMBO THREE",
-      "price": 2080.0,
+      "price": 1490.00,
       "foodItems": [
-        {"name": "Burger", "image": "assets/images/goldenoak180.jpg"},
-        {"name": "Fries", "image": "assets/images/goldenoak180.jpg"},
-        {"name": "Coke", "image": "assets/images/goldenoak180.jpg"}
+        {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Gorkha Strong Beer", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Any Veg Snacks", "image": "assets/images/goldenoak180.jpg"}
+      ]
+    },
+    {
+      "image": "assets/images/combofour.jpeg",
+      "title": "COMBO FOUR",
+      "price": 1490.00,
+      "foodItems": [
+        {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Gorkha Strong Beer", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Any Veg Snacks", "image": "assets/images/goldenoak180.jpg"}
+      ]
+    }, 
+    {
+      "image": "assets/images/combofive.jpeg",
+      "title": "COMBO FIVE",
+      "price": 1490.00,
+      "foodItems": [
+        {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Gorkha Strong Beer", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Any Veg Snacks", "image": "assets/images/goldenoak180.jpg"}
+      ]
+    },
+    {
+      "image": "assets/images/combosix.jpeg",
+      "title": "COMBO SIX",
+      "price": 2190.00,
+      "foodItems": [
+        {"name": "Pork Sekuwa 1/2 kg", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Khukri Rum 375 ML", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Chicken Wings", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Mustang Aalu", "image": "assets/images/goldenoak180.jpg"}
       ]
     }
   ]
