@@ -23,128 +23,124 @@ class WhatsnewFoodlist extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(comboName)),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.zero,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.zero,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Image.asset(
+                imageUrl.first,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 215,
+              ),
             ),
-            child: Image.asset(
-              imageUrl.first,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 215,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-  text: TextSpan(
-    children: [
-      TextSpan(
-        text: "Price: NRS  ",
-        style: TextStyle(
-          color: Colors.black,   fontSize: 16,  fontWeight: FontWeight.bold, ),
-      ),
-      TextSpan(
-        text: "${price.toStringAsFixed(2)}",
-        style: TextStyle(
-          color: Colors.green[700], 
-          fontSize: 15, 
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ],
-  ),
-)
-
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              "INCLUDED IN  $comboName:",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-          ...foodItems.map((item) => ListTile(
-                title: Text(item["name"] ?? "Unnamed"),
-                leading: item["image"] != null && item["image"] != ""
-                    ? Image.asset(item["image"]!, width: 40, height: 40)
-                    : Icon(Icons.fastfood),
-              )),
-          BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              bool isAddedToCart = false;
-              CartItem? existingCartItem;
-
-              if (state is CartUpdatedState) {
-                existingCartItem = state.cartItems.firstWhere(
-                  (item) => item.id == comboName,
-                  orElse: () => CartItem(
-                    id: comboName,
-                    title: comboName,
-                    imageUrl: imageUrl.first,
-                    price: price,
-                    quantity: 1,
+             // Price Card
+              Card(
+                color: Colors.green[50],
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                margin: const EdgeInsets.all(10),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 6),
+                      Text(
+                        "NRS ${price.toStringAsFixed(2)}",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.green[800],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-                isAddedToCart =
-                    state.cartItems.any((item) => item.id == comboName);
-              }
-
-              return Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final cartItem = CartItem(
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "INCLUDED IN  $comboName:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ...foodItems.map((item) => ListTile(
+                  title: Text(item["name"] ?? "Unnamed"),
+                  leading: item["image"] != null && item["image"] != ""
+                      ? Image.asset(item["image"]!, width: 75, height: 75)
+                      : Icon(Icons.fastfood),
+                )),
+            BlocBuilder<CartBloc, CartState>(
+              builder: (context, state) {
+                bool isAddedToCart = false;
+                CartItem? existingCartItem;
+        
+                if (state is CartUpdatedState) {
+                  existingCartItem = state.cartItems.firstWhere(
+                    (item) => item.id == comboName,
+                    orElse: () => CartItem(
                       id: comboName,
                       title: comboName,
                       imageUrl: imageUrl.first,
                       price: price,
                       quantity: 1,
-                    );
-
-                    if (!isAddedToCart) {
-                      context.read<CartBloc>().add(AddToCartEvent(
-                          cartItem: cartItem)); 
-                    } else {
-                      context.read<CartBloc>().add(RemoveFromCartEvent(
-                          cartItem: cartItem)); 
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isAddedToCart
-                        ? Colors.green
-                        : Theme.of(context).primaryColor,
+                    ),
+                  );
+                  isAddedToCart =
+                      state.cartItems.any((item) => item.id == comboName);
+                }
+        
+                return Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final cartItem = CartItem(
+                        id: comboName,
+                        title: comboName,
+                        imageUrl: imageUrl.first,
+                        price: price,
+                        quantity: 1,
+                      );
+        
+                      if (!isAddedToCart) {
+                        context.read<CartBloc>().add(AddToCartEvent(
+                            cartItem: cartItem)); 
+                      } else {
+                        context.read<CartBloc>().add(RemoveFromCartEvent(
+                            cartItem: cartItem)); 
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isAddedToCart
+                          ? Colors.green
+                          : Theme.of(context).primaryColor,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isAddedToCart
+                              ? Icons.check_circle
+                              : Icons.shopping_cart,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 8), 
+                        Text(
+                          isAddedToCart ? "ADDED IN CART" : "Add to Cart",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isAddedToCart
-                            ? Icons.check_circle
-                            : Icons.shopping_cart,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 8), 
-                      Text(
-                        isAddedToCart ? "ADDED IN CART" : "Add to Cart",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          SizedBox(height: 20),
-        ],
+                );
+              },
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
       ),
       bottomNavigationBar:
           BottomNavBar(scaffoldKey: GlobalKey<ScaffoldState>()),

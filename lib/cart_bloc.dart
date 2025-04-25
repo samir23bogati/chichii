@@ -88,6 +88,8 @@ void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
     emit(CartUpdatedState(cartItems: loadedCart));
   }
 
+
+
   List<CartItem> _getCurrentCartItems() {
     if (state is CartUpdatedState) {
       return List<CartItem>.from((state as CartUpdatedState).cartItems);
@@ -95,3 +97,4 @@ void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
     return [ ];
   }
 }
+

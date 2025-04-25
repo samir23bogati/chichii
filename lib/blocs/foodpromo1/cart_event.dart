@@ -23,3 +23,5 @@ class LoadCartEvent extends CartEvent {}
 
 class ClearCart extends CartEvent {}
 
+class LoadFavoritesEvent extends CartEvent {}
+

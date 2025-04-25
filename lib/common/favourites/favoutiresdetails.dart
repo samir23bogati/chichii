@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
+import 'package:padshala/common/favourites/fav_event.dart';
+import 'package:padshala/common/favourites/fav_state.dart';
 
 class FavouritesDetails extends StatefulWidget {
   @override
@@ -24,7 +26,7 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
       body: BlocBuilder<FavoritesBloc, FavoritesState>(
         builder: (context, state) {
           if (state is FavoritesUpdatedState) {
-            if (state.favorites.isEmpty) {
+            if (state.favorites.isEmpty) {  
               return Center(child: Text("No favorites yet"));
             }
             return ListView.builder(
