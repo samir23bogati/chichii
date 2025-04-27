@@ -1,16 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-abstract class FavoritesEvent extends Equatable {
+abstract class FavoriteEvent extends Equatable {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-class ToggleFavorite extends FavoritesEvent {
-  final Map<String, String> item;
+class LoadFavorites extends FavoriteEvent {}
+
+class ToggleFavorite extends FavoriteEvent {
+  final Map<String, dynamic> item;
+
   ToggleFavorite(this.item);
 
   @override
-  List<Object> get props => [item];
+  List<Object?> get props => [item];
 }
-
-class LoadFavorites extends FavoritesEvent {}

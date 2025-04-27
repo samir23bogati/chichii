@@ -6,19 +6,21 @@ class SearchBar extends StatelessWidget {
  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search  for products.',
-          hintStyle: TextStyle(color: Colors.grey),
-          prefixIcon: Icon(Icons.search_rounded),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.zero,
-            borderSide: BorderSide(color: Colors.grey),
-          ),
-          
-          focusedBorder: OutlineInputBorder(
-             borderRadius: BorderRadius.zero,
-             borderSide: BorderSide(color: Colors.amber),
+      child: Center(
+        child: TextField(
+          decoration: InputDecoration(
+            hintText: 'Search  for products.',
+            hintStyle: TextStyle(color: Colors.grey),
+            prefixIcon: Icon(Icons.search_rounded),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: Colors.grey),
+            ),
+            
+            focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.zero,
+               borderSide: BorderSide(color: Colors.amber),
+            ),
           ),
         ),
       ),

@@ -155,7 +155,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>( create: (context) => AuthBloc()),  
         BlocProvider<CartBloc>(create: (context) => CartBloc()..add(LoadCartEvent())),
-        BlocProvider<FavoritesBloc>(create: (context) => FavoritesBloc()),
+        BlocProvider<FavoriteBloc>(create: (context) => FavoriteBloc()),
         
       ],
       child: GetMaterialApp(

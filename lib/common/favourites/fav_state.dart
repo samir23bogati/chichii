@@ -1,10 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-class FavoritesState extends Equatable {
-  final List<Map<String, String>> favorites;
+abstract class FavoriteState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-  const FavoritesState(this.favorites);
+class FavoriteInitialState extends FavoriteState {}
+
+class FavoriteUpdatedState extends FavoriteState {
+  final List<Map<String, dynamic>> favorites;
+
+  FavoriteUpdatedState(this.favorites);
 
   @override
-  List<Object> get props => [favorites];
+  List<Object?> get props => [favorites];
 }

@@ -183,7 +183,6 @@ void dispose() {
   ),
   const SizedBox(width: 8),
 ],
-
         ),
         drawer: DrawerMenu(),
         body: Stack(

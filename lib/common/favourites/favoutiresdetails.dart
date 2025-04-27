@@ -16,16 +16,16 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
    @override
   void initState() {
     super.initState();
-    context.read<FavoritesBloc>().add(LoadFavorites());
+    context.read<FavoriteBloc>().add(LoadFavorites());
   }
  
  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Favorites')),
-      body: BlocBuilder<FavoritesBloc, FavoritesState>(
+      body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
-          if (state is FavoritesUpdatedState) {
+          if (state is FavoriteUpdatedState) {
             if (state.favorites.isEmpty) {  
               return Center(child: Text("No favorites yet"));
             }
@@ -36,21 +36,22 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
                 return ListTile(
                   leading: Image.asset(
                     item['image'] ?? 'assets/images/rum.jpg',
-                    width: 50, height: 50,
+                    width: 50, 
+                    height: 50,
                     fit: BoxFit.cover,
                   ),
-                  title: Text(item['title'] ?? 'Unknown'),
+                  title: Text(item['title'] ?? 'Unknown'), 
                   subtitle: Text("NRS ${item['price'] ?? '0.00'}"),
                   trailing: IconButton(
                     icon: Icon(Icons.favorite, color: Colors.red),
                     onPressed: () {
-                      context.read<FavoritesBloc>().add(ToggleFavorite(item));
+                      context.read<FavoriteBloc>().add(ToggleFavorite(item));
                     },
                   ),
                 );
               },
             );
-         } else if (state is FavoritesInitialState) {
+          } else if (state is FavoriteInitialState) {
             return Center(child: CircularProgressIndicator());
           } else {
             return Center(child: Text("Something went wrong"));

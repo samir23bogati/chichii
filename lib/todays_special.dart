@@ -47,7 +47,7 @@ class TodaySpecialPage extends StatelessWidget {
               ],
             ),
             onPressed: () {
-              // Handle shopping cart action
+              // Handle the cart icon, 
             },
           ),
         ],

@@ -80,7 +80,6 @@ class _FoodPromopage1State extends State<FoodPromopage1> {
              );
     }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(

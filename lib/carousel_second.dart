@@ -21,7 +21,6 @@ class _CarouselSecondState extends State<CarouselSecond> {
       {'image': 'assets/images/fastfood.jpg', 'title': 'Fast Food'},
       {'image': 'assets/images/chickendrum.jpg', 'title': 'Chicken Drum'},
     ];
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,7 +97,6 @@ class _CarouselSecondState extends State<CarouselSecond> {
                     );
                   }).toList(),
                 ),
-
                 Positioned(
                   left: 10,//5
                   top: MediaQuery.of(context).size.height * 0.1,
@@ -114,8 +112,6 @@ class _CarouselSecondState extends State<CarouselSecond> {
                     },
                   ),
                 ),
-                  
-
                 // Right arrow
                 Positioned(
                   right: 10,

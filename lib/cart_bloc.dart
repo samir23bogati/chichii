@@ -18,8 +18,6 @@ void _onClearCart(ClearCart event, Emitter<CartState> emit) async {
   await prefs.remove('cart_items'); 
   emit(CartUpdatedState(cartItems: [])); // ✅ clear in-memory cart too
 }
-
-
  void _onAddToCart(AddToCartEvent event, Emitter<CartState> emit) async {
   List<CartItem> updatedCartItems = (state is CartUpdatedState)
       ? List<CartItem>.from((state as CartUpdatedState).cartItems)

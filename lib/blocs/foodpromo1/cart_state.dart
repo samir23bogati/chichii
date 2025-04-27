@@ -27,8 +27,3 @@ class CartErrorState extends CartState {
 
   CartErrorState({required this.errorMessage});
 }
-
-class CartFavoritesLoaded extends CartState {
-  final List<String> favoriteItems;
-  CartFavoritesLoaded({required this.favoriteItems});
-}

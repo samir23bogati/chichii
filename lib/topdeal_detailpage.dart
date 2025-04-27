@@ -63,7 +63,6 @@ class _TopDealDetailPageState extends State<TopDealDetailPage> {
                       style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color: Colors.green[700]),
                     ),
                   ),
-
                   // Bloc for Add to Cart
                   Padding(
                     padding: EdgeInsets.all(16.0),

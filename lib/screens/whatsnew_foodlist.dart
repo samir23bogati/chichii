@@ -18,7 +18,6 @@ class WhatsnewFoodlist extends StatelessWidget {
     required this.foodItems,
     required this.imageUrl,
   });
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +77,6 @@ class WhatsnewFoodlist extends StatelessWidget {
               builder: (context, state) {
                 bool isAddedToCart = false;
                 CartItem? existingCartItem;
-        
                 if (state is CartUpdatedState) {
                   existingCartItem = state.cartItems.firstWhere(
                     (item) => item.id == comboName,
@@ -93,7 +91,6 @@ class WhatsnewFoodlist extends StatelessWidget {
                   isAddedToCart =
                       state.cartItems.any((item) => item.id == comboName);
                 }
-        
                 return Center(
                   child: ElevatedButton(
                     onPressed: () {
@@ -104,7 +101,6 @@ class WhatsnewFoodlist extends StatelessWidget {
                         price: price,
                         quantity: 1,
                       );
-        
                       if (!isAddedToCart) {
                         context.read<CartBloc>().add(AddToCartEvent(
                             cartItem: cartItem)); 
