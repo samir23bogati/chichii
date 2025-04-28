@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:logger/logger.dart';
-import 'package:padshala/login/map/address_selection_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MapSelectionScreen extends StatefulWidget {
    final Function(LatLng) onLocationSelected;
@@ -30,8 +30,21 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    requestLocationPermission();
   }
-
+Future<void> requestLocationPermission() async {
+    PermissionStatus status = await Permission.location.request();
+    if (status.isGranted) {
+      // Proceed with fetching location
+      _getCurrentLocation();
+    } else {
+      // Handle the case where permission is denied
+      // Show a message or prompt the user to enable the permission
+     ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Location permission denied")),
+     );
+    }
+  }
   Future<void> _getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -49,8 +62,11 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
       );
     } catch (e) {
       logger.e("Error fetching location: $e");
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error fetching location. Please try again.")),
+    );
   }
+}
 
   Future<void> _updateAddress(LatLng position) async {
     final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
@@ -132,7 +148,6 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
     logger.e("Error selecting place: $e");
   }
 }
-
 // Helper function to fetch Place ID
 Future<String?> _getPlaceId(String place) async {
   final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
@@ -196,6 +211,7 @@ Future<String?> _getPlaceId(String place) async {
                         });
                         _updateAddress(newPosition);
                       },
+                     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
                     ),
                   }
                 : {},
@@ -311,7 +327,7 @@ Future<String?> _getPlaceId(String place) async {
         ),
       ),
     ],
-  ),
+  ), 
   ); 
   }
 }

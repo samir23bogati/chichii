@@ -5,6 +5,7 @@ import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
 import 'package:padshala/common/favourites/fav_event.dart';
 import 'package:padshala/common/favourites/fav_state.dart';
+import 'package:padshala/screens/exploretab_page.dart';
 
 class FavouritesDetails extends StatefulWidget {
   @override
@@ -26,16 +27,25 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
       body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
           if (state is FavoriteUpdatedState) {
-            if (state.favorites.isEmpty) {  
-             return Center(
+          if (state.favorites.isEmpty) {
+  return Center(
+    child: GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ExploretabPage(initialIndex: 0,)), 
+        );
+      },
       child: Image.asset(
-        'assets/images/nofav.jpg', 
-        width: 200,
-        height: 200,
+        'assets/images/nofav.jpg',
+        width: 400,   // Increased width
+        height: 500,  // Increased height
         fit: BoxFit.contain,
       ),
-    );
-  }
+    ),
+  );
+}
+
   return ListView.builder(
               itemCount: state.favorites.length,
               itemBuilder: (context, index) {

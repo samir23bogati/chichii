@@ -87,6 +87,8 @@ Future <void> checkFirestoreData() async {
 }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(); 
+
 
    final connectivityResult = await Connectivity().checkConnectivity();
    debugPrint('Connectivity Result: $connectivityResult');

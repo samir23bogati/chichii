@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:padshala/common/embedmap.dart'; 
+import 'package:padshala/common/embedmap.dart';
+import 'package:padshala/screens/exploretab_page.dart'; 
 
 class SelfPickupScreen extends StatefulWidget {
   @override
@@ -98,15 +99,18 @@ class _SelfPickupScreenState extends State<SelfPickupScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Nothing happens for now
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: Text(
-                        "SELF PICKUP",
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ExploretabPage(initialIndex: 0,)),
+    );
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.amber,
+    padding: EdgeInsets.symmetric(vertical: 12),
+  ),
+  child: Text(
+    "SELF PICKUP",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
