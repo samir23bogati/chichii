@@ -27,9 +27,16 @@ class _FavouritesDetailsState extends State<FavouritesDetails> {
         builder: (context, state) {
           if (state is FavoriteUpdatedState) {
             if (state.favorites.isEmpty) {  
-              return Center(child: Text("No favorites yet"));
-            }
-            return ListView.builder(
+             return Center(
+      child: Image.asset(
+        'assets/images/nofav.jpg', 
+        width: 200,
+        height: 200,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+  return ListView.builder(
               itemCount: state.favorites.length,
               itemBuilder: (context, index) {
                 final item = state.favorites[index];
