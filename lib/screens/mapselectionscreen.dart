@@ -38,8 +38,6 @@ Future<void> requestLocationPermission() async {
       // Proceed with fetching location
       _getCurrentLocation();
     } else {
-      // Handle the case where permission is denied
-      // Show a message or prompt the user to enable the permission
      ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Location permission denied")),
      );
@@ -318,7 +316,7 @@ Future<String?> _getPlaceId(String place) async {
       
       // Add a floating action button for GPS button
       Positioned(
-        bottom: 100,  // Adjust positioning to avoid overlap
+        bottom: 100,  
         right: 10,
         child: FloatingActionButton(
           onPressed: _getCurrentLocation,
