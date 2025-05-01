@@ -54,6 +54,14 @@
           }
         },
         {
+          "client_id": "581466934152-ut5n403qs3hf34817tv5b073hafvba8v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chichii.online",
+            "certificate_hash": "7355f7c0398186ef01b6397745ee07c605999220"
+          }
+        },
+        {
           "client_id": "581466934152-r15f8jdlio8g53818b8bqkqnhqru6cgm.apps.googleusercontent.com",
           "client_type": 3
         }
