@@ -1,9 +1,9 @@
 [
-    { "title": "Chinese Food", "image": "assets/images/Chinesefood.jpg" },
-    { "title": "Cooked Food", "image": "assets/images/Cookedfood.jpg" },
-    { "title": "Snacks", "image": "assets/images/Snacks.jpg" },
-    { "title": "Fast Food", "image": "assets/images/Fastfood.jpg" },
-    { "title": "Indian Food", "image": "assets/images/Indianfood.jpg" },
+    { "title": "Chichii Snacks", "image": "assets/images/Chinesefood.jpg" },
+    { "title": "Chichii Grilled", "image": "assets/images/Cookedfood.jpg" },
+    { "title": "Chichii Fried", "image": "assets/images/Snacks.jpg" },
+    { "title": "Biryani/Gravy", "image": "assets/images/Fastfood.jpg" },
+    { "title": "Momo/Burger/Noodles", "image": "assets/images/Indianfood.jpg" },
     { "title": "Beverages", "image": "assets/images/Beverage.jpg" }
   ]
   

@@ -111,10 +111,6 @@ void dispose() {
           context,
           MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No updates at the moment.')),
-        );
       }
     }
   }

@@ -1,13 +1,105 @@
 [
-    {
-      "title": "Free Fries",
-      "price": "5000",
-      "image": "assets/images/sides.jpg"
-    },
-    {
-      "title": "Free Coleslaw",
-      "price": "5000",
-      "image": "assets/images/sides.jpg"
-    }
-  ]
-  
+  {
+    "category": "DOMESTIC BEER",
+    "items": [
+      { "title": "Barahsinghe 650ML", "price": "450", "image": "assets/images/sides.jpg" },
+      { "title": "Carlsberg 650ML", "price": "530", "image": "assets/images/sides.jpg" },
+      { "title": "Gorkha Strong 650ML", "price": "390", "image": "assets/images/sides.jpg" },
+      { "title": "Gorkha Strong Can 500ML", "price": "320", "image": "assets/images/sides.jpg" },
+      { "title": "Nepal Ice Strong 650ML", "price": "390", "image": "assets/images/sides.jpg" },
+      { "title": "Nepal Ice Can 500ML", "price": "320", "image": "assets/images/sides.jpg" },
+      { "title": "Tuborg Beer 650ML", "price": "475", "image": "assets/images/sides.jpg" },
+      { "title": "Tuborg Can 500ML", "price": "410", "image": "assets/images/sides.jpg" },
+      { "title": "Budweiser Premium 650ML", "price": "445", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "DOMESTIC WHISKY",
+    "items": [
+      { "title": "Golden Oak 750ML", "price": "1350", "image": "assets/images/sides.jpg" },
+      { "title": "Golden Oak 375ML", "price": "730", "image": "assets/images/sides.jpg" },
+      { "title": "Golden Oak 180ML", "price": "320", "image": "assets/images/sides.jpg" },
+      { "title": "Gurkhas and Guns 750ML", "price": "3475", "image": "assets/images/sides.jpg" },
+      { "title": "Signature Premier 750ML", "price": "2975", "image": "assets/images/sides.jpg" },
+      { "title": "Signature Rare Aged 750ML", "price": "2650", "image": "assets/images/sides.jpg" },
+      { "title": "Signature Rare Aged 375ML", "price": "1310", "image": "assets/images/sides.jpg" },
+      { "title": "Old Durbar 750ML", "price": "2975", "image": "assets/images/sides.jpg" },
+      { "title": "Aristocrat Classic 180ML", "price": "450", "image": "assets/images/sides.jpg" },
+      { "title": "Limpiya Whisky 750ML", "price": "1990", "image": "assets/images/sides.jpg" },
+      { "title": "The Himalayan Reserve 750ML", "price": "3800", "image": "assets/images/sides.jpg" },
+      { "title": "Black Oak 750ML", "price": "1750", "image": "assets/images/sides.jpg" },
+      { "title": "Kala Patthar Blended 750ML", "price": "3170", "image": "assets/images/sides.jpg" },
+      { "title": "Mustang Gold Whisky 375ML", "price": "690", "image": "assets/images/sides.jpg" },
+      { "title": "Mustang Gold Whisky 750ML", "price": "1380", "image": "assets/images/sides.jpg" },
+      { "title": "Virgin Deluxe Blend 375ML", "price": "510", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "DOMESTIC RUM",
+    "items": [
+      { "title": "Khukri Rum 750ML", "price": "2250", "image": "assets/images/sides.jpg" },
+      { "title": "Khukri Rum 375ML", "price": "1145", "image": "assets/images/sides.jpg" },
+      { "title": "Khukri Rum 180ML", "price": "590", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "DOMESTIC WINE",
+    "items": [
+      { "title": "Big Master Red 750ML", "price": "950", "image": "assets/images/sides.jpg" },
+      { "title": "Big Master White 750ML", "price": "950", "image": "assets/images/sides.jpg" },
+      { "title": "Divine Sweet Red 750ML", "price": "860", "image": "assets/images/sides.jpg" },
+      { "title": "Divine White 750ML", "price": "860", "image": "assets/images/sides.jpg" },
+      { "title": "Canvas Sweet Red 750ML", "price": "980", "image": "assets/images/sides.jpg" },
+      { "title": "Canvas Sweet White 750ML", "price": "980", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "DOMESTIC VODKA",
+    "items": [
+      { "title": "Absolut Blue 1L", "price": "7350", "image": "assets/images/sides.jpg" },
+      { "title": "8848 Vodka 750ML", "price": "2425", "image": "assets/images/sides.jpg" },
+      { "title": "8848 Vodka 375ML", "price": "1215", "image": "assets/images/sides.jpg" },
+      { "title": "Seto Bagh Vodka 750ML", "price": "2450", "image": "assets/images/sides.jpg" },
+      { "title": "Ruslan Premium 750ML", "price": "2550", "image": "assets/images/sides.jpg" },
+      { "title": "SKYY Vodka 750ML", "price": "2850", "image": "assets/images/sides.jpg" },
+      { "title": "Silver Oak Vodka 750ML", "price": "1550", "image": "assets/images/sides.jpg" },
+      { "title": "Highlander Pure White 750ML", "price": "1200", "image": "assets/images/sides.jpg" },
+      { "title": "Nude Superior 750ML", "price": "2425", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "IMPORTED WINE",
+    "items": [
+      { "title": "Robertson White 750ML", "price": "1925", "image": "assets/images/sides.jpg" },
+      { "title": "Robertson Red 750ML", "price": "1925", "image": "assets/images/sides.jpg" },
+      { "title": "2 Share Natural Red 750ML", "price": "1850", "image": "assets/images/sides.jpg" },
+      { "title": "Calvet Varietals 750ML", "price": "2350", "image": "assets/images/sides.jpg" },
+      { "title": "Royal Musk Red 750ML", "price": "1850", "image": "assets/images/sides.jpg" },
+      { "title": "Vina Serea Red 750ML", "price": "1700", "image": "assets/images/sides.jpg" },
+      { "title": "Hardys VR Red 750ML", "price": "2250", "image": "assets/images/sides.jpg" },
+      { "title": "Gossips Sweet Lips 750ML", "price": "2200", "image": "assets/images/sides.jpg" },
+      { "title": "Jacob's Creek Red 750ML", "price": "2250", "image": "assets/images/sides.jpg" },
+      { "title": "Palacio Del Whitte 750ML", "price": "1700", "image": "assets/images/sides.jpg" },
+      { "title": "Pluvium Prem Blanco 750ML", "price": "1590", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "PREMIUM WHISKY",
+    "items": [
+      { "title": "Chivas Regal 12 Yrs 1L", "price": "9720", "image": "assets/images/sides.jpg" },
+      { "title": "VAT 69 Whisky 1L", "price": "7720", "image": "assets/images/sides.jpg" },
+      { "title": "Johnnie Walk Black Label 1L", "price": "9725", "image": "assets/images/sides.jpg" },
+      { "title": "Johnnie Walker Dble Black 1L", "price": "11450", "image": "assets/images/sides.jpg" },
+      { "title": "Johnnie Walker Red Label 1L", "price": "8000", "image": "assets/images/sides.jpg" },
+      { "title": "Johnnie Walker Red Label 1L", "price": "8000", "image": "assets/images/sides.jpg" },
+      { "title": "Crown Black Malt 750ML", "price": "1990", "image": "assets/images/sides.jpg" },
+      { "title": "Crown Black Malt 375ML", "price": "1099", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "IMPORTED VODKA",
+    "items": [
+      { "title": "Absolut Blue Vodka 1L", "price": "7350", "image": "assets/images/sides.jpg" }
+    ]
+  }
+]

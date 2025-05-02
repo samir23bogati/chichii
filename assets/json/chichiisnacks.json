@@ -1,0 +1,49 @@
+[
+  {
+    "category": "CHICHII SNACKS",
+    "items": [
+      { "title": "Fried Chicken Wings - 3 Pcs", "price": "380", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Fried Chicken Wings", "price": "1080", "image": "assets/images/sides.jpg" },
+      { "title": "Fried Chicken Lollipop - 6 Pcs", "price": "360", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Chicken Lollipop - 18 Pcs", "price": "1080", "image": "assets/images/sides.jpg" },
+      { "title": "Fried Mushroom Chilly", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Fried Mushroom Chilly", "price": "960", "image": "assets/images/sides.jpg" },
+      { "title": "Fried Chicken Chilly", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Fried Chicken Chilly", "price": "960", "image": "assets/images/sides.jpg" },
+      { "title": "Fried Buff Chilly", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Fried Buff Chilly", "price": "960", "image": "assets/images/sides.jpg" },
+      { "title": "Fried Mustang Aalu", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Fried Mustang Aalu", "price": "930", "image": "assets/images/sides.jpg" },
+      { "title": "Fried Paneer Chilly - 180 gm", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Fried Paneer Chilly", "price": "960", "image": "assets/images/sides.jpg" },
+      { "title": "Stirred Veg Fried Rice", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Stirred Egg Fried Rice", "price": "720", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Egg Fried Rice", "price": "885", "image": "assets/images/sides.jpg" },
+      { "title": "Stirred Chicken Fried Rice", "price": "885", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Chicken Fried Rice", "price": "1020", "image": "assets/images/sides.jpg" },
+      { "title": "Stirred Buff Fried Rice", "price": "885", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Buff Fried Rice", "price": "1020", "image": "assets/images/sides.jpg" },
+      { "title": "Stirred Mix Fried Rice", "price": "885", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Mix Fried Rice", "price": "1080", "image": "assets/images/sides.jpg" }
+    ]
+  },
+  {
+    "category": "MARINATED SNACKS",
+    "items": [
+      { "title": "Buff Cholla", "price": "385", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Buff Cholla", "price": "985", "image": "assets/images/sides.jpg" },
+      { "title": "Chicken Cholla", "price": "385", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Chicken Cholla", "price": "985", "image": "assets/images/sides.jpg" },
+      { "title": "Mushroom Cholla", "price": "295", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Mushroom Cholla", "price": "625", "image": "assets/images/sides.jpg" },
+      { "title": "Marinated Chicken Sadheko", "price": "345", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Marinated Chicken Sadheko", "price": "745", "image": "assets/images/sides.jpg" },
+      { "title": "Buff Sadheko", "price": "345", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Buff Sadheko", "price": "745", "image": "assets/images/sides.jpg" },
+      { "title": "Mushroom Sadheko", "price": "295", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Mushroom Sadheko", "price": "625", "image": "assets/images/sides.jpg" },
+      { "title": "Sour Peanuts Badam Sadheko", "price": "295", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Badam Sadheko", "price": "585", "image": "assets/images/sides.jpg" }
+    ]
+  }
+]

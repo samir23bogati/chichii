@@ -12,8 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ExploretabPage extends StatefulWidget {
   final int initialIndex;
 
-  const ExploretabPage({required this.initialIndex, Key? key})
-      : super(key: key);
+  const ExploretabPage({required this.initialIndex, Key? key}) : super(key: key);
 
   @override
   _ExploretabPageState createState() => _ExploretabPageState();
@@ -23,21 +22,21 @@ class _ExploretabPageState extends State<ExploretabPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
 
   final List<String> tabs = [
-    "Chinese Food",
-    "Cooked Food",
-    "Snacks",
-    "Fast Food",
-    "Indian Food",
+    "Chichii Snacks",
+    "Chichii Grilled",
+    "Chichii Fried",
+    "Biryani/Gravy",
+    "Momo/Burger/Noodles",
     "Beverages"
   ];
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-        length: tabs.length, vsync: this, initialIndex: widget.initialIndex);
+    _tabController =
+        TabController(length: tabs.length, vsync: this, initialIndex: widget.initialIndex);
   }
 
   @override
@@ -47,23 +46,23 @@ class _ExploretabPageState extends State<ExploretabPage>
   }
 
   Future<List<Map<String, dynamic>>> _loadMenuItems(String category) async {
-    String jsonPath = '';
+    String jsonPath;
 
     switch (category) {
-      case "Chinese Food":
-        jsonPath = 'assets/json/Chinesefood.json';
+      case "Chichii Snacks":
+        jsonPath = 'assets/json/chichiisnacks.json';
         break;
-      case "Cooked Food":
-        jsonPath = 'assets/json/Cookedfood.json';
+      case "Chichii Grilled":
+        jsonPath = 'assets/json/chichiigrilled.json';
         break;
-      case "Snacks":
-        jsonPath = 'assets/json/Snacks.json';
+      case "Chichii Fried":
+        jsonPath = 'assets/json/chichiifried.json';
         break;
-      case "Fast Food":
-        jsonPath = 'assets/json/Fastfood.json';
+      case "Biryani/Gravy":
+        jsonPath = 'assets/json/biryani_gravy.json';
         break;
-      case "Indian Food":
-        jsonPath = 'assets/json/Indianfood.json';
+      case "Momo/Burger/Noodles":
+        jsonPath = 'assets/json/momo_burger_noodles.json';
         break;
       case "Beverages":
         jsonPath = 'assets/json/beverages.json';
@@ -74,12 +73,20 @@ class _ExploretabPageState extends State<ExploretabPage>
 
     String jsonString = await rootBundle.loadString(jsonPath);
     List<dynamic> jsonResponse = json.decode(jsonString);
-    return jsonResponse.map((item) => item as Map<String, dynamic>).toList();
+
+    if (category == "Beverages") {
+      return jsonResponse
+          .map((cat) => {"category": cat["category"], "items": cat["items"]})
+          .toList();
+    }
+
+    return jsonResponse.cast<Map<String, dynamic>>();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Explore Menu"),
         bottom: TabBar(
@@ -92,17 +99,14 @@ class _ExploretabPageState extends State<ExploretabPage>
         controller: _tabController,
         children: tabs.map((category) {
           return FutureBuilder<List<Map<String, dynamic>>>(
-            future: _loadMenuItems(
-                category), 
+            future: _loadMenuItems(category),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
-
               if (snapshot.hasError) {
                 return Center(child: Text('Error loading menu.'));
               }
-
               final items = snapshot.data ?? [];
               return MenuList(menuItems: items);
             },
@@ -117,9 +121,9 @@ class _ExploretabPageState extends State<ExploretabPage>
 class MenuList extends StatefulWidget {
   final List<Map<String, dynamic>> menuItems;
 
-  const MenuList({required this.menuItems, Key? key}): super(key: key);
+  const MenuList({required this.menuItems, Key? key}) : super(key: key);
 
-   @override
+  @override
   _MenuListState createState() => _MenuListState();
 }
 
@@ -144,144 +148,150 @@ class _MenuListState extends State<MenuList> {
     prefs.setStringList('favoriteItems', favoriteItems);
   }
 
+  List<Widget> buildItemList(Map<String, dynamic> item, List<CartItem> cartItems) {
+    if (item.containsKey('category') && item.containsKey('items')) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8),
+          child: Text(
+            item['category'],
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ...List<Widget>.from((item['items'] as List).map(
+          (subItem) => _buildMenuCard(subItem, cartItems),
+        )),
+      ];
+    } else {
+      return [_buildMenuCard(item, cartItems)];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
-        final cartItems = state is CartUpdatedState ? state.cartItems : [];
+       final List<CartItem> cartItems = state is CartUpdatedState ? state.cartItems : <CartItem>[];
 
-    return ListView.builder(
-      padding: EdgeInsets.all(16.0),
-      itemCount: widget.menuItems.length,
-      itemBuilder: (context, index) {
-        final item = widget.menuItems[index];
-        final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]); 
-        final isFavorite = favoriteItems.contains(item["title"]);
 
-        return GestureDetector(
-          onTap: (){
-            _showItemDialog(context,item);
+        return ListView.builder(
+          padding: EdgeInsets.all(4.0),
+          itemCount: widget.menuItems.length,
+          itemBuilder: (context, index) {
+            final item = widget.menuItems[index];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: buildItemList(item, cartItems),
+            );
           },
-          child: Card(
-            margin: EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  Image.asset(item["image"], height: 80, width: 80, fit: BoxFit.cover),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item["title"],
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        SizedBox(height: 4),
-                        Text("Rs.${item["price"]}",
-                            style: TextStyle(color: Colors.green[700], fontSize: 14,fontWeight: FontWeight.bold),
-                            ),
-                      ],
-                    ),
-                  ),
-                           SizedBox(width: 8), 
-                           IconButton(
-                                icon: Icon(
-                                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                                  color: isFavorite ? Colors.red : null,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    if (isFavorite) {
-                                      favoriteItems.remove(item["title"]);
-                                    } else {
-                                      favoriteItems.add(item["title"]);
-                                    }
-                                  });
-                                  _saveFavoriteItems(); // Save the updated favorites list
-                                },
-                              ),
-                           SizedBox(width: 8), 
-                            AnimatedSwitcher(
-                                duration: Duration(milliseconds: 300),
-                                transitionBuilder: (child, animation) => 
-                                FadeTransition(opacity: animation, child: child),
-                                child: isAdded
-                                    ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
-                                    : ElevatedButton(
-                                        onPressed: () {
-                                          final cartItem = CartItem(
-                                            id: item["title"],
-                                            title: item["title"],
-                                            price: double.tryParse(item["price"]) ?? 0.0,
-                                            imageUrl: item["image"],
-                                          );
-                                          context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
-                                        },
-                                        child: Text("Add to Cart"),
-                                      ),
-                              ),
-                ],
-                        ),
-               ),
-              
-                  ),
-                );
+        );
       },
-      );
-      },
-          );
+    );
   }
 
+  Widget _buildMenuCard(Map<String, dynamic> item, List<CartItem> cartItems) {
+    final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]);
+    final isFavorite = favoriteItems.contains(item["title"]);
+
+    return GestureDetector(
+      onTap: () => _showItemDialog(context, item),
+      child: Card(
+        margin: EdgeInsets.only(bottom: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              Image.asset(item["image"], height: 80, width: 80, fit: BoxFit.cover),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    SizedBox(height: 4),
+                    Text("Rs.${item["price"]}",
+                        style: TextStyle(color: Colors.green[700], fontSize: 14, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : null,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isFavorite ? favoriteItems.remove(item["title"]) : favoriteItems.add(item["title"]);
+                  });
+                  _saveFavoriteItems();
+                },
+              ),
+              SizedBox(width: 8),
+              AnimatedSwitcher(
+                duration: Duration(milliseconds: 300),
+                child: isAdded
+                    ? Icon(Icons.check_circle, color: Colors.green, key: ValueKey("added_${item["title"]}"))
+                    : ElevatedButton(
+                        key: ValueKey("button_${item["title"]}"),
+                        onPressed: () {
+                          final cartItem = CartItem(
+                            id: item["title"],
+                            title: item["title"],
+                            price: double.tryParse(item["price"].toString()) ?? 0.0,
+                            imageUrl: item["image"],
+                          );
+                          context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
+                        },
+                        child: Text("Add to Cart"),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   void _showItemDialog(BuildContext context, Map<String, dynamic> item) {
     showDialog(
       context: context,
       builder: (context) {
         return BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          final cartItems = state is CartUpdatedState ? state.cartItems : [];
-          bool isAddedToCart = cartItems.any((cartItem) => cartItem.id == item["title"]);
+          builder: (context, state) {
+            final cartItems = state is CartUpdatedState ? state.cartItems : [];
+            final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]);
 
-
-        return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(item["image"], height: 200, width: 200, fit: BoxFit.cover),
-                SizedBox(height: 12),
-                Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                SizedBox(height: 4),
-                Text("Rs.${item["price"]}", style: TextStyle(color: Colors.green[700],fontWeight: FontWeight.bold, fontSize: 14)),
-                SizedBox(height: 12),
-                AnimatedSwitcher(
-                  duration: Duration(milliseconds: 300),
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: isAddedToCart
-                      ? Icon(Icons.check_circle, color: Colors.green, size: 40, key: ValueKey("added_${item["title"]}"))
-                      : ElevatedButton(
-                          onPressed: () {
-                            final cartItem = CartItem(
-                              id: item["title"],
-                              title: item["title"],
-                              price: double.tryParse(item["price"]) ?? 0.0,
-                              imageUrl: item["image"],
-                            );
-                            context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
-
-                            // Wait for the Bloc state to update, then close the dialog after 2 seconds
-                            Future.delayed(Duration(milliseconds: 200), () {
-                              if (Navigator.canPop(context)) {
-                                Navigator.pop(context);
-                              }
-                            });
-                          },
-                          child: Text("Add to Cart"),
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(item["image"], height: 200, width: 200, fit: BoxFit.cover),
+                  SizedBox(height: 12),
+                  Text(item["title"], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  SizedBox(height: 4),
+                  Text("Rs.${item["price"]}",
+                      style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.bold, fontSize: 14)),
+                  SizedBox(height: 12),
+                  AnimatedSwitcher(
+                    duration: Duration(milliseconds: 300),
+                    child: isAdded
+                        ? Icon(Icons.check_circle, color: Colors.green, size: 40, key: ValueKey("added_${item["title"]}"))
+                        : ElevatedButton(
+                            onPressed: () {
+                              final cartItem = CartItem(
+                                id: item["title"],
+                                title: item["title"],
+                                price: double.tryParse(item["price"].toString()) ?? 0.0,
+                                imageUrl: item["image"],
+                              );
+                              context.read<CartBloc>().add(AddToCartEvent(cartItem: cartItem));
+                              Future.delayed(Duration(milliseconds: 200), () {
+                                if (Navigator.canPop(context)) Navigator.pop(context);
+                              });
+                            },
+                            child: Text("Add to Cart"),
                           ),
                   ),
                 ],

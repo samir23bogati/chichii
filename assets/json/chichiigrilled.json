@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Pork Sekuwa - 1/2 kg",
+    "price": 820,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Jumbo Pork Sekuwa - 1 kg",
+    "price": 1490,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Chicken Sekuwa - 1/2 kg",
+    "price": 485,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Jumbo Chicken Sekuwa - 1 kg",
+    "price": 885,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Buff Sekuwa - 1/2 kg",
+    "price": 495,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Jumbo Buff Sekuwa - 1 kg",
+    "price": 895,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Mutton Sekuwa - 1/2 kg",
+    "price": 1290,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Jumbo Mutton Sekuwa - 1 kg",
+    "price": 2360,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Grilled Mutton Ribs",
+    "price": 1435,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Grilled Pork Ribs",
+    "price": 1175,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Grilled Fish",
+    "price": 725,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Grilled Mix Vegetables",
+    "price": 425,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Grilled Chicken Wings - 3 Pcs",
+    "price": 390,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Jumbo Grilled Chicken Wings",
+    "price": 1075,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Chicken Sausages",
+    "price": 320,
+    "image": "assets/images/chicken_buckets.jpg"
+  },
+  {
+    "title": "Buff Sausages",
+    "price": 280,
+    "image": "assets/images/chicken_buckets.jpg"
+  }
+]
