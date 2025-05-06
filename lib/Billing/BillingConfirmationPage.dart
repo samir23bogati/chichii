@@ -39,9 +39,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
 
     // Get user phone number or email
     User? user = FirebaseAuth.instance.currentUser;
-    setState(() {
       userPhoneNumber = user?.phoneNumber ?? "Not Available";
-    });
   }
 
   Future<void> _fetchDeliveryCost() async {
@@ -61,6 +59,9 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
         deliveryCost = 0;
         isLoading = false;
       });
+       ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text("Failed to calculate delivery cost. Defaulting to NRS 0.")),
+  );
     }
   }
 
@@ -90,7 +91,12 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
           .set({"token": fcmToken});
     }
   }
-
+Future<void> maybeSaveAdminFcmToken() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (await checkIfUserIsAdmin()) {
+    await saveAdminFcmToken();
+  }
+}
   @override
   Widget build(BuildContext context) {
     double finalPrice = widget.totalPrice + (deliveryCost ?? 0);

@@ -119,7 +119,8 @@ Future<void> main() async {
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
-    await saveFcmTokenToFirestore();
+    await maybeSaveAdminFcmToken();
+
 
     // 🔄 Auto-update token if it refreshes
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
