@@ -129,6 +129,7 @@ class MenuList extends StatefulWidget {
 
 class _MenuListState extends State<MenuList> {
   List<String> favoriteItems = [];
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -147,9 +148,78 @@ class _MenuListState extends State<MenuList> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('favoriteItems', favoriteItems);
   }
+List<Map<String, dynamic>> _filterMenuItems() {
+    if (searchQuery.isEmpty) return widget.menuItems;
 
-  List<Widget> buildItemList(Map<String, dynamic> item, List<CartItem> cartItems) {
+    return widget.menuItems.where((item) {
+      if (item.containsKey('title')) {
+        return item['title'].toString().toLowerCase().contains(searchQuery.toLowerCase());
+      } else if (item.containsKey('items')) {
+        final filteredSubItems = (item['items'] as List)
+            .where((subItem) => subItem['title']
+                .toString()
+                .toLowerCase()
+                .contains(searchQuery.toLowerCase()))
+            .toList();
+        return filteredSubItems.isNotEmpty;
+      }
+      return false;
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final filteredItems = _filterMenuItems();
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search food...',
+              filled: true,
+              fillColor: Colors.white,
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onChanged: (value) {
+              setState(() => searchQuery = value);
+            },
+          ),
+        ),
+        Expanded(
+          child: BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              final List<CartItem> cartItems =
+                  state is CartUpdatedState ? state.cartItems : <CartItem>[];
+
+              return ListView.builder(
+                padding: EdgeInsets.all(4.0),
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = filteredItems[index];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: buildItemList(item, cartItems),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+ List<Widget> buildItemList(Map<String, dynamic> item, List<CartItem> cartItems) {
     if (item.containsKey('category') && item.containsKey('items')) {
+      final filteredSubItems = (item['items'] as List)
+          .where((subItem) => subItem['title']
+              .toString()
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()))
+          .toList();
+
       return [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8),
@@ -158,38 +228,13 @@ class _MenuListState extends State<MenuList> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        ...List<Widget>.from((item['items'] as List).map(
-          (subItem) => _buildMenuCard(subItem, cartItems),
-        )),
+        ...filteredSubItems.map((subItem) => _buildMenuCard(subItem, cartItems)).toList(),
       ];
     } else {
       return [_buildMenuCard(item, cartItems)];
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<CartBloc, CartState>(
-      builder: (context, state) {
-       final List<CartItem> cartItems = state is CartUpdatedState ? state.cartItems : <CartItem>[];
-
-
-        return ListView.builder(
-          padding: EdgeInsets.all(4.0),
-          itemCount: widget.menuItems.length,
-          itemBuilder: (context, index) {
-            final item = widget.menuItems[index];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: buildItemList(item, cartItems),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildMenuCard(Map<String, dynamic> item, List<CartItem> cartItems) {
+   Widget _buildMenuCard(Map<String, dynamic> item, List<CartItem> cartItems) {
     final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]);
     final isFavorite = favoriteItems.contains(item["title"]);
 

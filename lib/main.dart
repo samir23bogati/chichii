@@ -173,6 +173,29 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+Future<void> maybeSaveAdminFcmToken() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final doc = await FirebaseFirestore.instance
+      .collection('admins')
+      .doc(user.phoneNumber)
+      .get();
+
+  if (doc.exists && doc.data()?['isAdmin'] == true) {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null) {
+      await FirebaseFirestore.instance
+          .collection("admin_tokens")
+          .doc(user.phoneNumber)
+          .set({"token": fcmToken});
+      print("✅ FCM token saved for admin: ${user.phoneNumber}");
+    }
+  } else {
+    print("🔒 User is not admin; token not saved.");
+  }
+}
+
 class NoInternetScreen extends StatefulWidget {
   @override
   _NoInternetScreenState createState() => _NoInternetScreenState();
