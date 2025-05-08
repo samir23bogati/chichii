@@ -177,7 +177,7 @@ List<Map<String, dynamic>> _filterMenuItems() {
           padding: const EdgeInsets.all(8.0),
           child: TextField(
             decoration: InputDecoration(
-              hintText: 'Search food...',
+              hintText: 'Search snacks, drinks, meals...',
               filled: true,
               fillColor: Colors.white,
               prefixIcon: Icon(Icons.search),
