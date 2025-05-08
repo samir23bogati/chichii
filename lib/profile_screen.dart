@@ -184,7 +184,7 @@ void _showConfirmDialog(String action) {
                       ),
                       Container(width: 1, height: 20, color: Colors.grey), // Fixed Divider
                 TextButton(
-                  onPressed: () {}, // Implement add number action
+                  onPressed: () {}, 
                   child: Text("ADD NEW NUMBER", style: TextStyle(color: Colors.blue)),
                 ),
               ],
@@ -202,7 +202,7 @@ void _showConfirmDialog(String action) {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => FavouritesDetails()),
                     );
                   }),
-                  profileOption("My Address", Icons.location_on),
+                  profileOption("My Address", Icons.location_on,),
                   profileOption("My Orders", Icons.list_alt, onTap: () {
   Navigator.push(
     context,

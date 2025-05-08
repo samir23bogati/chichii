@@ -12,7 +12,7 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
     throw Exception("Google Maps API Key is missing. Check your .env file.");
   }
 
-  // Construct the API URL
+  
   final String url =
       'https://maps.googleapis.com/maps/api/distancematrix/json?'
       'origins=$fixedLat,$fixedLng'
@@ -21,17 +21,17 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
       '&key=$apiKey';
 
   try {
-    // Make the API call
+    
     final response = await http.get(Uri.parse(url));
 
-    // Check if the response is successful
+   
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       
-      // Log the full response to debug
+      
       print('API Response: $data');
 
-      // Check if the API returned a valid result
+     
       if (data['status'] == 'OK') {
         var elementStatus = data['rows'][0]['elements'][0]['status'];
        if (elementStatus == 'OK') {
@@ -39,7 +39,7 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
           final durationInSeconds = data['rows'][0]['elements'][0]['duration']['value'];
 
           if (distanceInMeters > 0) {
-            final distanceInKm = distanceInMeters / 1000.0; // Convert meters to km
+            final distanceInKm = distanceInMeters / 1000.0; 
             final double deliveryCost = calculateDeliveryCost(distanceInKm);
 
 
@@ -65,7 +65,7 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
     }
   } catch (e) {
     print('Error occurred: $e');
-    rethrow;  // Re-throw the error after logging it
+    rethrow; 
   }
 }
 
