@@ -56,7 +56,7 @@ Future<void> saveFcmTokenToFirestore() async {
   if (user != null && fcmToken != null) {
     await FirebaseFirestore.instance
         .collection("admin_tokens")
-        .doc(user.phoneNumber) // or user.uid
+        .doc(user.phoneNumber) 
         .set({
           "token": fcmToken,
         });

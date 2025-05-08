@@ -73,9 +73,9 @@ class BottomNavBar extends StatelessWidget {
     ),
         ),
     
-        // Floating Action Button 
+       
         Positioned(
-    top: -35, // Adjust based on gap depth
+    top: -35, 
       child: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
     int cartItemCount = (state is CartUpdatedState) ? state.cartItems.length : 0;
@@ -97,10 +97,10 @@ class BottomNavBar extends StatelessWidget {
       ),
     );
         },
-        behavior: HitTestBehavior.translucent, // Ensures the entire area detects taps
+        behavior: HitTestBehavior.translucent, 
         child: ClipRect(
     child: Container(
-      padding: EdgeInsets.all(10), // Increase tappable area
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [BoxShadow(color: Colors.transparent, blurRadius: 8)],
@@ -189,10 +189,10 @@ class BottomNavBarClipper extends CustomClipper<Path> {
     double height = size.height;
     double centerX = width / 2;
     double curveDepth = 45; // Depth of the dip
-    double curveWidth = 102; // Width of the curved section
+    double curveWidth = 102; 
 
     Path path = Path();
-    path.lineTo(centerX - curveWidth / 2, 0); // Move to left side of curve
+    path.lineTo(centerX - curveWidth / 2, 0); 
 
     // Create transparent curve
     path.quadraticBezierTo(centerX, curveDepth * 1.8, centerX + curveWidth / 2, 0);

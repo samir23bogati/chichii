@@ -210,7 +210,6 @@ void _showConfirmDialog(String action) {
   );
 }),
                 profileOption("Support", Icons.support, onTap: WhatsappSupportButton.launchWhatsApp),
-                  profileOption("Delete Account", Icons.delete, color: Colors.red, onTap: () => _showConfirmDialog("delete account")),
                   profileOption("Logout", Icons.exit_to_app, color: Colors.red, onTap: () => _showConfirmDialog("logout")),
               ],
                   ),

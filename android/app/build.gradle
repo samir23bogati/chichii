@@ -43,7 +43,7 @@ android {
        release {
             storeFile file('H:/padshala/keystore.jks')  
             storePassword 'qwertyuiop'  
-            keyAlias 'upload'  // The alias used in the keystore
+            keyAlias 'upload' 
             keyPassword 'qwertyuiop' 
         }
     }

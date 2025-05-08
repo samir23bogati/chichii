@@ -2,62 +2,62 @@
   {
     "category": "CHICHII BIRYANI",
     "items": [
-      { "title": "Chicken Dum Biryani", "price": "420", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Chicken Dum Biryani", "price": "1075", "image": "assets/images/sides.jpg" },
-      { "title": "Mutton Dum Biryani", "price": "585", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Mutton Dum Biryani", "price": "1185", "image": "assets/images/sides.jpg" }
+      { "title": "Chicken Dum Biryani", "price": "420", "image": "assets/images/Chickendumbiryani.png" },
+      { "title": "Jumbo Chicken Dum Biryani", "price": "1075", "image": "assets/images/Jumbochickendumbiryani.png" },
+      { "title": "Mutton Dum Biryani", "price": "585", "image": "assets/images/Muttondumbiryani.png" },
+      { "title": "Jumbo Mutton Dum Biryani", "price": "1185", "image": "assets/images/Jumbomuttondumbiryani.png" }
     ]
   },
   {
     "category": "GRAVY",
     "items": [
-      { "title": "Seasonal Mixed Veg Curry", "price": "340", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Seasonal Mix Veg Curry", "price": "840", "image": "assets/images/sides.jpg" },
-      { "title": "Chicken Curry", "price": "400", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Chicken Curry", "price": "1000", "image": "assets/images/sides.jpg" },
-      { "title": "Egg Curry - 2 Pcs", "price": "190", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Egg Curry", "price": "470", "image": "assets/images/sides.jpg" },
-      { "title": "Mutton Curry", "price": "470", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Mutton Curry", "price": "1100", "image": "assets/images/sides.jpg" },
-      { "title": "Mutter Paneer Curry", "price": "370", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Mutter Paneer Curry", "price": "920", "image": "assets/images/sides.jpg" },
-      { "title": "Pork Curry", "price": "400", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Pork Curry", "price": "1000", "image": "assets/images/sides.jpg" },
-      { "title": "Paneer Makhaniwala", "price": "400", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Paneer Makhaniwala", "price": "1000", "image": "assets/images/sides.jpg" },
-      { "title": "Chicken Makhaniwala", "price": "470", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Chicken Makhaniwala", "price": "1100", "image": "assets/images/sides.jpg" },
-      { "title": "Masala Gravy Fish Curry", "price": "370", "image": "assets/images/sides.jpg" }
+      { "title": "Seasonal Mixed Veg Curry", "price": "340", "image": "assets/images/Seasonalmixedvegcurry.png" },
+      { "title": "Jumbo Seasonal Mix Veg Curry", "price": "840", "image": "assets/images/Seasonalmixedvegcurry.png" },
+      { "title": "Chicken Curry", "price": "400", "image": "assets/images/Chickencurry.png" },
+      { "title": "Jumbo Chicken Curry", "price": "1000", "image": "assets/images/Chickencurry.png" },
+      { "title": "Egg Curry - 2 Pcs", "price": "190", "image": "assets/images/Eggcurrypng.png" },
+      { "title": "Jumbo Egg Curry", "price": "470", "image": "assets/images/Eggcurrypng.png" },
+      { "title": "Mutton Curry", "price": "470", "image": "assets/images/Muttoncurry.png" },
+      { "title": "Jumbo Mutton Curry", "price": "1100", "image": "assets/images/Muttoncurry.png" },
+      { "title": "Mutter Paneer Curry", "price": "370", "image": "assets/images/Mutterpaneercurry.png" },
+      { "title": "Jumbo Mutter Paneer Curry", "price": "920", "image": "assets/images/Mutterpaneercurry.png" },
+      { "title": "Pork Curry", "price": "400", "image": "assets/images/Porkcurry.png" },
+      { "title": "Jumbo Pork Curry", "price": "1000", "image": "assets/images/Porkcurry.png" },
+      { "title": "Paneer Makhaniwala", "price": "400", "image": "assets/images/Paneermakhanwala.png" },
+      { "title": "Jumbo Paneer Makhaniwala", "price": "1000", "image": "assets/images/Paneermakhanwala.png" },
+      { "title": "Chicken Makhaniwala", "price": "470", "image": "assets/images/Chickenmakhanwala.png" },
+      { "title": "Jumbo Chicken Makhaniwala", "price": "1100", "image": "assets/images/Chickenmakhanwala.png" },
+      { "title": "Masala Gravy Fish Curry", "price": "370", "image": "assets/images/Fishcurry.png" }
     ]
   },
   {
     "category": "STEAMED",
     "items": [
-      { "title": "Plain Rice", "price": "130", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Plain Rice", "price": "340", "image": "assets/images/sides.jpg" }
+      { "title": "Plain Rice", "price": "130", "image": "assets/images/Plainricepng.png" },
+      { "title": "Jumbo Plain Rice", "price": "340", "image": "assets/images/Plainricepng.png" }
     ]
   },
   {
     "category": "STIRRED",
     "items": [
-      { "title": "Jeera Rice", "price": "145", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Jeera Rice", "price": "360", "image": "assets/images/sides.jpg" },
-      { "title": "Garlic Rice", "price": "160", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Garlic Rice", "price": "385", "image": "assets/images/sides.jpg" }
+      { "title": "Jeera Rice", "price": "145", "image": "assets/images/Jeerarice.png" },
+      { "title": "Jumbo Jeera Rice", "price": "360", "image": "assets/images/Jeerarice.png" },
+      { "title": "Garlic Rice", "price": "160", "image": "assets/images/Garlicfryrice.png" },
+      { "title": "Jumbo Garlic Rice", "price": "385", "image": "assets/images/Garlicfryrice.png" }
     ]
   },
   {
     "category": "TOAST",
     "items": [
-      { "title": "Plain Roti - 3 Pcs", "price": "75", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Plain Roti - 9 Pcs", "price": "195", "image": "assets/images/sides.jpg" }
+      { "title": "Plain Roti - 3 Pcs", "price": "75", "image": "assets/images/Plainroti.png" },
+      { "title": "Jumbo Plain Roti - 9 Pcs", "price": "195", "image": "assets/images/Plainroti.png" }
     ]
   },
   {
     "category": "TADKA",
     "items": [
-      { "title": "Yellow Dal Tadka", "price": "210", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Yellow Dal Tadka", "price": "580", "image": "assets/images/sides.jpg" }
+      { "title": "Yellow Dal Tadka", "price": "210", "image": "assets/images/Daaltadka.png" },
+      { "title": "Jumbo Yellow Dal Tadka", "price": "580", "image": "assets/images/Daaltadka.png" }
     ]
   }
 ]
