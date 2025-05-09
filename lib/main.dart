@@ -14,11 +14,11 @@ import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/common/favourites/fav_bloc.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:padshala/login/auth/auth_bloc.dart';
-// Initialize local notifications
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-// Background message handler
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling background message: ${message.messageId}");
  
@@ -26,7 +26,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     showNotification(message.notification!); 
   }
 }
-// Function to show notifications
+
 Future<void> showNotification(RemoteNotification notification) async {
   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
     'your_channel_id',
@@ -214,7 +214,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
 Future<void> _checkConnectivity() async {
   // Listen for connectivity changes. Since the error suggests that the API expects a List, we need to update accordingly.
   _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
-    // Assuming you only need the first result from the list.
+   
     if (results.isNotEmpty) {
       _updateConnectionStatus(results.first); // Handle the first result
     }

@@ -2,12 +2,12 @@
   {
     "title": "Pork Sekuwa - 1/2 kg",
     "price": 820,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Porksekuwa.png"
   },
   {
     "title": "Jumbo Pork Sekuwa - 1 kg",
     "price": 1490,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Porksekuwa.png"
   },
   {
     "title": "Chicken Sekuwa - 1/2 kg",
@@ -32,12 +32,12 @@
   {
     "title": "Mutton Sekuwa - 1/2 kg",
     "price": 1290,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Muttonsekuwa.png"
   },
   {
     "title": "Jumbo Mutton Sekuwa - 1 kg",
     "price": 2360,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Muttonsekuwa.png"
   },
   {
     "title": "Grilled Mutton Ribs",

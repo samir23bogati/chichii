@@ -127,9 +127,6 @@ void _showConfirmDialog(String action) {
                 if (action == "logout") {
                   await FirebaseAuth.instance.signOut();
                   Navigator.pop(context);
-                } else if (action == "delete account") {
-                  await FirebaseAuth.instance.currentUser?.delete();
-                  Navigator.pop(context);
                 }
               },
               child: Text("Confirm"),
