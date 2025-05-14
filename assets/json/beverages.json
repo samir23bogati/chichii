@@ -2,55 +2,55 @@
   {
     "category": "DOMESTIC BEER",
     "items": [
-      { "title": "Barahsinghe 650ML", "price": "450", "image": "assets/images/sides.jpg" },
-      { "title": "Carlsberg 650ML", "price": "530", "image": "assets/images/sides.jpg" },
-      { "title": "Gorkha Strong 650ML", "price": "390", "image": "assets/images/sides.jpg" },
-      { "title": "Gorkha Strong Can 500ML", "price": "320", "image": "assets/images/sides.jpg" },
-      { "title": "Nepal Ice Strong 650ML", "price": "390", "image": "assets/images/sides.jpg" },
-      { "title": "Nepal Ice Can 500ML", "price": "320", "image": "assets/images/sides.jpg" },
-      { "title": "Tuborg Beer 650ML", "price": "475", "image": "assets/images/sides.jpg" },
+      { "title": "Barahsinghe 650ML", "price": "450", "image": "assets/images/Barahsinghe.png" },
+      { "title": "Carlsberg 650ML", "price": "530", "image": "assets/images/Carlsberg.png" },
+      { "title": "Gorkha Strong 650ML", "price": "390", "image": "assets/images/Gorkhastrong.png" },
+      { "title": "Gorkha Strong Can 500ML", "price": "320", "image": "assets/images/Gorkhastrongcan.png" },
+      { "title": "Nepal Ice Strong 650ML", "price": "390", "image": "assets/images/Nepalicestrong.png" },
+      { "title": "Nepal Ice Can 500ML", "price": "320", "image": "assets/images/Nepalicebeercan.png" },
+      { "title": "Tuborg Beer 650ML", "price": "475", "image": "assets/images/Tuborgstrong.png" },
       { "title": "Tuborg Can 500ML", "price": "410", "image": "assets/images/sides.jpg" },
-      { "title": "Budweiser Premium 650ML", "price": "445", "image": "assets/images/sides.jpg" }
+      { "title": "Budweiser Premium 650ML", "price": "445", "image": "assets/images/budweiser.png" }
     ]
   },
   {
     "category": "DOMESTIC WHISKY",
     "items": [
-      { "title": "Golden Oak 750ML", "price": "1350", "image": "assets/images/sides.jpg" },
-      { "title": "Golden Oak 375ML", "price": "730", "image": "assets/images/sides.jpg" },
-      { "title": "Golden Oak 180ML", "price": "320", "image": "assets/images/sides.jpg" },
-      { "title": "Gurkhas and Guns 750ML", "price": "3475", "image": "assets/images/sides.jpg" },
-      { "title": "Signature Premier 750ML", "price": "2975", "image": "assets/images/sides.jpg" },
-      { "title": "Signature Rare Aged 750ML", "price": "2650", "image": "assets/images/sides.jpg" },
-      { "title": "Signature Rare Aged 375ML", "price": "1310", "image": "assets/images/sides.jpg" },
-      { "title": "Old Durbar 750ML", "price": "2975", "image": "assets/images/sides.jpg" },
-      { "title": "Aristocrat Classic 180ML", "price": "450", "image": "assets/images/sides.jpg" },
-      { "title": "Limpiya Whisky 750ML", "price": "1990", "image": "assets/images/sides.jpg" },
-      { "title": "The Himalayan Reserve 750ML", "price": "3800", "image": "assets/images/sides.jpg" },
-      { "title": "Black Oak 750ML", "price": "1750", "image": "assets/images/sides.jpg" },
-      { "title": "Kala Patthar Blended 750ML", "price": "3170", "image": "assets/images/sides.jpg" },
-      { "title": "Mustang Gold Whisky 375ML", "price": "690", "image": "assets/images/sides.jpg" },
-      { "title": "Mustang Gold Whisky 750ML", "price": "1380", "image": "assets/images/sides.jpg" },
-      { "title": "Virgin Deluxe Blend 375ML", "price": "510", "image": "assets/images/sides.jpg" }
+      { "title": "Golden Oak 750ML", "price": "1350", "image": "assets/images/Goldenoak.png" },
+      { "title": "Golden Oak 375ML", "price": "730", "image": "assets/images/Goldenoak.png" },
+      { "title": "Golden Oak 180ML", "price": "320", "image": "assets/images/Goldenoak.png" },
+      { "title": "Gurkhas and Guns 750ML", "price": "3475", "image": "assets/images/GorkhasandGuns.png" },
+      { "title": "Signature Premier 750ML", "price": "2975", "image": "assets/images/Signeturepremiere.png" },
+      { "title": "Signature Rare Aged 750ML", "price": "2650", "image": "assets/images/Signeturerareage.png" },
+      { "title": "Signature Rare Aged 375ML", "price": "1310", "image": "assets/images/Signeturerareage.png" },
+      { "title": "Old Durbar 750ML", "price": "2975", "image": "assets/images/Olddurbar.png" },
+      { "title": "Aristocrat Classic 180ML", "price": "450", "image": "assets/images/Aristocrat.png" },
+      { "title": "Limpiya Whisky 750ML", "price": "1990", "image": "assets/images/Limpiya.png" },
+      { "title": "The Himalayan Reserve 750ML", "price": "3800", "image": "assets/images/Thehimalayanreserve.png" },
+      { "title": "Black Oak 750ML", "price": "1750", "image": "assets/images/Blackoak.png" },
+      { "title": "Kala Patthar Blended 750ML", "price": "3170", "image": "assets/images/Kalapather.png" },
+      { "title": "Mustang Gold Whisky 375ML", "price": "690", "image": "assets/images/Mustanggold.png" },
+      { "title": "Mustang Gold Whisky 750ML", "price": "1380", "image": "assets/images/Mustanggold.png" },
+      { "title": "Virgin Deluxe Blend 375ML", "price": "510", "image": "assets/images/Virgindeluxe.png" }
     ]
   },
   {
     "category": "DOMESTIC RUM",
     "items": [
-      { "title": "Khukri Rum 750ML", "price": "2250", "image": "assets/images/sides.jpg" },
-      { "title": "Khukri Rum 375ML", "price": "1145", "image": "assets/images/sides.jpg" },
-      { "title": "Khukri Rum 180ML", "price": "590", "image": "assets/images/sides.jpg" }
+      { "title": "Khukri Rum 750ML", "price": "2250", "image": "assets/images/Khukrirum.png" },
+      { "title": "Khukri Rum 375ML", "price": "1145", "image": "assets/images/Khukrirum.png" },
+      { "title": "Khukri Rum 180ML", "price": "590", "image": "assets/images/Khukrirum.png" }
     ]
   },
   {
     "category": "DOMESTIC WINE",
     "items": [
-      { "title": "Big Master Red 750ML", "price": "950", "image": "assets/images/sides.jpg" },
-      { "title": "Big Master White 750ML", "price": "950", "image": "assets/images/sides.jpg" },
-      { "title": "Divine Sweet Red 750ML", "price": "860", "image": "assets/images/sides.jpg" },
-      { "title": "Divine White 750ML", "price": "860", "image": "assets/images/sides.jpg" },
-      { "title": "Canvas Sweet Red 750ML", "price": "980", "image": "assets/images/sides.jpg" },
-      { "title": "Canvas Sweet White 750ML", "price": "980", "image": "assets/images/sides.jpg" }
+      { "title": "Big Master Red 750ML", "price": "950", "image": "assets/images/Bigmasterred.png" },
+      { "title": "Big Master White 750ML", "price": "950", "image": "assets/images/Bigmasterwhite.png" },
+      { "title": "Divine Sweet Red 750ML", "price": "860", "image": "assets/images/Devinesweetred.png" },
+      { "title": "Divine White 750ML", "price": "860", "image": "assets/images/Devinewhite.png" },
+      { "title": "Canvas Sweet Red 750ML", "price": "980", "image": "assets/images/Canvassweetred.png" },
+      { "title": "Canvas Sweet White 750ML", "price": "980", "image": "assets/images/Canvassweetwhite.png" }
     ]
   },
   {

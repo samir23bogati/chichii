@@ -22,12 +22,12 @@
   {
     "title": "Buff Sekuwa - 1/2 kg",
     "price": 495,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Buffsekuwa.png"
   },
   {
     "title": "Jumbo Buff Sekuwa - 1 kg",
     "price": 895,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Buffsekuwa.png"
   },
   {
     "title": "Mutton Sekuwa - 1/2 kg",
@@ -77,6 +77,6 @@
   {
     "title": "Buff Sausages",
     "price": 280,
-    "image": "assets/images/chicken_buckets.jpg"
+    "image": "assets/images/Buffsausages.png"
   }
 ]

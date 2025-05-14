@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   const MyOrdersScreen({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class MyOrdersScreen extends StatelessWidget {
             stream: FirebaseFirestore.instance
                 .collection('orders')
                 .where('phoneNumber', isEqualTo: phoneNumber)
-                .orderBy('timestamp', descending: true) // latest orders first
+                .orderBy('timestamp', descending: true)
                 .snapshots(),
             builder: (context, orderSnapshot) {
               if (orderSnapshot.connectionState == ConnectionState.waiting) {
@@ -48,19 +49,29 @@ class MyOrdersScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final order = orders[index];
                   final items = List<Map<String, dynamic>>.from(order['items']);
+                  final timestamp = order['timestamp'] as Timestamp;
+                  final formattedDate =
+                      DateFormat('dd MMM yyyy, hh:mm a').format(timestamp.toDate());
 
                   return Card(
                     margin: const EdgeInsets.all(8),
-                    child: ListTile(
-                      title: Text('Order ID: ${order['orderId']}'),
-                      subtitle: Column(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text('Order ID: ${order['orderId']}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          SizedBox(height: 4),
+                          Text('Order Time: $formattedDate'),
+                          Text('Status: ${order['status'] ?? 'Pending'}'),
                           Text('Total: NRS ${order['totalPrice']}'),
                           Text('Delivery Cost: NRS ${order['deliveryCost']}'),
                           Text('Payment: ${order['paymentMethod']}'),
                           const SizedBox(height: 8),
-                          const Text('Items:'),
+                          Text('Items:',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
                           ...items.map((item) => Text(
                               "- ${item['title']} x${item['quantity']}")),
                         ],

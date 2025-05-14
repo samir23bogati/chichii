@@ -25,7 +25,7 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadCartEvent());  
+      context.read<CartBloc>().add(LoadCartEvent());
     });
 
     return Scaffold(
@@ -46,47 +46,51 @@ class CartPage extends StatelessWidget {
                       final item = cartItems[index];
                       return Card(
                         elevation: 2.5,
-                        shape:RoundedRectangleBorder(
-                          borderRadius:BorderRadius.circular(12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        margin: const EdgeInsets.symmetric( vertical: 8, horizontal: 12),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
-                            leading:SizedBox(
-                                            width: 60, 
-                                            height: 90, 
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(10), 
-                                              child: Image.asset(
-                                                item.imageUrl,
-                                                fit: BoxFit.cover, 
-                                          ),
-                                           ),
-                                      ),
-                            title: Text(item.title,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            leading: SizedBox(
+                              width: 60,
+                              height: 90,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  item.imageUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              item.title,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             subtitle: Text(
-                                'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}',
-                                style: const TextStyle(fontSize: 14, color:Colors.black38),
-                                ),
-                            trailing:Row(
-                            mainAxisSize: MainAxisSize.min,
+                              'Price: NRS ${item.price.toStringAsFixed(2)}\nQuantity: ${item.quantity}',
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black38),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.remove),
                                   onPressed: () {
                                     if (item.quantity > 1) {
                                       // Decrease quantity by 1
-                          
+
                                       context.read<CartBloc>().add(
                                             UpdateQuantityEvent(
                                               cartItem: item.copyWith(
                                                   quantity: item.quantity - 1),
                                               isIncrement: false,
-                                              quantity:
-                                                  item.quantity - 1, // Decrement
+                                              quantity: item.quantity -
+                                                  1, // Decrement
                                             ),
                                           );
                                     } else {
@@ -99,7 +103,9 @@ class CartPage extends StatelessWidget {
                                   },
                                 ),
                                 Text('${item.quantity}',
-                                    style: const TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold)),
                                 IconButton(
                                   icon: const Icon(Icons.add),
                                   onPressed: () {
@@ -120,7 +126,8 @@ class CartPage extends StatelessWidget {
                                   onPressed: () {
                                     context.read<CartBloc>().add(
                                           RemoveFromCartEvent(
-                                              cartItem: item), // Delete the item
+                                              cartItem:
+                                                  item), // Delete the item
                                         );
                                   },
                                 ),
@@ -203,7 +210,9 @@ class CartPage extends StatelessWidget {
                                   totalPrice: state.totalPrice,
                                   userLat: selectedLocation.latitude,
                                   userLng: selectedLocation.longitude,
-                                   onClearCart: () {},
+                                  onClearCart: () {
+                                    context.read<CartBloc>().add(ClearCart());
+                                  },
                                 ),
                               ),
                             );

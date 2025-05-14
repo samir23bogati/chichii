@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/common/bottom_navbar.dart';
 import 'package:padshala/model/cart_item.dart';
+import 'package:padshala/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ExploretabPage extends StatefulWidget {

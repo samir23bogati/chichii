@@ -87,7 +87,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
     if (user != null && fcmToken != null) {
       await FirebaseFirestore.instance
           .collection("admin_tokens")
-          .doc(user.phoneNumber) // or user.uid
+          .doc(user.phoneNumber) 
           .set({"token": fcmToken});
     }
   }
@@ -100,7 +100,7 @@ Future<void> maybeSaveAdminFcmToken() async {
   @override
   Widget build(BuildContext context) {
     double finalPrice = widget.totalPrice + (deliveryCost ?? 0);
-    return Scaffold(
+    return Scaffold( 
       appBar: AppBar(title: const Text("Billing Confirmation")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -279,7 +279,7 @@ Future<void> maybeSaveAdminFcmToken() async {
         builder: (context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), // Rounded corners
+              borderRadius: BorderRadius.circular(20), 
             ),
             title: Column(
               children: [
@@ -301,7 +301,7 @@ Future<void> maybeSaveAdminFcmToken() async {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber, // Custom button color
+                    backgroundColor: Colors.amber, 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10), // Rounded button
                     ),
