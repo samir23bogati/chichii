@@ -16,8 +16,13 @@
   },
   {
     "title": "Jumbo Chicken Sekuwa - 1 kg",
+<<<<<<< HEAD
     "price": 885,
     "image": "assets/images/Chickensekuwa.png"
+=======
+    "price": 885.00,
+    "image": "assets/images/chicken_buckets.jpg"
+>>>>>>> 785b3c0 (changes by kbndra)
   },
   {
     "title": "Buff Sekuwa - 1/2 kg",
