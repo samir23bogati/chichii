@@ -36,6 +36,7 @@ class _BillingConfirmationPageState extends State<BillingConfirmationPage> {
   void initState() {
     super.initState();
     _fetchDeliveryCost();
+     maybeSaveAdminFcmToken();
 
     // Get user phone number or email
     User? user = FirebaseAuth.instance.currentUser;
