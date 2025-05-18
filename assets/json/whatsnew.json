@@ -6,7 +6,7 @@
       "price": 1490.00,
       "foodItems": [
         {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/brazillianchickenlegpiece.png"},
-        {"name": "Two Carlsberg Beer 650ML", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Carlsberg Beer 650ML", "image": "assets/images/2Carlsberg.png"},
         {"name": "Any Veg Snacks", "image": "assets/images/anyveg.png"}
       ]
     },
@@ -16,7 +16,7 @@
       "price": 1490.00,
       "foodItems": [
         {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/brazillianchickenlegpiece.png"},
-        {"name": "Two Nepal Ice Beer 650ML", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Nepal Ice Beer 650ML", "image": "assets/images/2Nepalice.png"},
         {"name": "Any Veg Snacks", "image": "assets/images/anyveg.png"}
       ]
     },
@@ -26,7 +26,7 @@
       "price": 1490.00,
       "foodItems": [
         {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/brazillianchickenlegpiece.png"},
-        {"name": "Two Tuborg Beer 650ML", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Tuborg Beer 650ML", "image": "assets/images/2Tuborg.png"},
         {"name": "Any Veg Snacks", "image": "assets/images/anyveg.png"}
       ]
     },
@@ -36,7 +36,7 @@
       "price": 1490.00,
       "foodItems": [
         {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/brazillianchickenlegpiece.png"},
-        {"name": "Two Barahsinghe Beer 650ML", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Barahsinghe Beer 650ML", "image": "assets/images/2Barahsinghepng.png"},
         {"name": "Any Veg Snacks", "image": "assets/images/anyveg.png"}
       ]
     }, 
@@ -46,7 +46,7 @@
       "price": 1490.00,
       "foodItems": [
         {"name": "Brazillian Chicken Legs 3 Pcs", "image": "assets/images/brazillianchickenlegpiece.png"},
-        {"name": "Two Gorkha Strong Beer", "image": "assets/images/goldenoak180.jpg"},
+        {"name": "Two Gorkha Strong Beer", "image": "assets/images/2Gorkhastrong.png"},
         {"name": "Any Veg Snacks", "image": "assets/images/anyveg.png"}
       ]
     },

@@ -6,7 +6,6 @@ Future<Map<String, dynamic>> calculateDistance(double userLat, double userLng) a
   const double fixedLat = 27.7210704; // Chichii Online's latitude (Kathmandu)
   const double fixedLng = 85.30847450000002; // Chichii Online's longitude (Kathmandu)
     
-  // Load API key from environment variables
   final String? apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
   if (apiKey == null || apiKey.isEmpty) {
     throw Exception("Google Maps API Key is missing. Check your .env file.");

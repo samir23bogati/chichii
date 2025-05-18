@@ -2,71 +2,71 @@
   {
     "title": "Fried Chicken Nuggets - 8 Pcs",
     "price": "360",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Chickennuggets.png"
   },
   {
     "title": "Jumbo Chicken Nuggets - 24 Pcs",
     "price": "980",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Chickennuggets.png"
   },
   {
     "title": "Kurkure Mutton Lung Fry (Khasi Fokso) - 180 gm",
     "price": "300",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Kurkuremuttonfoksofry.png"
   },
   {
     "title": "Jumbo Kurkure Mutton Lung Fry (Khasi Fokso)",
     "price": "850",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Kurkuremuttonfoksofry.png"
   },
   {
     "title": "Fried Buff Jibro Fry - 180 gm",
     "price": "365",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Friedbuffjibro.png"
   },
   {
     "title": "Jumbo Fried Buff Jibro Fry",
     "price": "995",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Friedbuffjibro.png"
   },
   {
     "title": "Fried Fish Finger - 8 Pcs",
     "price": "375",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Friedfishfinger.png"
   },
   {
     "title": "Jumbo Fish Finger - 24 Pcs",
     "price": "1050",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Friedfishfinger.png"
   },
   {
     "title": "French Fries",
     "price": "215",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Frenchfry.png"
   },
   {
     "title": "Jumbo French Fries",
     "price": "595",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Frenchfry.png"
   },
   {
     "title": "Fried Brazillian Drum - 3 Pcs",
     "price": "525",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Friedbrazilliandrum.png"
   },
   {
     "title": "Jumbo Fried Brazillian Drum",
     "price": "1445",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Friedbrazilliandrum.png"
   },
   {
     "title": "Fried Chicken Sausages - 4 Pcs",
     "price": "280",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Chickensausages.png"
   },
   {
     "title": "Fried Buff Sausages - 4 Pcs",
     "price": "240",
-    "image": "assets/images/sides.jpg"
+    "image": "assets/images/Buffsausages.png"
   }
 ]

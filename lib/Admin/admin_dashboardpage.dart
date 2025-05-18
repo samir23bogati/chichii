@@ -9,7 +9,7 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  final List<String> adminPhoneNumbers = ['+9779813629126'];
+  final List<String> adminPhoneNumbers = ['+9779813629126','+9779841557870','+9779818805500'];
 
   @override
   Widget build(BuildContext context) {

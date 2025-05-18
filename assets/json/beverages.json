@@ -9,7 +9,7 @@
       { "title": "Nepal Ice Strong 650ML", "price": "390", "image": "assets/images/Nepalicestrong.png" },
       { "title": "Nepal Ice Can 500ML", "price": "320", "image": "assets/images/Nepalicebeercan.png" },
       { "title": "Tuborg Beer 650ML", "price": "475", "image": "assets/images/Tuborgstrong.png" },
-      { "title": "Tuborg Can 500ML", "price": "410", "image": "assets/images/sides.jpg" },
+      { "title": "Tuborg Can 500ML", "price": "410", "image": "assets/images/Tuborgcan.png" },
       { "title": "Budweiser Premium 650ML", "price": "445", "image": "assets/images/budweiser.png" }
     ]
   },
@@ -56,50 +56,50 @@
   {
     "category": "DOMESTIC VODKA",
     "items": [
-      { "title": "Absolut Blue 1L", "price": "7350", "image": "assets/images/sides.jpg" },
-      { "title": "8848 Vodka 750ML", "price": "2425", "image": "assets/images/sides.jpg" },
-      { "title": "8848 Vodka 375ML", "price": "1215", "image": "assets/images/sides.jpg" },
-      { "title": "Seto Bagh Vodka 750ML", "price": "2450", "image": "assets/images/sides.jpg" },
-      { "title": "Ruslan Premium 750ML", "price": "2550", "image": "assets/images/sides.jpg" },
-      { "title": "SKYY Vodka 750ML", "price": "2850", "image": "assets/images/sides.jpg" },
-      { "title": "Silver Oak Vodka 750ML", "price": "1550", "image": "assets/images/sides.jpg" },
-      { "title": "Highlander Pure White 750ML", "price": "1200", "image": "assets/images/sides.jpg" },
-      { "title": "Nude Superior 750ML", "price": "2425", "image": "assets/images/sides.jpg" }
+      { "title": "Absolut Blue 1L", "price": "7350", "image": "assets/images/Absoluteblue.png" },
+      { "title": "8848 Vodka 750ML", "price": "2425", "image": "assets/images/8848.png" },
+      { "title": "8848 Vodka 375ML", "price": "1215", "image": "assets/images/8848.png" },
+      { "title": "Seto Bagh Vodka 750ML", "price": "2450", "image": "assets/images/Setobagh.png" },
+      { "title": "Ruslan Premium 750ML", "price": "2550", "image": "assets/images/Ruslan.png" },
+      { "title": "SKYY Vodka 750ML", "price": "2850", "image": "assets/images/skyy.png" },
+      { "title": "Silver Oak Vodka 750ML", "price": "1550", "image": "assets/images/Silveroak.png" },
+      { "title": "Highlander Pure White 750ML", "price": "1200", "image": "assets/images/Highlander.png" },
+      { "title": "Nude Superior 750ML", "price": "2425", "image": "assets/images/Nudesuperior.png" }
     ]
   },
   {
     "category": "IMPORTED WINE",
     "items": [
-      { "title": "Robertson White 750ML", "price": "1925", "image": "assets/images/sides.jpg" },
-      { "title": "Robertson Red 750ML", "price": "1925", "image": "assets/images/sides.jpg" },
-      { "title": "2 Share Natural Red 750ML", "price": "1850", "image": "assets/images/sides.jpg" },
-      { "title": "Calvet Varietals 750ML", "price": "2350", "image": "assets/images/sides.jpg" },
-      { "title": "Royal Musk Red 750ML", "price": "1850", "image": "assets/images/sides.jpg" },
-      { "title": "Vina Serea Red 750ML", "price": "1700", "image": "assets/images/sides.jpg" },
-      { "title": "Hardys VR Red 750ML", "price": "2250", "image": "assets/images/sides.jpg" },
-      { "title": "Gossips Sweet Lips 750ML", "price": "2200", "image": "assets/images/sides.jpg" },
-      { "title": "Jacob's Creek Red 750ML", "price": "2250", "image": "assets/images/sides.jpg" },
-      { "title": "Palacio Del Whitte 750ML", "price": "1700", "image": "assets/images/sides.jpg" },
-      { "title": "Pluvium Prem Blanco 750ML", "price": "1590", "image": "assets/images/sides.jpg" }
+      { "title": "Robertson White 750ML", "price": "1925", "image": "assets/images/Robertsonwhite.png" },
+      { "title": "Robertson Red 750ML", "price": "1925", "image": "assets/images/Robertsonred.png" },
+      { "title": "2 Share Natural Red 750ML", "price": "1850", "image": "assets/images/2sharenaturalred.png" },
+      { "title": "Calvet Varietals 750ML", "price": "2350", "image": "assets/images/Calvatvarietal.png" },
+      { "title": "Royal Musk Red 750ML", "price": "1850", "image": "assets/images/Royalmusk.png" },
+      { "title": "Vina Serea Red 750ML", "price": "1700", "image": "assets/images/vinaserea.png" },
+      { "title": "Hardys VR Red 750ML", "price": "2250", "image": "assets/images/Hardysvrred.png" },
+      { "title": "Gossips Sweet Lips 750ML", "price": "2200", "image": "assets/images/Gossipsweetlips.png" },
+      { "title": "Jacob's Creek Red 750ML", "price": "2250", "image": "assets/images/Jacobscreek.png" },
+      { "title": "Palacio Del Whitte 750ML", "price": "1700", "image": "assets/images/Palaciodelehitte.png" },
+      { "title": "Pluvium Prem Blanco 750ML", "price": "1590", "image": "assets/images/Pluviumprembalaco.png" }
     ]
   },
   {
     "category": "PREMIUM WHISKY",
     "items": [
-      { "title": "Chivas Regal 12 Yrs 1L", "price": "9720", "image": "assets/images/sides.jpg" },
-      { "title": "VAT 69 Whisky 1L", "price": "7720", "image": "assets/images/sides.jpg" },
-      { "title": "Johnnie Walk Black Label 1L", "price": "9725", "image": "assets/images/sides.jpg" },
-      { "title": "Johnnie Walker Dble Black 1L", "price": "11450", "image": "assets/images/sides.jpg" },
-      { "title": "Johnnie Walker Red Label 1L", "price": "8000", "image": "assets/images/sides.jpg" },
-      { "title": "Johnnie Walker Red Label 1L", "price": "8000", "image": "assets/images/sides.jpg" },
-      { "title": "Crown Black Malt 750ML", "price": "1990", "image": "assets/images/sides.jpg" },
-      { "title": "Crown Black Malt 375ML", "price": "1099", "image": "assets/images/sides.jpg" }
+      { "title": "Chivas Regal 12 Yrs 1L", "price": "9720", "image": "assets/images/Chivasregal.png" },
+      { "title": "VAT 69 Whisky 1L", "price": "7720", "image": "assets/images/Vat69.png" },
+      { "title": "Johnnie Walk Black Label 1L", "price": "9725", "image": "assets/images/Blacklavel.png" },
+      { "title": "Johnnie Walker Dble Black 1L", "price": "11450", "image": "assets/images/Doubleblack.png" },
+      { "title": "Johnnie Walker Red Label 1L", "price": "8000", "image": "assets/images/Redlevel.png" },
+      { "title": "Johnnie Walker Red Label 1L", "price": "8000", "image": "assets/images/Redlevel.png" },
+      { "title": "Crown Black Malt 750ML", "price": "1990", "image": "assets/images/Crownblackmalt.png" },
+      { "title": "Crown Black Malt 375ML", "price": "1099", "image": "assets/images/Crownblackmalt.png" }
     ]
   },
   {
     "category": "IMPORTED VODKA",
     "items": [
-      { "title": "Absolut Blue Vodka 1L", "price": "7350", "image": "assets/images/sides.jpg" }
+      { "title": "Absolut Blue Vodka 1L", "price": "7350", "image": "assets/images/Absoluteblue.png" }
     ]
   }
 ]

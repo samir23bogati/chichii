@@ -9,7 +9,7 @@ class Topcircle extends StatefulWidget {
 }
 
 class _TopcircleState extends State<Topcircle> {
-  int selectedIndex = 1; // Default selection: "SELF-PICKUP"
+  int selectedIndex = 1; 
   LatLng? selectedAddress;
 
   final List<Map<String, dynamic>> orderTypes = [
@@ -26,7 +26,7 @@ class _TopcircleState extends State<Topcircle> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-          height: 75, // Ensure bounded height
+          height: 75,
           child:Scaffold(
             body: Center(
               child: SingleChildScrollView(
@@ -41,7 +41,7 @@ class _TopcircleState extends State<Topcircle> {
                     setState(() {
                       selectedIndex = index;
                    if (index == 0) {
-                        // Open map screen when "DELIVERY" is selected
+                       
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -51,11 +51,11 @@ class _TopcircleState extends State<Topcircle> {
                           ),
                         );
                       } else if (index == 1) {
-                        // Navigate to "SELF-PICKUP" screen when "SELF-PICKUP" is selected , 
+                       
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SelfPickupScreen(), // Navigating to  Self Pickup Screen 
+                            builder: (context) => SelfPickupScreen(), 
                           ),
                         );
                       }
