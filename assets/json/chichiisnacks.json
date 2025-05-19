@@ -27,7 +27,7 @@
       { "title": "Pork Fried Rice", "price": "375", "image": "assets/images/Porkfriedrice.png" },
       { "title": "Jumbo Pork Fried Rice", "price": "1020", "image": "assets/images/Porkfriedrice.png" },
       { "title": "Stirred Mix Fried Rice", "price": "390", "image": "assets/images/Mixedvegfriedrice.png" },
-      { "title": "Jumbo Mix Fried Rice", "price": "1095", "image": "assets/images/Mixedvegfriedrice.png" }
+      { "title": "Jumbo Mix Fried Rice", "price": "1", "image": "assets/images/Mixedvegfriedrice.png" }
     ]
   },
   {
