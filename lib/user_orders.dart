@@ -48,7 +48,7 @@ class MyOrdersScreen extends StatelessWidget {
                 itemCount: orders.length,
                 itemBuilder: (context, index) {
                   final order = orders[index];
-                  final items = List<Map<String, dynamic>>.from(order['items']);
+                  final items = List<Map<String, dynamic>>.from(order['items']); 
                   final timestamp = order['timestamp'] as Timestamp;
                   final formattedDate =
                       DateFormat('dd MMM yyyy, hh:mm a').format(timestamp.toDate());

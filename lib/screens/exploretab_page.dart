@@ -8,6 +8,8 @@ import 'package:padshala/blocs/foodpromo1/cart_bloc.dart';
 import 'package:padshala/blocs/foodpromo1/cart_event.dart';
 import 'package:padshala/blocs/foodpromo1/cart_state.dart';
 import 'package:padshala/common/bottom_navbar.dart';
+import 'package:padshala/common/favourites/fav_bloc.dart';
+import 'package:padshala/common/favourites/fav_event.dart';
 import 'package:padshala/model/cart_item.dart';
 import 'package:padshala/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,9 +125,7 @@ class _ExploretabPageState extends State<ExploretabPage>
 
 class MenuList extends StatefulWidget {
   final List<Map<String, dynamic>> menuItems;
-
   const MenuList({required this.menuItems, Key? key}) : super(key: key);
-
   @override
   _MenuListState createState() => _MenuListState();
 }
@@ -133,11 +133,10 @@ class MenuList extends StatefulWidget {
 class _MenuListState extends State<MenuList> {
   List<String> favoriteItems = [];
   String searchQuery = "";
-
   @override
   void initState() {
     super.initState();
-    _loadFavoriteItems();
+    _loadFavoriteItems(); // load Favorite items 
   }
 
   Future<void> _loadFavoriteItems() async {
@@ -173,7 +172,6 @@ List<Map<String, dynamic>> _filterMenuItems() {
   @override
   Widget build(BuildContext context) {
     final filteredItems = _filterMenuItems();
-
     return Column(
       children: [
         Padding(
@@ -196,7 +194,6 @@ List<Map<String, dynamic>> _filterMenuItems() {
             builder: (context, state) {
               final List<CartItem> cartItems =
                   state is CartUpdatedState ? state.cartItems : <CartItem>[];
-
               return ListView.builder(
                 padding: EdgeInsets.all(4.0),
                 itemCount: filteredItems.length,
@@ -216,7 +213,7 @@ List<Map<String, dynamic>> _filterMenuItems() {
   }
  List<Widget> buildItemList(Map<String, dynamic> item, List<CartItem> cartItems) {
     if (item.containsKey('category') && item.containsKey('items')) {
-      final filteredSubItems = (item['items'] as List)
+      final filteredSubItems = (item['items'] as List) 
           .where((subItem) => subItem['title']
               .toString()
               .toLowerCase()
@@ -240,7 +237,6 @@ List<Map<String, dynamic>> _filterMenuItems() {
    Widget _buildMenuCard(Map<String, dynamic> item, List<CartItem> cartItems) {
     final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]);
     final isFavorite = favoriteItems.contains(item["title"]);
-
     return GestureDetector(
       onTap: () => _showItemDialog(context, item),
       child: Card(
@@ -250,7 +246,7 @@ List<Map<String, dynamic>> _filterMenuItems() {
           padding: const EdgeInsets.all(12.0),
           child: Row(
             children: [
-              Image.asset(item["image"], height: 80, width: 80, fit: BoxFit.cover),
+              Image.asset(item["image"], height: 80, width: 80, fit: BoxFit.cover), 
               SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -273,6 +269,7 @@ List<Map<String, dynamic>> _filterMenuItems() {
                     isFavorite ? favoriteItems.remove(item["title"]) : favoriteItems.add(item["title"]);
                   });
                   _saveFavoriteItems();
+                  context.read<FavoriteBloc>().add(ToggleFavorite(item));
                 },
               ),
               SizedBox(width: 8),
@@ -300,7 +297,6 @@ List<Map<String, dynamic>> _filterMenuItems() {
       ),
     );
   }
-
   void _showItemDialog(BuildContext context, Map<String, dynamic> item) {
     showDialog(
       context: context,
@@ -309,7 +305,6 @@ List<Map<String, dynamic>> _filterMenuItems() {
           builder: (context, state) {
             final cartItems = state is CartUpdatedState ? state.cartItems : [];
             final isAdded = cartItems.any((cartItem) => cartItem.id == item["title"]);
-
             return AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               content: Column(

@@ -64,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+         print("Current State: $state");
         if (state is OtpSentState) {
       setState(() {
         isOtpSent = true;
@@ -93,7 +94,16 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 _buildHeader(),
                 const SizedBox(height: 25),
-                isOtpSent ? _buildOtpInput() : _buildPhoneInput(),
+               BlocBuilder<AuthBloc, AuthState>(
+  builder: (context, state) {
+    if (state is OtpSentState) {
+      return _buildOtpInput();
+    } else {
+      return _buildPhoneInput();
+    }
+  },
+),
+
                 const SizedBox(height: 25),
                // const Text("Login With Social Media Accounts"),
                 // const SizedBox(height: 10),

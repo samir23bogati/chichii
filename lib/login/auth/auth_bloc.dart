@@ -64,16 +64,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _auth.verifyPhoneNumber(
         phoneNumber: event.phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
-          UserCredential userCredential =
-              await _auth.signInWithCredential(credential);
-          emit(Authenticated(user: userCredential.user!));
+          try {
+            UserCredential userCredential =
+                await _auth.signInWithCredential(credential);
+            emit(Authenticated(user: userCredential.user!));
+          } catch (e) {
+            emit(AuthError(message: 'Auto-verification failed: $e')); // 🔧 Added catch for auto-verification
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           emit(AuthError(message: e.message ?? "Verification failed."));
         },
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
-          _startCountdown(event.phoneNumber, emit);
+          _startCountdown(event.phoneNumber, emit); // ⏱ Start countdown on code sent
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
@@ -90,6 +94,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(PhoneAuthLoading());
 
     try {
+      if (_verificationId == null) {
+        emit(AuthError(message: 'Verification ID is null. Please request OTP again.')); // 🛡 Safe check
+        emit(Unauthenticated());
+        return;
+      }
+
       final credential = PhoneAuthProvider.credential(
         verificationId: _verificationId!,
         smsCode: event.otp,
@@ -100,11 +110,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(OtpVerified(user: userCredential.user!));
     } catch (e) {
       emit(AuthError(message: 'Invalid OTP: $e'));
+      emit(Unauthenticated()); // ❗Emit unauthenticated if OTP fails
     }
   }
 
   Future<void> _onResendOtpRequested(
       ResendOtpRequested event, Emitter<AuthState> emit) async {
+    _countdownTimer?.cancel(); // 🔁 Cancel any ongoing countdown before resending
     add(PhoneAuthRequested(phoneNumber: event.phoneNumber));
   }
 
@@ -112,7 +124,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       CountdownTicked event, Emitter<AuthState> emit) {
     if (event.remainingTime > 0) {
       emit(OtpSentState(
-          phoneNumber: event.phoneNumber, remainingTime: event.remainingTime));
+          phoneNumber: event.phoneNumber,
+          remainingTime: event.remainingTime));
     } else {
       _countdownTimer?.cancel();
     }

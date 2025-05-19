@@ -28,7 +28,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchUserDetails() async {
     if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
       if (userDoc.exists) {
         setState(() {
           name = userDoc['name'] ?? user!.displayName ?? "No Name";
@@ -53,10 +56,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: _updateProfilePicture,
                 child: CircleAvatar(
                   radius: 40,
-                 backgroundImage: profilePic.isNotEmpty
+                  backgroundImage: profilePic.isNotEmpty
                       ? NetworkImage(profilePic)
-                      : AssetImage("assets/images/chichiisplash.png") as ImageProvider,
-                  child: Icon(Icons.camera_alt, size: 25, color: Colors.white70),
+                      : AssetImage("assets/images/chichiisplash.png")
+                          as ImageProvider,
+                  child: Icon(Icons.camera_alt,
+                      size: 25, color: Colors.white70),
                 ),
               ),
               SizedBox(height: 10),
@@ -73,7 +78,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await _updateUserProfile(nameController.text);
+                if (nameController.text.trim().isNotEmpty) {
+                  await _updateUserProfile(nameController.text.trim());
+                }
                 Navigator.pop(context);
               },
               child: Text("Save"),
@@ -84,33 +91,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
- Future<void> _updateProfilePicture() async {
-  final picker = ImagePicker();
-  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-  if (pickedFile != null) {
-    File imageFile = File(pickedFile.path);
-    String fileName = user!.uid;
-    Reference storageRef = FirebaseStorage.instance.ref().child('profile_pictures/$fileName.jpg');
-    UploadTask uploadTask = storageRef.putFile(imageFile);
-    await uploadTask.whenComplete(() async {
-      String downloadUrl = await storageRef.getDownloadURL();
-      setState(() {
-        profilePic = downloadUrl;
+  Future<void> _updateProfilePicture() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      String fileName = user!.uid;
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_pictures/$fileName.jpg');
+      UploadTask uploadTask = storageRef.putFile(imageFile);
+      await uploadTask.whenComplete(() async {
+        String downloadUrl = await storageRef.getDownloadURL();
+        setState(() {
+          profilePic = downloadUrl;
+        });
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .update({'profilePic': downloadUrl});
       });
-      await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({'profilePic': downloadUrl});
-    });
+    }
   }
-}
-
 
   Future<void> _updateUserProfile(String newName) async {
     setState(() {
       name = newName;
     });
 
-    await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({'name': newName});
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .update({'name': newName});
   }
-void _showConfirmDialog(String action) {
+
+  void _showConfirmDialog(String action) {
     showDialog(
       context: context,
       builder: (context) {
@@ -142,20 +157,22 @@ void _showConfirmDialog(String action) {
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(
-          context, 
+          context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("My Profile"), centerTitle: true,
-        leading: IconButton(
+        appBar: AppBar(
+          title: Text("My Profile"),
+          centerTitle: true,
+          leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-            Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
             },
           ),
         ),
@@ -164,51 +181,51 @@ void _showConfirmDialog(String action) {
             CircleAvatar(
               radius: 45,
               backgroundColor: Colors.grey[300],
-             backgroundImage: profilePic.isNotEmpty
-        ? NetworkImage(profilePic)
-        : AssetImage("assets/images/chichiisplash.png") as ImageProvider,
-      ),
+              backgroundImage: profilePic.isNotEmpty
+                  ? NetworkImage(profilePic)
+                  : AssetImage("assets/images/chichiisplash.png")
+                      as ImageProvider,
+            ),
             SizedBox(height: 10),
-            Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-             Text(phoneNumber, style: TextStyle(color: Colors.grey[600])),
-                  Divider(),
-             Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: _showEditProfilePopup,
-                        child: Text("EDIT PROFILE", style: TextStyle(color: Colors.blue)),
-                      ),
-                      Container(width: 1, height: 20, color: Colors.grey), // Fixed Divider
-                TextButton(
-                  onPressed: () {}, 
-                  child: Text("ADD NEW NUMBER", style: TextStyle(color: Colors.blue)),
-                ),
-              ],
+            Text(name,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(phoneNumber, style: TextStyle(color: Colors.grey[600])),
+            Divider(),
+            TextButton(
+              onPressed: _showEditProfilePopup,
+              child: Text("EDIT PROFILE",
+                  style: TextStyle(color: Colors.blue)),
             ),
             SizedBox(height: 10),
             Expanded(
               child: Card(
                 margin: EdgeInsets.all(12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                  profileOption("My Favorite", Icons.favorite,onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FavouritesDetails()),
-                    );
-                  }),
-                  profileOption("My Address", Icons.location_on,),
-                  profileOption("My Orders", Icons.list_alt, onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => MyOrdersScreen()),
-  );
-}),
-                profileOption("Support", Icons.support, onTap: WhatsappSupportButton.launchWhatsApp),
-                  profileOption("Logout", Icons.exit_to_app, color: Colors.red, onTap: () => _showConfirmDialog("logout")),
-              ],
+                      profileOption("My Favorite", Icons.favorite, onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FavouritesDetails()),
+                        );
+                      }),
+                      profileOption("My Orders", Icons.list_alt, onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyOrdersScreen()),
+                        );
+                      }),
+                      profileOption("Support", Icons.support,
+                          onTap: WhatsappSupportButton.launchWhatsApp),
+                      profileOption("Logout", Icons.exit_to_app,
+                          color: Colors.red,
+                          onTap: () => _showConfirmDialog("logout")),
+                    ],
                   ),
                 ),
               ),
@@ -219,10 +236,12 @@ void _showConfirmDialog(String action) {
     );
   }
 
-  Widget profileOption(String title, IconData icon, {Color color = Colors.black, Function()? onTap}) {
+  Widget profileOption(String title, IconData icon,
+      {Color color = Colors.black, Function()? onTap}) {
     return ListTile(
       leading: Icon(icon, color: color),
-      title: Text(title, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+      title: Text(title,
+          style: TextStyle(color: color, fontWeight: FontWeight.bold)),
       onTap: onTap,
     );
   }

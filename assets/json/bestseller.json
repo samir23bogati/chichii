@@ -1,28 +1,67 @@
 [
-    {
-      "title": "Buff MoMo",
-      "image": "assets/images/buffmomo.jpg",
-      "price": "450"
-    },
-    {
-      "title": "Chicken Biryani",
-      "image": "assets/images/chickenbiriyani.jpg",
-      "price": "850"
-    },
-    {
-      "title": "Chicken Lollipop",
-      "image": "assets/images/chickenlollipop.jpg",
-      "price": "555"
-    },
-    {
-      "title": "Khukuri Rum",
-      "image": "assets/images/khukurirum.jpg",
-      "price": "850"
-    },
-    {
-      "title": "Nepali Khana Set",
-      "image": "assets/images/nepalikhanaset.jpg",
-      "price": "458"
-    }
-  ]
-  
+  {
+    "title": "Chicken Dum Biryani",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "420"
+  },
+  {
+    "title": "Chicken Sekuwa -1/2 kg",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "485"
+  },
+  {
+    "title": "Fried Chicken Lollipop -6 Pcs",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "380"
+  },
+  {
+    "title": "Grilled Chicken Burger",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "390"
+  },
+  {
+    "title": "C Chicken Momo",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "270"
+  },
+  {
+    "title": "Buff Momo",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "450"
+  },
+  {
+    "title": "Fried Chicken Wings -3 Pcs",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "380"
+  },
+  {
+    "title": "JumboChicken Fried Rice",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "945"
+  },
+  {
+    "title": "Gorkha Strong - 650ML",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "390"
+  },
+  {
+    "title": "Nepal Ice Strong - 650ML",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "390"
+  },
+  {
+    "title": "Mustang Gold Whisky -750ML",
+    "image": "assets/images/buffmomo.jpg",
+    "price": "1380"
+  },
+  {
+    "title": "Khukuri Rum - 750ML",
+  "image": "assets/images/buffmomo.jpg",
+    "price": "2250"
+  },
+  {
+    "title": "Golden Oak - 750ML",
+   "image": "assets/images/buffmomo.jpg",
+    "price": "1350"
+  }
+]
