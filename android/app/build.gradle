@@ -42,7 +42,7 @@ android {
     }
     signingConfigs {
        release {
-            storeFile file('H:/padshala/keystore.jks')  
+            storeFile file('C:/Users/Computer/Desktop/chichii_online/keystore.jks')
             storePassword 'qwertyuiop'  
             keyAlias 'upload' 
             keyPassword 'qwertyuiop' 
