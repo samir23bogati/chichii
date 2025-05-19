@@ -40,14 +40,15 @@ android {
         versionName = "9.1.0"
         manifestPlaceholders.GOOGLE_MAPS_API_KEY = GOOGLE_MAPS_API_KEY
     }
-    signingConfigs {
-       release {
-            storeFile file('H:/padshala/keystore.jks')  
-            storePassword 'qwertyuiop'  
-            keyAlias 'upload' 
-            keyPassword 'qwertyuiop' 
-        }
+   signingConfigs {
+    release {
+        storeFile file(keystoreProperties['storeFile'])
+        storePassword keystoreProperties['storePassword']
+        keyAlias keystoreProperties['keyAlias']
+        keyPassword keystoreProperties['keyPassword']
     }
+}
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -67,4 +68,3 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.0.2' 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
-apply plugin: 'com.google.gms.google-services'
