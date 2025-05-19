@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   @override
@@ -9,7 +12,11 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  final List<String> adminPhoneNumbers = ['+9779813629126','+9779841557870','+9779818805500'];
+  final List<String> adminPhoneNumbers = [
+    '+9779813629126',
+    '+9779841557870',
+    '+9779818805500'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +77,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       (data['timestamp'] as Timestamp?)?.toDate() ??
                           DateTime.now();
                   final formattedDate =
-                      DateFormat('d MMMM yyyy, h:mm a').format(timestamp); 
+                      DateFormat('d MMMM yyyy, h:mm a').format(timestamp);
                   final phoneNumber = data.containsKey('phoneNumber')
                       ? data['phoneNumber']
                       : 'Unknown';
@@ -139,11 +146,72 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text("🕒 Ordered on: $formattedDateDetail"),
+                                      Text(
+                                          "🕒 Ordered on: $formattedDateDetail"),
                                       const SizedBox(height: 6),
                                       Text("🆔 Order ID: ${data['orderId']}"),
                                       Text("📞 Phone: ${data['phoneNumber']}"),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.copy),
+                                            tooltip: 'Copy Phone',
+                                            onPressed: () {
+                                              Clipboard.setData(ClipboardData(
+                                                  text: data['phoneNumber']));
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        "Phone number copied!")),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                       Text("🏠 Address: ${data['address']}"),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.copy),
+                                            tooltip: 'Copy Address',
+                                            onPressed: () {
+                                              Clipboard.setData(ClipboardData(
+                                                  text: data['address']));
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        "Address copied!")),
+                                              );
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.map),
+                                            tooltip: 'View on Map',
+                                            onPressed: () async {
+                                              final query = Uri.encodeComponent(
+                                                  data['address']);
+                                              final googleMapsUrl =
+                                                  "https://www.google.com/maps/search/?api=1&query=$query";
+                                              if (await canLaunchUrl(
+                                                  Uri.parse(googleMapsUrl))) {
+                                                await launchUrl(
+                                                    Uri.parse(googleMapsUrl),
+                                                    mode: LaunchMode
+                                                        .externalApplication);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          "Could not open Google Maps.")),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                       Text(
                                           "💳 Payment: ${data['paymentMethod']}"),
                                       Text(

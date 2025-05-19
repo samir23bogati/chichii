@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.chichii.online",
+      "sha256_cert_fingerprints": [
+        "FC:AB:B8:8C:BC:20:6E:AD:36:91:4A:6B:B7:AB:04:46:3B:0F:14:7A:00:E1:BA:21:8E:A3:17:56:92:3C:1A:A7"
+      ]
+    }
+  }
+]
