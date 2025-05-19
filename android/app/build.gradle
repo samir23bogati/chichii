@@ -40,12 +40,22 @@ android {
         versionName = "9.1.0"
         manifestPlaceholders.GOOGLE_MAPS_API_KEY = GOOGLE_MAPS_API_KEY
     }
+<<<<<<< HEAD
    signingConfigs {
     release {
         storeFile file(keystoreProperties['storeFile'])
         storePassword keystoreProperties['storePassword']
         keyAlias keystoreProperties['keyAlias']
         keyPassword keystoreProperties['keyPassword']
+=======
+    signingConfigs {
+       release {
+            storeFile file('C:/Users/Computer/Desktop/chichii_online/keystore.jks')
+            storePassword 'qwertyuiop'  
+            keyAlias 'upload' 
+            keyPassword 'qwertyuiop' 
+        }
+>>>>>>> 7e6f568 ( .jks file path change)
     }
 }
 
