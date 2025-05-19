@@ -46,3 +46,4 @@ app.*.map.json
 
 # Local keystore properties (DO NOT commit this file)
 key.properties
+local.properties
