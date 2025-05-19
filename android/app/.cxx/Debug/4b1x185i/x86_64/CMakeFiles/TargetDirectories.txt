@@ -1,0 +1,2 @@
+C:/Users/Computer/Desktop/chichii_online/android/app/.cxx/Debug/4b1x185i/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Computer/Desktop/chichii_online/android/app/.cxx/Debug/4b1x185i/x86_64/CMakeFiles/rebuild_cache.dir
