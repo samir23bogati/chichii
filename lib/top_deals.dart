@@ -3,10 +3,10 @@ import 'package:padshala/topdeal_detailpage.dart';
 
 class TopDeals extends StatelessWidget {
   static final List<Map<String, String>> _topDeals = [
-    {'title': 'Buff Steam Mo:Mo', 'image': 'assets/images/cookedfood.png', 'price': '100'},
-    {'title': 'Chicken Choila', 'image': 'assets/images/cookedfood.png', 'price': '250'},
-    {'title': 'Sukuti Sadeko', 'image': 'assets/images/cookedfood.png', 'price': '300'},
-    {'title': 'Fried Mo:Mo', 'image': 'assets/images/cookedfood.png', 'price': '150'},
+    {'title': 'Buff Steam Mo:Mo', 'image': 'assets/images/cookedfood.png', 'price': '220'},
+    {'title': 'Chicken Choila', 'image': 'assets/images/cookedfood.png', 'price': '365'},
+    {'title': 'Jumbo Marinated Chicken', 'image': 'assets/images/cookedfood.png', 'price': '965'},
+    {'title': 'Fry Chicken Mo:Mo', 'image': 'assets/images/cookedfood.png', 'price': '250'},
   ];
 
   const TopDeals({Key? key}) : super(key: key);
@@ -55,7 +55,8 @@ class TopDeals extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
+                    //color: Colors.white,
+                    color: Color.fromARGB(255, 185, 140, 46),
                     ),
                     child: Row(
                       children: [
@@ -76,14 +77,14 @@ class TopDeals extends StatelessWidget {
                             children: [
                               Text(
                                 deal['title']!,
-                                style: TextStyle(fontSize:14 ,fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize:14 ,fontWeight: FontWeight.bold,color: Colors.white),
                                 overflow: TextOverflow.ellipsis, 
                                 maxLines: 1,  
                               ),
                               SizedBox(height: 6), 
                               Text(
                                 "NRS ${deal['price']}",
-                                style: TextStyle(fontSize:14 ,fontWeight: FontWeight.bold,color: Colors.green),
+                                style: TextStyle(fontSize:14 ,fontWeight: FontWeight.bold,color: Colors.white),
                               ),
                             ],
                           ),

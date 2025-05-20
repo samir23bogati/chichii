@@ -2,42 +2,42 @@
   {
     "category": "CHICHII MO:MO",
     "items": [
-      { "title": "Steam Buff Mo:Mo", "price": "220", "image": "assets/images/cocacola.png" },
-      { "title": "Fry Buff Mo:Mo", "price": "240", "image": "assets/images/cocacola.png" },
-      { "title": "Sadeko Buff Mo:Mo", "price": "260", "image": "assets/images/cocacola.png" },
-      { "title": "C Buff Mo:Mo", "price": "280", "image": "assets/images/cocacola.png" },
-      { "title": "Kothey Buff Mo:Mo", "price": "280", "image": "assets/images/cocacola.png" },
-      { "title": "Steam Chicken Mo:Mo", "price": "230", "image": "assets/images/cocacola.png" },
-      { "title": "Fry Chicken Mo:Mo", "price": "250", "image": "assets/images/cocacola.png" },
-      { "title": "Sadeko Chicken Mo:Mo", "price": "270", "image": "assets/images/cocacola.png" },
-      { "title": "C Chicken Mo:Mo", "price": "270", "image": "assets/images/cocacola.png" },
-      { "title": "Kothey Chicken Mo:Mo", "price": "270", "image": "assets/images/cocacola.png" },
-      { "title": "Steam Pork Mo:Mo", "price": "270", "image": "assets/images/cocacola.png" },
-      { "title": "Fry Pork Mo:Mo", "price": "270", "image": "assets/images/cocacola.png" },
-      { "title": "C Pork Mo:Mo", "price": "270", "image": "assets/images/cocacola.png" },
-      { "title": "Sadeko Pork Mo:Mo", "price": "280", "image": "assets/images/cocacola.png" },
-      { "title": "Kothey Pork Mo:Mo", "price": "280", "image": "assets/images/cocacola.png" }
+      { "title": "Steam Buff Mo:Mo", "price": "220", "image": "assets/images/Steambuffmomo.png" },
+      { "title": "Fry Buff Mo:Mo", "price": "240", "image": "assets/images/Frybuffmomo.png" },
+      { "title": "Sadeko Buff Mo:Mo", "price": "260", "image": "assets/images/Sadhekobuffmomo.png" },
+      { "title": "C Buff Mo:Mo", "price": "260", "image": "assets/images/Cbuffmomo.png" },
+      { "title": "Kothey Buff Mo:Mo", "price": "230", "image": "assets/images/kotheybuffmomo.png" },
+      { "title": "Steam Chicken Mo:Mo", "price": "230", "image": "assets/images/Steamchickenmomo.png" },
+      { "title": "Fry Chicken Mo:Mo", "price": "250", "image": "assets/images/Frychickenmomo.png" },
+      { "title": "Sadeko Chicken Mo:Mo", "price": "270", "image": "assets/images/Sadhekobuffmomo.png" },
+      { "title": "C Chicken Mo:Mo", "price": "270", "image": "assets/images/Chickencmomo.png" },
+      { "title": "Kothey Chicken Mo:Mo", "price": "240", "image": "assets/images/Kotheychickenmomo.png" },
+      { "title": "Steam Pork Mo:Mo", "price": "250", "image": "assets/images/Steamporkmomo.png" },
+      { "title": "Fry Pork Mo:Mo", "price": "270", "image": "assets/images/Friedporkmomo.png" },
+      { "title": "C Pork Mo:Mo", "price": "290", "image": "assets/images/Cporkmomo.png" },
+      { "title": "Sadeko Pork Mo:Mo", "price": "290", "image": "assets/images/Sadhekobuffmomo.png" },
+      { "title": "Kothey Pork Mo:Mo", "price": "260", "image": "assets/images/Kotheyporkmomo.png" }
     ]
   },
   {
     "category": "CHICHII BURGER",
     "items": [
-      { "title": "Grilled Chicken Burger", "price": "380", "image": "assets/images/cocacola.png" },
-      { "title": "Grilled Chicken Burger With Extra Chicken Patties", "price": "590", "image": "assets/images/cocacola.png" },
-      { "title": "Crispy Chicken Burger", "price": "480", "image": "assets/images/cocacola.png" },
-      { "title": "Crispy Chicken Burger With Extra Crispy Chicken Patties", "price": "620", "image": "assets/images/cocacola.png" },
-      { "title": "Grilled Buff Burger", "price": "380", "image": "assets/images/cocacola.png" },
-      { "title": "Grilled Buff Burger With Extra Buff Patties", "price": "570", "image": "assets/images/cocacola.png" },
-      { "title": "Veg Burger", "price": "320", "image": "assets/images/cocacola.png" },
-      { "title": "Veg Burger With Extra Cheese", "price": "420", "image": "assets/images/cocacola.png" }
+      { "title": "Grilled Chicken Burger", "price": "390", "image": "assets/images/Grilledchickenburger.png" },
+      { "title": "Grilled Chicken Burger With Extra Chicken Patties", "price": "590", "image": "assets/images/Grilledchickenburgerwithextrachickenpatties.png" },
+      { "title": "Crispy Chicken Burger", "price": "410", "image": "assets/images/Crispychickenburger.png" },
+      { "title": "Crispy Chicken Burger With Extra Crispy Chicken Patties", "price": "620", "image": "assets/images/Crispychickenburgerwithextrapatties.png" },
+      { "title": "Grilled Buff Burger", "price": "380", "image": "assets/images/Grilledbuffburger.png" },
+      { "title": "Grilled Buff Burger With Extra Buff Patties", "price": "570", "image": "assets/images/Grilledbuffburgerwithextrabuffpatties.png" },
+      { "title": "Veg Burger", "price": "320", "image": "assets/images/Vegburger.png" },
+      { "title": "Veg Burger With Extra Cheese", "price": "420", "image": "assets/images/vegburgerwithextracheese.png" }
     ]
   },
   {
     "category": "NOODLES",
     "items": [
-      { "title": "Carbonara (Pork) Spaghetti - 150 gm", "price": "420", "image": "assets/images/cocacola.png" },
-      { "title": "Bolognese (Chicken) Spaghetti - 150 gm", "price": "420", "image": "assets/images/cocacola.png" },
-      { "title": "Mushroom Alfredo Pasta - 150 gm", "price": "350", "image": "assets/images/cocacola.png" }
+      { "title": "Carbonara (Pork) Spaghetti - 150 gm", "price": "420", "image": "assets/images/Carbonara(pork)spaghetti.png" },
+      { "title": "Bolognese (Chicken) Spaghetti - 150 gm", "price": "390", "image": "assets/images/Bolognese(chicken)spaghetti.png" },
+      { "title": "Mushroom Alfredo Pasta - 150 gm", "price": "350", "image": "assets/images/Mushroomalfredopasta.png" }
     ]
   }
 ]
