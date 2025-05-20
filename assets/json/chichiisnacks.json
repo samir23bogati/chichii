@@ -33,20 +33,20 @@
   {
     "category": "MARINATED SNACKS",
     "items": [
-      { "title": "Buff Cholla", "price": "385", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Buff Cholla", "price": "985", "image": "assets/images/sides.jpg" },
-      { "title": "Chicken Cholla", "price": "385", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Chicken Cholla", "price": "985", "image": "assets/images/sides.jpg" },
+      { "title": "Buff Cholla", "price": "365", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Buff Cholla", "price": "995", "image": "assets/images/sides.jpg" },
+      { "title": "Chicken Cholla", "price": "365", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Chicken Cholla", "price": "995", "image": "assets/images/sides.jpg" },
       { "title": "Mushroom Cholla", "price": "295", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Mushroom Cholla", "price": "625", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Mushroom Cholla", "price": "825", "image": "assets/images/sides.jpg" },
       { "title": "Marinated Chicken Sadheko", "price": "345", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Marinated Chicken Sadheko", "price": "745", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Marinated Chicken Sadheko", "price": "965", "image": "assets/images/sides.jpg" },
       { "title": "Buff Sadheko", "price": "345", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Buff Sadheko", "price": "745", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Buff Sadheko", "price": "965", "image": "assets/images/sides.jpg" },
       { "title": "Mushroom Sadheko", "price": "295", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Mushroom Sadheko", "price": "625", "image": "assets/images/sides.jpg" },
-      { "title": "Sour Peanuts Badam Sadheko", "price": "295", "image": "assets/images/sides.jpg" },
-      { "title": "Jumbo Badam Sadheko", "price": "585", "image": "assets/images/sides.jpg" }
+      { "title": "Jumbo Mushroom Sadheko", "price": "825", "image": "assets/images/sides.jpg" },
+      { "title": "Sour Peanuts Badam Sadheko", "price": "215", "image": "assets/images/sides.jpg" },
+      { "title": "Jumbo Badam Sadheko", "price": "595", "image": "assets/images/sides.jpg" }
     ]
   }
 ]

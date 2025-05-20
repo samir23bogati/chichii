@@ -1,13 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:padshala/common/favourites/favoutiresdetails.dart';
 import 'package:padshala/homepage.dart';
 import 'package:padshala/user_orders.dart';
 import 'package:padshala/whatsapp_support.dart';
-import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -152,6 +154,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> _launchPrivacyPolicy() async {
+    final url = Uri.parse('https://chichii.online/privacy-policy-for-app/');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Could not open the privacy policy")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -222,6 +235,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }),
                       profileOption("Support", Icons.support,
                           onTap: WhatsappSupportButton.launchWhatsApp),
+                      profileOption("Privacy Policy", Icons.privacy_tip,
+                          onTap: _launchPrivacyPolicy),
                       profileOption("Logout", Icons.exit_to_app,
                           color: Colors.red,
                           onTap: () => _showConfirmDialog("logout")),
