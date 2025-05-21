@@ -56,8 +56,8 @@
   {
     "category": "TADKA",
     "items": [
-      { "title": "Yellow Dal Tadka", "price": "290", "image": "assets/images/Daaltadka.png" },
-      { "title": "Jumbo Yellow Dal Tadka", "price": "850", "image": "assets/images/Daaltadka.png" }
+      { "title": "Dal Tadka", "price": "210", "image": "assets/images/Daaltadka.png" },
+      { "title": "Jumbo Dal Tadka", "price": "580", "image": "assets/images/Daaltadka.png" }
     ]
   }
 ]
