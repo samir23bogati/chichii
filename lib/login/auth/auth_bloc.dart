@@ -6,6 +6,7 @@ import 'auth_state.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _verificationId;
