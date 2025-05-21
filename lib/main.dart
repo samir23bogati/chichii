@@ -68,6 +68,28 @@ Future<void> saveFcmTokenToFirestore() async {
     print("❌ Error saving FCM token: $e");
   }
 }
+Future<void> maybeSaveAdminFcmToken() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final doc = await FirebaseFirestore.instance
+      .collection('admins')
+      .doc(user.phoneNumber)
+      .get();
+
+  if (doc.exists && doc.data()?['isAdmin'] == true) {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null) {
+      await FirebaseFirestore.instance
+          .collection("admin_tokens")
+          .doc(user.phoneNumber)
+          .set({"token": fcmToken});
+      print("✅ FCM token saved for admin: ${user.phoneNumber}");
+    }
+  } else {
+    print("🔒 User is not admin; token not saved.");
+  }
+}
 
 Future <void> checkFirestoreData() async {
   var firestore = FirebaseFirestore.instance;
@@ -91,7 +113,6 @@ Future<void> main() async {
 
 
    final connectivityResult = await Connectivity().checkConnectivity();
-   debugPrint('Connectivity Result: $connectivityResult');
   final hasInternet = connectivityResult != ConnectivityResult.none;
 
   if (!hasInternet) {
@@ -100,7 +121,6 @@ Future<void> main() async {
   }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await dotenv.load();
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance.activate(
   androidProvider: AndroidProvider.playIntegrity, 
@@ -173,36 +193,12 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-Future<void> maybeSaveAdminFcmToken() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return;
-
-  final doc = await FirebaseFirestore.instance
-      .collection('admins')
-      .doc(user.phoneNumber)
-      .get();
-
-  if (doc.exists && doc.data()?['isAdmin'] == true) {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken != null) {
-      await FirebaseFirestore.instance
-          .collection("admin_tokens")
-          .doc(user.phoneNumber)
-          .set({"token": fcmToken});
-      print("✅ FCM token saved for admin: ${user.phoneNumber}");
-    }
-  } else {
-    print("🔒 User is not admin; token not saved.");
-  }
-}
-
 class NoInternetScreen extends StatefulWidget {
   @override
   _NoInternetScreenState createState() => _NoInternetScreenState();
 }
 
 class _NoInternetScreenState extends State<NoInternetScreen> {
-  late ConnectivityResult _connectionStatus;
   final Connectivity _connectivity = Connectivity();
   bool _isOnline = true;
 
@@ -212,18 +208,14 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
     _checkConnectivity();
   }
 Future<void> _checkConnectivity() async {
-  // Listen for connectivity changes. Since the error suggests that the API expects a List, we need to update accordingly.
   _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
    
     if (results.isNotEmpty) {
-      _updateConnectionStatus(results.first); // Handle the first result
+      _updateConnectionStatus(results.first); 
     }
   });
 
- // Get the initial connectivity status (checkConnectivity now returns a list).
   List<ConnectivityResult> connectivityResults = await _connectivity.checkConnectivity();
-  
-  // Handle the first result from the list.
   if (connectivityResults.isNotEmpty) {
     _updateConnectionStatus(connectivityResults.first);
   }
@@ -231,11 +223,7 @@ Future<void> _checkConnectivity() async {
 
  void _updateConnectionStatus(ConnectivityResult result) {
     setState(() {
-      if (result == ConnectivityResult.none) {
-        _isOnline = false;
-      } else {
-        _isOnline = true;
-      }
+      _isOnline = result != ConnectivityResult.none;
     });
   }
 

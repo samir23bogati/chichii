@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Buff Steam Mo:Mo",
+    "image": "assets/images/steammomobuf.png",
+    "price": "220"
+  },
+  {
+    "title": "Chicken Choila",
+    "image": "assets/images/choilachick.png",
+    "price": "365"
+  },
+  {
+    "title": "Jumbo Marinated Chicken",
+    "image": "assets/images/jumbomarichick.png",
+    "price": "965"
+  },
+  {
+    "title": "Fry Chicken Mo:Mo",
+    "image": "assets/images/frymomochick.png",
+    "price": "250"
+  }
+]

@@ -8,11 +8,23 @@ import 'package:padshala/model/cartpage_track.dart';
 import 'package:padshala/profile_screen.dart';
 import 'package:padshala/screens/exploretab_page.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   BottomNavBar({required this.scaffoldKey});
 
+  @override
+  State<BottomNavBar> createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends State<BottomNavBar> {
+  int _selectedIndex = 0;
+  void _onItemTapped(int index, VoidCallback navigationCallback) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    navigationCallback();
+  }
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -47,28 +59,27 @@ class BottomNavBar extends StatelessWidget {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildNavItem(Icons.home, "Home", isActive: true, onTap: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        }),
-        _buildNavItem(Icons.list_alt, "Menu", onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ExploretabPage(initialIndex: 0)),
-          );
-        }),
-        SizedBox(width: 60), 
-        _buildNavItem(Icons.account_circle, "Account", onTap: () {
-          Navigator.pushReplacement(
-            context,
-             MaterialPageRoute(builder: (context) => ProfileScreen()),
-          );
-        }),
-        _buildNavItem(Icons.grid_view, "More", onTap: () {
-          scaffoldKey.currentState!.openDrawer();
-        }),
+        _buildNavItem(Icons.home, "Home", isActive: _selectedIndex == 0, onTap: () {
+                _onItemTapped(0, () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
+                });
+              }),
+              _buildNavItem(Icons.list_alt, "Menu", isActive: _selectedIndex == 1, onTap: () {
+                _onItemTapped(1, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ExploretabPage(initialIndex: 0)));
+                });
+              }),
+              SizedBox(width: 60),
+              _buildNavItem(Icons.account_circle, "Account", isActive: _selectedIndex == 2, onTap: () {
+                _onItemTapped(2, () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
+                });
+              }),
+              _buildNavItem(Icons.grid_view, "More", isActive: _selectedIndex == 3, onTap: () {
+                _onItemTapped(3, () {
+                  widget.scaffoldKey.currentState!.openDrawer();
+                });
+              }),
       ],
     ),
         ),
