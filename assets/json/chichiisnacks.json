@@ -2,7 +2,7 @@
   {
     "category": "CHICHII SNACKS",
     "items": [
-      { "title": "Fried Chicken Wings - 3 Pcs", "price": "3801", "image": "assets/images/chickenwings.jpeg" },
+      { "title": "Fried Chicken Wings - 3 Pcs", "price": "380", "image": "assets/images/chickenwings.jpeg" },
       { "title": "Jumbo Fried Chicken Wings", "price": "1080", "image": "assets/images/chickenwings.jpeg" },
       { "title": "Fried Chicken Lollipop - 6 Pcs", "price": "380", "image": "assets/images/Chickenlollipop.png" },
       { "title": "Jumbo Chicken Lollipop - 18 Pcs", "price": "1060", "image": "assets/images/Chickenlollipop.png" },
