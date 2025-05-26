@@ -97,8 +97,15 @@ void initState() {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(widget.image,
-                      height: 250, width: double.infinity, fit: BoxFit.cover),
+                 AspectRatio(
+  aspectRatio: 16 / 9,
+  child: Image.asset(
+    widget.image,
+    width: double.infinity,
+    fit: BoxFit.cover,
+  ),
+),
+
                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
@@ -224,7 +231,7 @@ void initState() {
             ),
 
             // Display Other Best Sellers
-            ListView.builder(
+          ListView.builder(
               itemCount: widget.bestSellers.length,
               itemBuilder: (context, index) {
                 final item = widget.bestSellers[index];
@@ -242,6 +249,7 @@ void initState() {
                           image: item['image']!,
                           price: item['price']!,
                           bestSellers: widget.bestSellers,
+
                         ),
                       ),
                     );

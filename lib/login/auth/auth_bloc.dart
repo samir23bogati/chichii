@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:padshala/screens/integrity_helper.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,6 +20,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyOtpRequested>(_onVerifyOtpRequested);
     on<ResendOtpRequested>(_onResendOtpRequested);
     on<CountdownTicked>(_onCountdownTicked);
+     on<OtpSent>(_onOtpSent);
+    on<AuthFailure>(_onAuthFailure);
   }
 
  Future<void> _onCheckAuthStatus(
@@ -57,67 +60,85 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onPhoneAuthRequested(
-      PhoneAuthRequested event, Emitter<AuthState> emit) async {
-    emit(PhoneAuthLoading());
+ Future<void> _onPhoneAuthRequested(
+    PhoneAuthRequested event, Emitter<AuthState> emit) async {
+  print("📞 Starting phone auth for: ${event.phoneNumber}");
+  emit(PhoneAuthLoading());
 
-    try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: event.phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          try {
-            UserCredential userCredential =
-                await _auth.signInWithCredential(credential);
-            emit(Authenticated(user: userCredential.user!));
-          } catch (e) {
-            emit(AuthError(message: 'Auto-verification failed: $e')); // 🔧 Added catch for auto-verification
-          }
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          emit(AuthError(message: e.message ?? "Verification failed."));
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          _verificationId = verificationId;
-          _startCountdown(event.phoneNumber, emit); // ⏱ Start countdown on code sent
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
-        },
-        timeout: const Duration(seconds: 60),
-      );
-    } catch (e) {
-      emit(AuthError(message: 'Phone auth error: $e'));
-    }
+  // ✅ 1. Get Play Integrity Token
+  final token = await IntegrityHelper.getPlayIntegrityToken();
+
+  if (token == null) {
+    print("❌ Failed to get Play Integrity token");
+    emit(AuthError(message: "Failed Play Integrity check."));
+    return;
   }
+
+  print("✅ Play Integrity Token received: $token");
+
+  // ✅ 2. Proceed with phone verification only if token is valid
+  try {
+    await _auth.verifyPhoneNumber(
+      phoneNumber: event.phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        print("✅ Auto verification completed.");
+        try {
+          UserCredential userCredential = await _auth.signInWithCredential(credential);
+          emit(Authenticated(user: userCredential.user!));
+        } catch (e) {
+          print("❌ Sign-in after auto-verification failed: $e");
+          emit(AuthError(message: "Auto-verification failed: $e"));
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("❌ Verification failed: ${e.message}");
+        emit(AuthError(message: e.message ?? "Verification failed."));
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        print("📨 Code sent! VerificationId: $verificationId");
+        _verificationId = verificationId;
+        add(OtpSent(phoneNumber: event.phoneNumber, remainingTime: 60));
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print("⏰ Auto retrieval timeout.");
+        _verificationId = verificationId;
+      },
+      timeout: const Duration(seconds: 60),
+    );
+  } catch (e) {
+    print("🚨 Exception in verifyPhoneNumber: $e");
+    emit(AuthError(message: 'Phone auth error: $e'));
+  }
+}
+
 
   Future<void> _onVerifyOtpRequested(
       VerifyOtpRequested event, Emitter<AuthState> emit) async {
     emit(PhoneAuthLoading());
 
-    try {
-      if (_verificationId == null) {
-        emit(AuthError(message: 'Verification ID is null. Please request OTP again.')); // 🛡 Safe check
-        emit(Unauthenticated());
-        return;
-      }
+     if (_verificationId == null) {
+      emit(AuthError(message: 'Verification ID is null. Please request OTP again.'));
+      return;
+    }
 
+    try {
       final credential = PhoneAuthProvider.credential(
         verificationId: _verificationId!,
         smsCode: event.otp,
       );
 
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      UserCredential userCredential = await _auth.signInWithCredential(credential);
       emit(OtpVerified(user: userCredential.user!));
     } catch (e) {
+      print("❌ OTP verification failed: $e");
       emit(AuthError(message: 'Invalid OTP: $e'));
-      emit(Unauthenticated()); // ❗Emit unauthenticated if OTP fails
     }
   }
 
   Future<void> _onResendOtpRequested(
       ResendOtpRequested event, Emitter<AuthState> emit) async {
     _countdownTimer?.cancel(); // 🔁 Cancel any ongoing countdown before resending
+     print("🔄 Resending OTP to ${event.phoneNumber}");
     add(PhoneAuthRequested(phoneNumber: event.phoneNumber));
   }
 
@@ -131,10 +152,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _countdownTimer?.cancel();
     }
   }
+  void _onOtpSent(OtpSent event, Emitter<AuthState> emit) {
+    print("✅ OTP sent event handled.");
+    emit(OtpSentState(
+      phoneNumber: event.phoneNumber,
+      remainingTime: event.remainingTime,
+    ));
+    _startCountdown(event.phoneNumber);
+  }
 
-  void _startCountdown(String phoneNumber, Emitter<AuthState> emit) {
+  void _startCountdown(String phoneNumber) {
     int remainingTime = 60;
-    emit(OtpSentState(phoneNumber: phoneNumber, remainingTime: remainingTime));
 
     _countdownTimer?.cancel();
     _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -145,7 +173,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
   }
-
+     void _onAuthFailure(AuthFailure event, Emitter<AuthState> emit) {
+    emit(AuthError(message: event.message));
+  }
   @override
   Future<void> close() {
     _countdownTimer?.cancel();

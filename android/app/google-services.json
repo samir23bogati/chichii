@@ -14,22 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "581466934152-73hr4sv6jp69fl2tpfc8je532e38id18.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chichii.online",
-            "certificate_hash": "49041e1677780212cb5672c3e4165ee7a9de2c33"
-          }
-        },
-        {
-          "client_id": "581466934152-7c9icm3k1si2kue4tv1n26e4akheceob.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chichii.online",
-            "certificate_hash": "3e34d9c5884e788b0a7afb92dacd843fe7494048"
-          }
-        },
-        {
           "client_id": "581466934152-bl15dqk7giu68polbt9lpv5igqquj0m6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -38,35 +22,11 @@
           }
         },
         {
-          "client_id": "581466934152-cl8k25po8ja9fhbsga1ao5urvutbdt5g.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chichii.online",
-            "certificate_hash": "ed713768e78abe75cd1c1afb3244dfc8bae80817"
-          }
-        },
-        {
-          "client_id": "581466934152-edkf8dcrp82bu72la539d65rr1oi15rm.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chichii.online",
-            "certificate_hash": "9cab285dfcb447bdd095828126968adc521a0dc0"
-          }
-        },
-        {
           "client_id": "581466934152-gmuc5qt8p3slv7ubfqa1f8ip17cp117f.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.chichii.online",
             "certificate_hash": "fafff98c1095806088b25074baf5471502959adb"
-          }
-        },
-        {
-          "client_id": "581466934152-jgitf6n8ltkfem95ljkjcd3e2titpei1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chichii.online",
-            "certificate_hash": "a25338f318f73ea7f89e6653952339d1f251cd1e"
           }
         },
         {

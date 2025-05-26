@@ -64,29 +64,31 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-         print("Current State: $state");
-        if (state is OtpSentState) {
-      setState(() {
-        isOtpSent = true;
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('OTP has been sent to your phone')),
-      );
-    } else if (state is OtpVerified || state is Authenticated) {
-      setState(() => isLoading = false);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _navigateToAddressSelectionPage();
-      });
-    } else if (state is AuthError) {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${state.message}')),
-      );
-    } else if (state is GoogleAuthLoading) {
-      setState(() => isLoading = true);
-    }
-  },
+         print("AuthBloc State: $state");
+
+       if (state is PhoneAuthLoading) {
+    setState(() => isLoading = true);
+  } else if (state is OtpSentState) {
+    setState(() {
+      isOtpSent = true;
+      isLoading = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('OTP has been sent to your phone')),
+    );
+  } else if (state is OtpVerified || state is Authenticated) {
+    setState(() => isLoading = false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _navigateToAddressSelectionPage();
+    });
+  } else if (state is AuthError) {
+    print("❌ AuthError: ${state.message}");
+    setState(() => isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${state.message}')),
+    );
+  }
+},
       child: Scaffold(
           backgroundColor: Colors.white,
           body: SingleChildScrollView(

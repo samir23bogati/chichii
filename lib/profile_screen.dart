@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user != null) {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
-          .doc(user!.uid)
+          .doc(user!.phoneNumber!)
           .get();
       if (userDoc.exists) {
         setState(() {

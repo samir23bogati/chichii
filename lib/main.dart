@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:padshala/screens/integrity_helper.dart';
 import 'package:padshala/screens/splash_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -125,9 +126,18 @@ Future<void> main() async {
   await FirebaseAppCheck.instance.activate(
   androidProvider: AndroidProvider.playIntegrity, 
 );
+FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    if (user != null) {
+      print("✅ User Signed In: ${user.uid}");
+      print("📞 Phone Number: ${user.phoneNumber}");
+    } else {
+      print("❌ No User Signed In");
+    }
+  });
 
+  print("USER: ${FirebaseAuth.instance.currentUser}");
+  print("PHONE: ${FirebaseAuth.instance.currentUser?.phoneNumber}");
   await checkFirestoreData();
-
   
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
@@ -167,6 +177,13 @@ Future<void> main() async {
   });
 
   runApp(const MyApp());
+}
+void checkIntegrityAfterLogin() async {
+  final token = await IntegrityHelper.getPlayIntegrityToken();
+  if (token != null) {
+    print("🛡️ Play Integrity Token received: $token");
+    // 🔒 Send this token to your server for validation if needed.
+  }
 }
 
 class MyApp extends StatelessWidget {

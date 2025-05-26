@@ -1,67 +1,67 @@
 [
   {
     "title": "Chicken Dum Biryani",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bschickendumbiriyani.png",
     "price": "420"
   },
   {
     "title": "Chicken Sekuwa -1/2 kg",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bschiksekuwa.png",
     "price": "485"
   },
   {
     "title": "Fried Chicken Lollipop -6 Pcs",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bschikenlolli.png",
     "price": "380"
   },
   {
     "title": "Grilled Chicken Burger",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsgrilledchikburger.png",
     "price": "390"
   },
   {
     "title": "C Chicken Momo",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bscchikmomo.png",
     "price": "270"
   },
   {
     "title": "Buff Momo",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsbbuffmomo.png",
     "price": "450"
   },
   {
     "title": "Fried Chicken Wings -3 Pcs",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsfrychikwing.png",
     "price": "380"
   },
   {
     "title": "JumboChicken Fried Rice",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsjumbofrrice.png",
     "price": "945"
   },
   {
     "title": "Gorkha Strong - 650ML",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsgorkhastng.png",
     "price": "390"
   },
   {
     "title": "Nepal Ice Strong - 650ML",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsnepalice.png",
     "price": "390"
   },
   {
     "title": "Mustang Gold Whisky -750ML",
-    "image": "assets/images/buffmomo.jpg",
+    "image": "assets/images/bsmustngglds.png",
     "price": "1380"
   },
   {
     "title": "Khukuri Rum - 750ML",
-  "image": "assets/images/buffmomo.jpg",
+  "image": "assets/images/bskukurieyrun.png",
     "price": "2250"
   },
   {
     "title": "Golden Oak - 750ML",
-   "image": "assets/images/buffmomo.jpg",
+   "image": "assets/images/bsgoldenoak.png",
     "price": "1350"
   }
 ]

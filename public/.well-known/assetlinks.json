@@ -1,0 +1,17 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.chichii.online",
+      "sha256_cert_fingerprints": [
+        "73:FC:78:71:8A:5B:84:4F:1E:0D:35:F7:AC:B2:58:8B:C1:AC:CD:66:32:7E:AD:3B:06:B4:4F:3C:A7:F2:6E:C1",
+        "FC:AB:B8:8C:BC:20:6E:AD:36:91:4A:6B:B7:AB:04:46:3B:0F:14:7A:00:E1:BA:21:8E:A3:17:56:92:3C:1A:A7",
+        "21:B4:A4:7E:0F:4C:39:4D:C4:82:BE:F4:37:29:63:60:A5:C7:64:C0:95:76:03:75:62:88:C8:BB:7C:CD:76:8B"
+      ]
+    }
+  }
+]
