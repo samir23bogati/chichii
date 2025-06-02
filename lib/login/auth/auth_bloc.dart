@@ -94,11 +94,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print("❌ Verification failed: ${e.message}");
         emit(AuthError(message: e.message ?? "Verification failed."));
       },
-      codeSent: (String verificationId, int? resendToken) {
-        print("📨 Code sent! VerificationId: $verificationId");
-        _verificationId = verificationId;
-        add(OtpSent(phoneNumber: event.phoneNumber, remainingTime: 60));
-      },
+     codeSent: (String verificationId, int? resendToken) {
+  print("📨 Code sent! VerificationId: $verificationId");
+  _verificationId = verificationId;
+  emit(OtpSentState(
+    phoneNumber: event.phoneNumber,
+    remainingTime: 60,
+  ));
+  _startCountdown(event.phoneNumber); 
+},
+
       codeAutoRetrievalTimeout: (String verificationId) {
         print("⏰ Auto retrieval timeout.");
         _verificationId = verificationId;

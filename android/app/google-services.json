@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "581466934152-73hr4sv6jp69fl2tpfc8je532e38id18.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chichii.online",
+            "certificate_hash": "49041e1677780212cb5672c3e4165ee7a9de2c33"
+          }
+        },
+        {
           "client_id": "581466934152-bl15dqk7giu68polbt9lpv5igqquj0m6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
